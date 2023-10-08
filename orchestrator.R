@@ -23,32 +23,33 @@ get_season_df <- function() {
     seasons_page %>%
     html_elements("tr th[data-stat='season'] a") %>%
     html_text2()
-  
+
   seasons_id <-
     seasons_page %>%
     html_elements("tr th[data-stat='season'] a") %>%
-    html_attr("href") %>% 
+    html_attr("href") %>%
     str_extract(".*/([A-Z]+_\\d+).html", 1)
-  
+
   seasons_identifier <-
-    tibble(season = seasons_name, id = seasons_id) %>% 
+    tibble(season = seasons_name, id = seasons_id) %>%
     filter(str_detect(id, "NBA"))
-  
+
   seasons_identifier_table <-
     seasons_initial_table %>%
     left_join(seasons_identifier, by = c("Season" = "season"))
-  
-  seasons_table <- 
+
+  seasons_table <-
     seasons_identifier_table %>%
     mutate(start = as.numeric(str_replace(Season, "-.*", "")),
            end = start + 1,
            type = "SEASON") %>%
     clean_names()
-  
+
   seasons_table
 }
 
 seasons_table <- get_season_df()
+
 
 
 # TEAM
@@ -263,3 +264,211 @@ games_table <-
   map2_dfr(2023, \(month, season) get_game_df(str_to_lower(month), season))
 
 
+
+# AWARD
+
+get_awards_df <- function() {
+  playoffs_url <- "https://www.basketball-reference.com/playoffs/"
+
+  playoffs_page <-
+    read_html(playoffs_url) %>%
+    html_element("table#champions_index")
+
+  playoffs_initial_table <-
+    playoffs_page %>%
+    html_table() %>%
+    row_to_names(row_number = 1) %>%
+    select(where(is_character)) %>%
+    filter(nzchar(Year)) %>%
+    mutate(row_number = row_number()) %>%
+    clean_names()
+
+  seasons_name <-
+    playoffs_page %>%
+    html_elements("tr th[data-stat='year_id'] a") %>%
+    html_text2()
+
+  seasons_id <-
+    playoffs_page %>%
+    html_elements("tr th[data-stat='year_id'] a") %>%
+    html_attr("href") %>%
+    str_extract(".*/([A-Z]+_\\d+).html", 1)
+
+  seasons_identifier <-
+    tibble(seasons_name, seasons_id) %>%
+    mutate(row_number = row_number())
+
+  awards_seasons_identifier_table <-
+    playoffs_initial_table %>%
+    left_join(seasons_identifier,
+              by = c("year" = "seasons_name", "row_number"))
+
+  champions_name <-
+    playoffs_page %>%
+    html_elements("tr td[data-stat='champion'] a") %>%
+    html_text2()
+
+  champions_id <-
+    playoffs_page %>%
+    html_elements("tr td[data-stat='champion'] a") %>%
+    html_attr("href") %>%
+    str_extract(".*/teams/([^/]+)/.*", 1)
+
+  champions_identifier <-
+    tibble(champions_name, champions_id) %>%
+    mutate(row_number = row_number())
+
+  awards_champions_identifier_table <-
+    awards_seasons_identifier_table %>%
+    left_join(champions_identifier,
+              by = c("champion" = "champions_name", "row_number")) %>%
+    filter(lg == "NBA") %>%
+    select(seasons_id, champions_id) %>%
+    rename(all_of(c(
+      season = "seasons_id",
+      champion = "champions_id"
+    )))
+
+  mvp_url <- "https://www.basketball-reference.com/awards/mvp.html"
+
+  mvp_page <-
+    read_html(mvp_url) %>%
+    html_element("table#mvp_NBA")
+
+  mvp_initial_table <-
+    mvp_page %>%
+    html_table() %>%
+    row_to_names(row_number = 1) %>%
+    mutate(row_number = row_number())
+
+  mvps_name <-
+    mvp_page %>%
+    html_elements("tr td[data-stat='player'] a") %>%
+    html_text2()
+
+  mvps_id <-
+    mvp_page %>%
+    html_elements("tr td[data-stat='player'] a") %>%
+    html_attr("href") %>%
+    str_extract("[^/]+(?=\\.html$)")
+
+  mvps_identifier <-
+    tibble(mvps_name, mvps_id) %>%
+    mutate(row_number = row_number())
+
+  mvps_identifier_table <-
+    mvp_initial_table %>%
+    left_join(mvps_identifier, by = c("Player" = "mvps_name", "row_number")) %>%
+    mutate(season = paste0("NBA_", as.numeric(str_replace(Season, "-.*", "")) + 1)) %>%
+    select(season, mvps_id)
+
+  awards_mvp_identifier_table <-
+    awards_champions_identifier_table %>%
+    left_join(mvps_identifier_table, by = join_by(season)) %>%
+    rename(all_of(c(mvp = "mvps_id")))
+
+  roy_url <- "https://www.basketball-reference.com/awards/roy.html"
+
+  roy_page <-
+    read_html(roy_url) %>%
+    html_element("table#roy_NBA")
+
+  roy_initial_table <-
+    roy_page %>%
+    html_table() %>%
+    row_to_names(row_number = 1) %>%
+    mutate(row_number = row_number())
+
+  roys_name <-
+    roy_page %>%
+    html_elements("tr td[data-stat='player'] a") %>%
+    html_text2()
+
+  roys_id <-
+    roy_page %>%
+    html_elements("tr td[data-stat='player'] a") %>%
+    html_attr("href") %>%
+    str_extract("[^/]+(?=\\.html$)")
+
+  roys_identifier <-
+    tibble(roys_name, roys_id) %>%
+    mutate(row_number = row_number())
+
+  roys_identifier_table <-
+    roy_initial_table %>%
+    mutate(Player = str_trim(str_replace_all(Player, "\\(Tie\\)|\\*", ""))) %>%
+    left_join(roys_identifier, by = c("Player" = "roys_name", "row_number")) %>%
+    mutate(season = paste0("NBA_", as.numeric(str_replace(Season, "-.*", "")) + 1)) %>%
+    select(season, roys_id)
+
+  awards_roy_identifier_table <-
+    awards_mvp_identifier_table %>%
+    left_join(roys_identifier_table, by = join_by(season), multiple = "all") %>%
+    rename(all_of(c(roy = "roys_id")))
+
+  awards_roy_identifier_table
+  
+  pts_url <- "https://www.basketball-reference.com/leaders/pts_yearly.html"
+  
+  pts_page <-
+    read_html(pts_url) %>%
+    html_element("table#leaders")
+  
+  pts_initial_table <-
+    pts_page %>%
+    html_table() %>%
+    mutate(row_number = row_number())
+  
+  pts_name <-
+    pts_page %>%
+    html_elements("tr td a[href^='/players']") %>%
+    html_text2()
+  
+  pts_id <-
+    pts_page %>%
+    html_elements("tr td a[href^='/players']") %>%
+    html_attr("href") %>%
+    str_extract("[^/]+(?=\\.html$)")
+  
+  pts_value <-
+    pts_page %>%
+    html_elements("tr td:nth-child(4)") %>%
+    html_text2()
+
+  pts_identifier <-
+    tibble(pts_name, pts_id, pts_value) %>%
+    mutate(row_number = row_number())
+
+  pts_identifier_table <-
+    pts_initial_table %>%
+    mutate(Player = str_trim(str_replace_all(Player, "\\*", ""))) %>%
+    left_join(pts_identifier, by = c("Player" = "pts_name", "row_number")) %>%
+    mutate(season = paste0("NBA_", as.numeric(str_replace(Season, "-.*", "")) + 1),
+           pts_id = paste0(pts_id, "/", pts_value)) %>%
+    filter(season != "NBA_NA") %>% 
+    select(season, pts_id)
+  
+  awards_pts_identifier_table <-
+    awards_roy_identifier_table %>%
+    left_join(pts_identifier_table,
+              by = join_by(season),
+              multiple = "all") %>%
+    rename(all_of(c(pts_leader = "pts_id")))
+  
+  awards_pts_identifier_table
+  
+  # https://www.basketball-reference.com/leaders/ast_yearly.html
+}
+  
+awards_table <- get_awards_df()
+
+# Have some duplicates due to ties. need to account for both but not duplicate others in row.
+# 1952 is an example.
+
+df_long <-
+  awards_table %>%
+  pivot_longer(cols = -season,
+               names_to = "award",
+               values_to = "value") %>%
+  filter(complete.cases(.)) %>% 
+  mutate(type = "AWARD")
