@@ -1,14 +1,11 @@
 
 
 get_awards_df <- function() {
-  playoffs_url <- "https://www.basketball-reference.com/playoffs/"
-  
-  playoffs_page <-
-    read_html(playoffs_url) %>%
-    html_element("table#champions_index")
-  
+  playoffs_page <- discover_page("https://www.basketball-reference.com/playoffs/")
+  playoffs_view <- playoffs_page("table#champions_index")
+
   playoffs_initial_table <-
-    playoffs_page %>%
+    playoffs_view %>%
     html_table() %>%
     row_to_names(row_number = 1) %>%
     select(where(is_character)) %>%
@@ -17,12 +14,12 @@ get_awards_df <- function() {
     clean_names()
   
   seasons_name <-
-    playoffs_page %>%
+    playoffs_view %>%
     html_elements("tr th[data-stat='year_id'] a") %>%
     html_text2()
   
   seasons_id <-
-    playoffs_page %>%
+    playoffs_view %>%
     html_elements("tr th[data-stat='year_id'] a") %>%
     html_attr("href") %>%
     str_extract(".*/([A-Z]+_\\d+).html", 1)
@@ -37,12 +34,12 @@ get_awards_df <- function() {
               by = c("year" = "seasons_name", "row_number"))
   
   champions_name <-
-    playoffs_page %>%
+    playoffs_view %>%
     html_elements("tr td[data-stat='champion'] a") %>%
     html_text2()
   
   champions_id <-
-    playoffs_page %>%
+    playoffs_view %>%
     html_elements("tr td[data-stat='champion'] a") %>%
     html_attr("href") %>%
     str_extract(".*/teams/([^/]+)/.*", 1)
@@ -62,25 +59,22 @@ get_awards_df <- function() {
       champion = "champions_id"
     )))
   
-  mvp_url <- "https://www.basketball-reference.com/awards/mvp.html"
-  
-  mvp_page <-
-    read_html(mvp_url) %>%
-    html_element("table#mvp_NBA")
-  
+  mvp_page <- discover_page("https://www.basketball-reference.com/awards/mvp.html")
+  mvp_view <- mvp_page("table#mvp_NBA")
+
   mvp_initial_table <-
-    mvp_page %>%
+    mvp_view %>%
     html_table() %>%
     row_to_names(row_number = 1) %>%
     mutate(row_number = row_number())
   
   mvps_name <-
-    mvp_page %>%
+    mvp_view %>%
     html_elements("tr td[data-stat='player'] a") %>%
     html_text2()
   
   mvps_id <-
-    mvp_page %>%
+    mvp_view %>%
     html_elements("tr td[data-stat='player'] a") %>%
     html_attr("href") %>%
     str_extract("[^/]+(?=\\.html$)")
@@ -100,25 +94,22 @@ get_awards_df <- function() {
     left_join(mvps_identifier_table, by = join_by(season)) %>%
     rename(all_of(c(mvp = "mvps_id")))
   
-  roy_url <- "https://www.basketball-reference.com/awards/roy.html"
-  
-  roy_page <-
-    read_html(roy_url) %>%
-    html_element("table#roy_NBA")
-  
+  roy_page <- discover_page("https://www.basketball-reference.com/awards/roy.html")
+  roy_view <- roy_page("table#roy_NBA")
+
   roy_initial_table <-
-    roy_page %>%
+    roy_view %>%
     html_table() %>%
     row_to_names(row_number = 1) %>%
     mutate(row_number = row_number())
   
   roys_name <-
-    roy_page %>%
+    roy_view %>%
     html_elements("tr td[data-stat='player'] a") %>%
     html_text2()
   
   roys_id <-
-    roy_page %>%
+    roy_view %>%
     html_elements("tr td[data-stat='player'] a") %>%
     html_attr("href") %>%
     str_extract("[^/]+(?=\\.html$)")
@@ -141,31 +132,27 @@ get_awards_df <- function() {
               multiple = "all") %>%
     rename(all_of(c(roy = "roys_id")))
   
-  pts_url <-
-    "https://www.basketball-reference.com/leaders/pts_yearly.html"
-  
-  pts_page <-
-    read_html(pts_url) %>%
-    html_element("table#leaders")
-  
+  pts_page <- discover_page("https://www.basketball-reference.com/leaders/pts_yearly.html")
+  pts_view <- pts_page("table#leaders")
+
   pts_initial_table <-
-    pts_page %>%
+    pts_view %>%
     html_table() %>%
     mutate(row_number = row_number())
   
   pts_name <-
-    pts_page %>%
+    pts_view %>%
     html_elements("tr td a[href^='/players']") %>%
     html_text2()
   
   pts_id <-
-    pts_page %>%
+    pts_view %>%
     html_elements("tr td a[href^='/players']") %>%
     html_attr("href") %>%
     str_extract("[^/]+(?=\\.html$)")
   
   pts_value <-
-    pts_page %>%
+    pts_view %>%
     html_elements("tr td:nth-child(4)") %>%
     html_text2()
   
@@ -191,31 +178,27 @@ get_awards_df <- function() {
               multiple = "all") %>%
     rename(all_of(c(pts_leader = "pts_id")))
   
-  asts_url <-
-    "https://www.basketball-reference.com/leaders/ast_yearly.html"
-  
-  asts_page <-
-    read_html(asts_url) %>%
-    html_element("table#leaders")
-  
+  asts_page <- discover_page("https://www.basketball-reference.com/leaders/ast_yearly.html")
+  asts_view <- asts_page("table#leaders")
+
   asts_initial_table <-
-    asts_page %>%
+    asts_view %>%
     html_table() %>%
     mutate(row_number = row_number())
   
   asts_name <-
-    asts_page %>%
+    asts_view %>%
     html_elements("tr td a[href^='/players']") %>%
     html_text2()
   
   asts_id <-
-    asts_page %>%
+    asts_view %>%
     html_elements("tr td a[href^='/players']") %>%
     html_attr("href") %>%
     str_extract("[^/]+(?=\\.html$)")
   
   asts_value <-
-    asts_page %>%
+    asts_view %>%
     html_elements("tr td:nth-child(4)") %>%
     html_text2()
   
@@ -241,31 +224,27 @@ get_awards_df <- function() {
               multiple = "all") %>%
     rename(all_of(c(asts_leader = "asts_id")))
   
-  trbs_url <-
-    "https://www.basketball-reference.com/leaders/trb_yearly.html"
-  
-  trbs_page <-
-    read_html(trbs_url) %>%
-    html_element("table#leaders")
-  
+  trbs_page <- discover_page("https://www.basketball-reference.com/leaders/trb_yearly.html")
+  trbs_view <- trbs_page("table#leaders")
+
   trbs_initial_table <-
-    trbs_page %>%
+    trbs_view %>%
     html_table() %>%
     mutate(row_number = row_number())
   
   trbs_name <-
-    trbs_page %>%
+    trbs_view %>%
     html_elements("tr td a[href^='/players']") %>%
     html_text2()
   
   trbs_id <-
-    trbs_page %>%
+    trbs_view %>%
     html_elements("tr td a[href^='/players']") %>%
     html_attr("href") %>%
     str_extract("[^/]+(?=\\.html$)")
   
   trbs_value <-
-    trbs_page %>%
+    trbs_view %>%
     html_elements("tr td:nth-child(4)") %>%
     html_text2()
   

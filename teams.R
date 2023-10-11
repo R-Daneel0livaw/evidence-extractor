@@ -1,23 +1,20 @@
 
 
 get_team_df <- function() {
-  teams_url <- "https://www.basketball-reference.com/teams/"
-  
-  teams_page <-
-    read_html(teams_url) %>%
-    html_element("table#teams_active")
-  
+  teams_page <- discover_page("https://www.basketball-reference.com/teams/")
+  teams_view <- teams_page("table#teams_active")
+
   teams_initial_table <-
-    teams_page %>%
+    teams_view %>%
     html_table()
   
   teams_name <-
-    teams_page %>%
+    teams_view %>%
     html_elements("tr th[data-stat$='name'] a") %>%
     html_text2()
   
   teams_id <-
-    teams_page %>%
+    teams_view %>%
     html_elements("tr th[data-stat$='name'] a") %>%
     html_attr("href") %>%
     str_extract(".*/([^/]+)/$", 1)

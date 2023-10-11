@@ -9,21 +9,12 @@ get_game_df <- function() {
 }
 
 scrape_games <- function(month, season) {
-  games_url <-
-    paste0(
-      "https://www.basketball-reference.com/leagues/NBA_",
-      season,
-      "_games-",
-      month,
-      ".html"
-    )
-  
-  games_page <-
-    read_html(games_url) %>%
-    html_element("table#schedule")
-  
+  games_page <- discover_page(paste0("https://www.basketball-reference.com/leagues/NBA_", season,
+    "_games-", month, ".html"))
+  games_view <- games_page("table#schedule")
+
   games_initial_table <-
-    games_page %>%
+    games_view %>%
     html_table() %>%
     clean_names() %>%
     rename(all_of(
@@ -43,7 +34,7 @@ scrape_games <- function(month, season) {
     select(!x)
   
   games_id <-
-    games_page %>%
+    games_view %>%
     html_elements("tr td[data-stat='box_score_text'] a") %>%
     html_attr("href") %>%
     str_extract(".*/([^.]+)\\.html$", 1)
