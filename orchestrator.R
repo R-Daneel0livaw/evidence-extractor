@@ -2,6 +2,7 @@ library(tidyverse)
 library(rvest)
 library(jsonlite)
 library(janitor)
+library(polite)
 
 source("seasons.R")
 source("teams.R")

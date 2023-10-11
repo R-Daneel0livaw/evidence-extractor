@@ -8,20 +8,13 @@ get_season_df <- function() {
     html_table() %>% 
     row_to_names(row_number = 1) %>%
     filter(Lg == "NBA")
-
-  seasons_name <-
-    seasons_view %>%
-    html_elements("tr th[data-stat='season'] a") %>%
-    html_text2()
-
-  seasons_id <-
-    seasons_view %>%
-    html_elements("tr th[data-stat='season'] a") %>%
-    html_attr("href") %>%
-    str_extract(".*/([A-Z]+_\\d+).html", 1)
-
+  
   seasons_identifier <-
-    tibble(season = seasons_name, id = seasons_id) %>%
+    seasons_view %>%
+    html_elements("tr th[data-stat='season'] a") %>%
+    html_attrs_dfr() %>% 
+    rename_all(~ c("id", "season")) %>% 
+    mutate(id = str_extract(id, ".*/([A-Z]+_\\d+).html", 1)) %>% 
     filter(str_detect(id, "NBA"))
 
   seasons_identifier_table <-
