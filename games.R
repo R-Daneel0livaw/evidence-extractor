@@ -33,16 +33,14 @@ scrape_games <- function(month, season) {
     ) %>%
     select(!x)
   
-  games_id <-
+  games_identifier <-
     games_view %>%
     html_elements("tr td[data-stat='box_score_text'] a") %>%
-    html_attr("href") %>%
-    str_extract(".*/([^.]+)\\.html$", 1)
-  
-  games_identifier <-
-    tibble(id = games_id) %>%
-    mutate(row_number = row_number())
-  
+    html_attrs_dfr(add_text = FALSE) %>% 
+    rename_all(~ c("id")) %>% 
+    mutate(id = str_extract(id, ".*/([^.]+)\\.html$", 1),
+           row_number = row_number())
+
   games_table <-
     games_initial_table %>%
     left_join(games_identifier, by = join_by(row_number)) %>%

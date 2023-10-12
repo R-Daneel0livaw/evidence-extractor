@@ -33,34 +33,26 @@ scrape_players <- function(letter) {
     mutate(Player = str_replace_all(Player, "\\*", ""),
            row_number = row_number())
   
-  players_name <-
+  players_identifier <- 
     players_view %>%
     html_elements("tr th[data-stat='player'] a") %>%
-    html_text2()
-  
-  players_id <-
-    players_view %>%
-    html_elements("tr th[data-stat='player'] a") %>%
-    html_attr("href") %>%
-    str_extract("[^/]+(?=\\.html$)")
-  
-  players_identifier <-
-    tibble(player = players_name, id = players_id) %>%
-    mutate(row_number = row_number())
-  
+    html_attrs_dfr() %>% 
+    rename_all(~ c("id", "player")) %>% 
+    mutate(id = str_extract(id, "[^/]+(?=\\.html$)"),
+           row_number = row_number())
+
   players_identifier_table <-
     players_initial_table %>%
     left_join(players_identifier, by = c("Player" = "player", "row_number"))
   
-  players_active_id <-
+  players_active_identifier <-
     players_view %>%
     html_elements("tr th[data-stat='player'] strong a") %>%
-    html_attr("href") %>%
-    str_extract("[^/]+(?=\\.html$)")
-  
-  players_active_identifier <-
-    tibble(id = players_active_id, active = TRUE)
-  
+    html_attrs_dfr(add_text = FALSE) %>% 
+    rename_all(~ c("id")) %>% 
+    mutate(id = str_extract(id, "[^/]+(?=\\.html$)"),
+           active = TRUE)
+
   players_table <-
     players_identifier_table %>%
     left_join(players_active_identifier, by = join_by(id)) %>%
@@ -72,25 +64,17 @@ scrape_players <- function(letter) {
     select(!row_number) %>%
     clean_names()
   
-  players_college_name <-
-    players_view %>%
-    html_elements("tr td[data-stat='colleges'] a") %>%
-    html_text2()
-  # %>%
-  # str_replace(",", "#")
-  
-  players_college_id <-
-    players_view %>%
-    html_elements("tr td[data-stat='colleges'] a") %>%
-    html_attr("href") %>%
-    str_extract("(?<=college=).*")
-  
   players_college_identifier <-
-    tibble(college_name = players_college_name, college_id = players_college_id) %>%
+    players_view %>%
+    html_elements("tr td[data-stat='colleges'] a") %>%
+    html_attrs_dfr() %>% 
+    rename_all(~ c("college_id", "college_name")) %>% 
+    mutate(id = str_extract(college_id, "(?<=college=).*")) %>% 
     distinct(college_id, .keep_all = TRUE)
-  
+
   # look into library(fuzzyjoin) to eliminate need to split on comma which is causing NAs.
-  players_table <- players_table %>%
+  players_table <- 
+    players_table %>%
     separate_longer_delim(colleges, ", ") %>%
     left_join(
       players_college_identifier,
