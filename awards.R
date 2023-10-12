@@ -54,21 +54,14 @@ get_awards_df <- function() {
     row_to_names(row_number = 1) %>%
     mutate(row_number = row_number())
   
-  mvps_name <-
-    mvp_view %>%
-    html_elements("tr td[data-stat='player'] a") %>%
-    html_text2()
-  
-  mvps_id <-
-    mvp_view %>%
-    html_elements("tr td[data-stat='player'] a") %>%
-    html_attr("href") %>%
-    str_extract("[^/]+(?=\\.html$)")
-  
   mvps_identifier <-
-    tibble(mvps_name, mvps_id) %>%
-    mutate(row_number = row_number())
-  
+    mvp_view %>%
+    html_elements("tr td[data-stat='player'] a") %>%
+    html_attrs_dfr() %>% 
+    rename_all(~ c("mvps_id", "mvps_name")) %>% 
+    mutate(mvps_id = str_extract(mvps_id, "[^/]+(?=\\.html$)"),
+           row_number = row_number())
+
   mvps_identifier_table <-
     mvp_initial_table %>%
     left_join(mvps_identifier, by = c("Player" = "mvps_name", "row_number")) %>%
@@ -89,21 +82,14 @@ get_awards_df <- function() {
     row_to_names(row_number = 1) %>%
     mutate(row_number = row_number())
   
-  roys_name <-
-    roy_view %>%
-    html_elements("tr td[data-stat='player'] a") %>%
-    html_text2()
-  
-  roys_id <-
-    roy_view %>%
-    html_elements("tr td[data-stat='player'] a") %>%
-    html_attr("href") %>%
-    str_extract("[^/]+(?=\\.html$)")
-  
   roys_identifier <-
-    tibble(roys_name, roys_id) %>%
-    mutate(row_number = row_number())
-  
+    roy_view %>%
+    html_elements("tr td[data-stat='player'] a") %>%
+    html_attrs_dfr() %>% 
+    rename_all(~ c("roys_id", "roys_name")) %>% 
+    mutate(roys_id = str_extract(roys_id, "[^/]+(?=\\.html$)"),
+           row_number = row_number())
+
   roys_identifier_table <-
     roy_initial_table %>%
     mutate(Player = str_trim(str_replace_all(Player, "\\(Tie\\)|\\*", ""))) %>%
