@@ -13,41 +13,27 @@ get_awards_df <- function() {
     mutate(row_number = row_number()) %>%
     clean_names()
   
-  seasons_name <-
-    playoffs_view %>%
-    html_elements("tr th[data-stat='year_id'] a") %>%
-    html_text2()
-  
-  seasons_id <-
-    playoffs_view %>%
-    html_elements("tr th[data-stat='year_id'] a") %>%
-    html_attr("href") %>%
-    str_extract(".*/([A-Z]+_\\d+).html", 1)
-  
   seasons_identifier <-
-    tibble(seasons_name, seasons_id) %>%
-    mutate(row_number = row_number())
-  
+    playoffs_view %>%
+    html_elements("tr th[data-stat='year_id'] a") %>%
+    html_attrs_dfr() %>% 
+    rename_all(~ c("seasons_id", "seasons_name")) %>% 
+    mutate(seasons_id = str_extract(seasons_id, ".*/([A-Z]+_\\d+).html", 1),
+           row_number = row_number())
+
   awards_seasons_identifier_table <-
     playoffs_initial_table %>%
     left_join(seasons_identifier,
               by = c("year" = "seasons_name", "row_number"))
   
-  champions_name <-
-    playoffs_view %>%
-    html_elements("tr td[data-stat='champion'] a") %>%
-    html_text2()
-  
-  champions_id <-
-    playoffs_view %>%
-    html_elements("tr td[data-stat='champion'] a") %>%
-    html_attr("href") %>%
-    str_extract(".*/teams/([^/]+)/.*", 1)
-  
   champions_identifier <-
-    tibble(champions_name, champions_id) %>%
-    mutate(row_number = row_number())
-  
+    playoffs_view %>%
+    html_elements("tr td[data-stat='champion'] a") %>%
+    html_attrs_dfr() %>% 
+    rename_all(~ c("champions_id", "champions_name")) %>% 
+    mutate(champions_id = str_extract(champions_id, ".*/teams/([^/]+)/.*", 1),
+           row_number = row_number())
+
   awards_champions_identifier_table <-
     awards_seasons_identifier_table %>%
     left_join(champions_identifier,
