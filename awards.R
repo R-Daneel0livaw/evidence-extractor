@@ -112,26 +112,20 @@ get_awards_df <- function() {
     html_table() %>%
     mutate(row_number = row_number())
   
-  pts_name <-
-    pts_view %>%
-    html_elements("tr td a[href^='/players']") %>%
-    html_text2()
-  
-  pts_id <-
-    pts_view %>%
-    html_elements("tr td a[href^='/players']") %>%
-    html_attr("href") %>%
-    str_extract("[^/]+(?=\\.html$)")
-  
   pts_value <-
     pts_view %>%
     html_elements("tr td:nth-child(4)") %>%
     html_text2()
   
   pts_identifier <-
-    tibble(pts_name, pts_id, pts_value) %>%
-    mutate(row_number = row_number())
-  
+    pts_view %>%
+    html_elements("tr td a[href^='/players']") %>%
+    html_attrs_dfr() %>% 
+    rename_all(~ c("pts_id", "pts_name")) %>% 
+    mutate(pts_id = str_extract(pts_id, "[^/]+(?=\\.html$)"),
+           pts_value = pts_value,
+           row_number = row_number())
+
   pts_identifier_table <-
     pts_initial_table %>%
     mutate(Player = str_trim(str_replace_all(Player, "\\*", ""))) %>%
@@ -158,26 +152,20 @@ get_awards_df <- function() {
     html_table() %>%
     mutate(row_number = row_number())
   
-  asts_name <-
-    asts_view %>%
-    html_elements("tr td a[href^='/players']") %>%
-    html_text2()
-  
-  asts_id <-
-    asts_view %>%
-    html_elements("tr td a[href^='/players']") %>%
-    html_attr("href") %>%
-    str_extract("[^/]+(?=\\.html$)")
-  
   asts_value <-
     asts_view %>%
     html_elements("tr td:nth-child(4)") %>%
     html_text2()
   
   asts_identifier <-
-    tibble(asts_name, asts_id, asts_value) %>%
-    mutate(row_number = row_number())
-  
+    asts_view %>%
+    html_elements("tr td a[href^='/players']") %>%
+    html_attrs_dfr() %>% 
+    rename_all(~ c("asts_id", "asts_name")) %>% 
+    mutate(asts_id = str_extract(asts_id, "[^/]+(?=\\.html$)"),
+           asts_value = asts_value,
+           row_number = row_number())
+
   asts_identifier_table <-
     asts_initial_table %>%
     mutate(Player = str_trim(str_replace_all(Player, "\\*", ""))) %>%
@@ -204,26 +192,20 @@ get_awards_df <- function() {
     html_table() %>%
     mutate(row_number = row_number())
   
-  trbs_name <-
-    trbs_view %>%
-    html_elements("tr td a[href^='/players']") %>%
-    html_text2()
-  
-  trbs_id <-
-    trbs_view %>%
-    html_elements("tr td a[href^='/players']") %>%
-    html_attr("href") %>%
-    str_extract("[^/]+(?=\\.html$)")
-  
   trbs_value <-
     trbs_view %>%
     html_elements("tr td:nth-child(4)") %>%
     html_text2()
   
   trbs_identifier <-
-    tibble(trbs_name, trbs_id, trbs_value) %>%
-    mutate(row_number = row_number())
-  
+    trbs_view %>%
+    html_elements("tr td a[href^='/players']") %>%
+    html_attrs_dfr() %>% 
+    rename_all(~ c("trbs_id", "trbs_name")) %>% 
+    mutate(trbs_id = str_extract(trbs_id, "[^/]+(?=\\.html$)"),
+           trbs_value = trbs_value,
+           row_number = row_number())
+
   trbs_identifier_table <-
     trbs_initial_table %>%
     mutate(Player = str_trim(str_replace_all(Player, "\\*", ""))) %>%
