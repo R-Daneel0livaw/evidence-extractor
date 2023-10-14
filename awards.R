@@ -241,3 +241,5 @@ get_awards_df <- function() {
   # Have some duplicates due to ties. need to account for both but not duplicate others in row.
   # 1952 is an example.
 }
+
+m_get_awards_df <- memoise(get_awards_df)

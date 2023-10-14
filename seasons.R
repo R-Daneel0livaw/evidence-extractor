@@ -29,3 +29,5 @@ get_season_df <- function() {
 
   seasons_table
 }
+
+m_get_season_df <- memoise(get_season_df)

@@ -90,3 +90,6 @@ scrape_players <- function(letter) {
 
   players_table
 }
+
+m_get_player_df <- memoise(get_player_df)
+m_get_college_df <- memoise(get_college_df)

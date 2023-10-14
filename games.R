@@ -45,3 +45,5 @@ scrape_games <- function(month, season) {
   
   games_table
 }
+
+m_get_game_df <- memoise(get_game_df)

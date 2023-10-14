@@ -37,3 +37,5 @@ get_team_df <- function() {
 
   teams_table
 }
+
+m_get_team_df <- memoise(get_team_df)
