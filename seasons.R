@@ -40,4 +40,6 @@ join_identifier_columns <- function(view, initial_table) {
   seasons_identifier_table <-
     initial_table %>%
     left_join(seasons_identifier, by = join_by(season))
+  
+  seasons_identifier_table
 }

@@ -24,25 +24,9 @@ scrape_players <- function(letter) {
   players_page <- discover_page(paste0("https://www.basketball-reference.com/players/", letter, "/"))
   players_view <- players_page("table#players")
 
-  players_initial_table <-
-    players_view %>%
-    html_table() %>%
-    clean_names() %>% 
-    mutate(player = str_replace_all(player, "\\*", ""),
-           row_number = row_number())
-  
-  players_identifier <- 
-    players_view %>%
-    html_elements("tr th[data-stat='player'] a") %>%
-    html_attrs_dfr() %>% 
-    rename_all(~ c("id", "player")) %>% 
-    mutate(id = str_extract(id, "[^/]+(?=\\.html$)"),
-           row_number = row_number())
-
   players_identifier_table <-
-    players_initial_table %>%
-    left_join(players_identifier, by = c("player", "row_number"))
-  
+    join_identifier_columns(players_view, get_clean_players_table(players_view))
+
   players_active_identifier <-
     players_view %>%
     html_elements("tr th[data-stat='player'] strong a") %>%
@@ -93,3 +77,30 @@ scrape_players <- function(letter) {
 
 m_get_player_df <- memoise(get_player_df)
 m_get_college_df <- memoise(get_college_df)
+
+get_clean_players_table <- function(view) {
+  players_initial_table <-
+    view %>%
+    html_table() %>%
+    clean_names() %>%
+    mutate(player = str_replace_all(player, "\\*", ""),
+           row_number = row_number())
+  
+  players_initial_table
+}
+
+join_identifier_columns <- function(view, initial_table) {
+  players_identifier <- 
+    view %>%
+    html_elements("tr th[data-stat='player'] a") %>%
+    html_attrs_dfr() %>%
+    rename_all( ~ c("id", "player")) %>%
+    mutate(id = str_extract(id, "[^/]+(?=\\.html$)"),
+           row_number = row_number())
+  
+  players_identifier_table <-
+    initial_table %>%
+    left_join(players_identifier, by = c("player", "row_number"))
+  
+  players_identifier_table
+}
