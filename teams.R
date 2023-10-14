@@ -1,12 +1,11 @@
-
-
 get_team_df <- function() {
   teams_page <- discover_page("https://www.basketball-reference.com/teams/")
   teams_view <- teams_page("table#teams_active")
 
   teams_initial_table <-
     teams_view %>%
-    html_table()
+    html_table() %>% 
+    clean_names()
   
   teams_identifier <-
     teams_view %>% 
@@ -18,12 +17,11 @@ get_team_df <- function() {
 
   teams_identifier_table <-
     teams_initial_table %>%
-    left_join(teams_identifier, by = c("Franchise" = "team")) %>%
+    left_join(teams_identifier, by = c("franchise" = "team")) %>%
     fill(id) %>%
     replace_na(list(current = FALSE)) %>%
-    mutate(level = ifelse(!duplicated(Franchise) &
-                            current, "FRANCHISE", "TEAM")) %>%
-    clean_names()
+    mutate(level = ifelse(!duplicated(franchise) &
+                            current, "FRANCHISE", "TEAM"))
 
   teams_alts <-
     teams_identifier_table %>%

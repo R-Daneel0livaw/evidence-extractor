@@ -1,4 +1,3 @@
-
 get_season_df <- function() {
   seasons_page <- discover_page("https://www.basketball-reference.com/leagues/")
   seasons_view <- seasons_page("table#stats")
@@ -7,7 +6,8 @@ get_season_df <- function() {
     seasons_view %>%
     html_table() %>% 
     row_to_names(row_number = 1) %>%
-    filter(Lg == "NBA")
+    clean_names() %>% 
+    filter(lg == "NBA")
   
   seasons_identifier <-
     seasons_view %>%
@@ -19,14 +19,13 @@ get_season_df <- function() {
 
   seasons_identifier_table <-
     seasons_initial_table %>%
-    left_join(seasons_identifier, by = c("Season" = "season"))
+    left_join(seasons_identifier, by = join_by(season))
 
   seasons_table <-
     seasons_identifier_table %>%
-    mutate(start = as.numeric(str_replace(Season, "-.*", "")),
+    mutate(start = as.numeric(str_replace(season, "-.*", "")),
            end = start + 1,
-           type = "SEASON") %>%
-    clean_names()
+           type = "SEASON") 
 
   seasons_table
 }

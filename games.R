@@ -1,5 +1,3 @@
-
-
 get_game_df <- function() {
   games_table <-
     month.name[10:12] %>%
@@ -17,15 +15,13 @@ scrape_games <- function(month, season) {
     games_view %>%
     html_table() %>%
     clean_names() %>%
-    rename(all_of(
-      c(
-        visitor = "visitor_neutral",
-        home = "home_neutral",
-        home_pts = "pts_2",
-        visitor_pts = "pts",
-        ot = "x_2"
-      )
-    )) %>%
+    rename(
+      visitor = visitor_neutral,
+      home = home_neutral,
+      home_pts = pts_2,
+      visitor_pts = pts,
+      ot = x_2
+    ) %>%
     mutate(
       row_number = row_number(),
       ot = ifelse(nzchar(ot), TRUE, FALSE),

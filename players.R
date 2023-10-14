@@ -1,6 +1,3 @@
-
-
-
 get_player_df <- function() {
   players_table <-
     letters[1:3] %>%
@@ -30,7 +27,8 @@ scrape_players <- function(letter) {
   players_initial_table <-
     players_view %>%
     html_table() %>%
-    mutate(Player = str_replace_all(Player, "\\*", ""),
+    clean_names() %>% 
+    mutate(player = str_replace_all(player, "\\*", ""),
            row_number = row_number())
   
   players_identifier <- 
@@ -43,7 +41,7 @@ scrape_players <- function(letter) {
 
   players_identifier_table <-
     players_initial_table %>%
-    left_join(players_identifier, by = c("Player" = "player", "row_number"))
+    left_join(players_identifier, by = c("player", "row_number"))
   
   players_active_identifier <-
     players_view %>%
@@ -58,22 +56,21 @@ scrape_players <- function(letter) {
     left_join(players_active_identifier, by = join_by(id)) %>%
     mutate(
       active = !is.na(active),
-      `Birth Date` = as.Date(`Birth Date`, format = "%B %d, %Y"),
+      birth_date = as.Date(birth_date, format = "%B %d, %Y"),
       type = "PLAYER"
     ) %>%
-    select(!row_number) %>%
-    clean_names()
-  
+    select(!row_number)
+
   players_college_identifier <-
     players_view %>%
     html_elements("tr td[data-stat='colleges'] a") %>%
-    html_attrs_dfr() %>% 
-    rename_all(~ c("college_id", "college_name")) %>% 
-    mutate(id = str_extract(college_id, "(?<=college=).*")) %>% 
+    html_attrs_dfr() %>%
+    rename_all(~ c("college_id", "college_name")) %>%
+    mutate(college_id = str_extract(college_id, "(?<=college=).*")) %>%
     distinct(college_id, .keep_all = TRUE)
 
   # look into library(fuzzyjoin) to eliminate need to split on comma which is causing NAs.
-  players_table <- 
+  players_table <-
     players_table %>%
     separate_longer_delim(colleges, ", ") %>%
     left_join(
@@ -90,6 +87,6 @@ scrape_players <- function(letter) {
            .by = id) %>%
     distinct(player, id, .keep_all = TRUE) %>%
     select(!college_id)
-  
+
   players_table
 }
