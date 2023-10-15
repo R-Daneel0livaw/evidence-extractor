@@ -9,26 +9,12 @@ get_awards_df <- function() {
     join_identifier_columns(playoffs_view,
                             get_clean_champions_awards_table(playoffs_view))
 
-  # champions_identifier <- get_award_champions(playoffs_view)
-  
   awards_mvp_identifier_table <-
     awards_identifier_table %>%
     join_award_champions(get_award_champions(playoffs_view)) %>%
     join_award_mvps(get_clean_player_awards_table(mvp_view),
                     get_award_mvps(mvp_view)) %>%
     rename(all_of(c(mvp = "mvps_id")))
-
-  # mvps_identifier_table <-
-  #   join_award_mvps(get_clean_player_awards_table(mvp_view),
-  #                   get_award_mvps(mvp_view))
-  
-  # awards_mvp_identifier_table <-
-  #   awards_champions_identifier_table %>%
-  #   left_join(mvps_identifier_table, by = join_by(season)) %>%
-  #   rename(all_of(c(mvp = "mvps_id")))
-  
-  
-  
 
   roy_page <- discover_page("https://www.basketball-reference.com/awards/roy.html")
   roy_view <- roy_page("table#roy_NBA")
