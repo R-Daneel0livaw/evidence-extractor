@@ -4,51 +4,25 @@ get_awards_df <- function() {
   
   mvp_page <- discover_page("https://www.basketball-reference.com/awards/mvp.html")
   mvp_view <- mvp_page("table#mvp_NBA")
+  
+  roy_page <- discover_page("https://www.basketball-reference.com/awards/roy.html")
+  roy_view <- roy_page("table#roy_NBA")
+  
+  pts_page <- discover_page("https://www.basketball-reference.com/leaders/pts_yearly.html")
+  pts_view <- pts_page("table#leaders")
 
   awards_identifier_table <-
     join_identifier_columns(playoffs_view,
                             get_clean_champions_awards_table(playoffs_view))
 
-  awards_mvp_identifier_table <-
+  awards_roy_identifier_table <-
     awards_identifier_table %>%
     join_award_champions(get_award_champions(playoffs_view)) %>%
     join_award_mvps(get_clean_player_awards_table(mvp_view),
                     get_award_mvps(mvp_view)) %>%
-    rename(all_of(c(mvp = "mvps_id")))
-
-  roy_page <- discover_page("https://www.basketball-reference.com/awards/roy.html")
-  roy_view <- roy_page("table#roy_NBA")
-
-  roy_initial_table <-
-    roy_view %>%
-    html_table() %>%
-    row_to_names(row_number = 1) %>%
-    mutate(row_number = row_number())
-
-  roys_identifier <-
-    roy_view %>%
-    html_elements("tr td[data-stat='player'] a") %>%
-    html_attrs_dfr() %>%
-    rename_all(~ c("roys_id", "roys_name")) %>%
-    mutate(roys_id = str_extract(roys_id, "[^/]+(?=\\.html$)"),
-           row_number = row_number())
-
-  roys_identifier_table <-
-    roy_initial_table %>%
-    mutate(Player = str_trim(str_replace_all(Player, "\\(Tie\\)|\\*", ""))) %>%
-    left_join(roys_identifier, by = c("Player" = "roys_name", "row_number")) %>%
-    mutate(season = paste0("NBA_", as.numeric(str_replace(Season, "-.*", "")) + 1)) %>%
-    select(season, roys_id)
-
-  awards_roy_identifier_table <-
-    awards_mvp_identifier_table %>%
-    left_join(roys_identifier_table,
-              by = join_by(season),
-              multiple = "all") %>%
-    rename(all_of(c(roy = "roys_id")))
-
-  pts_page <- discover_page("https://www.basketball-reference.com/leaders/pts_yearly.html")
-  pts_view <- pts_page("table#leaders")
+    join_award_roys(get_clean_player_awards_table(roy_view),
+                    get_award_roys(roy_view)) %>%
+    rename(all_of(c(mvp = "mvps_id", roy = "roys_id")))
 
   pts_initial_table <-
     pts_view %>%
@@ -253,6 +227,18 @@ get_award_mvps <- function(view) {
   mvps_identifier
 }
 
+get_award_roys <- function(view) {
+  roys_identifier <-
+    view %>%
+    html_elements("tr td[data-stat='player'] a") %>%
+    html_attrs_dfr() %>%
+    rename_all(~ c("roys_id", "roys_name")) %>%
+    mutate(roys_id = str_extract(roys_id, "[^/]+(?=\\.html$)"),
+           row_number = row_number())
+  
+  roys_identifier
+}
+
 join_award_champions <- function(awards_table, champions_identifier) {
   awards_champions_identifier_table <-
     awards_table %>%
@@ -279,5 +265,22 @@ join_award_mvps <- function(main_awards_table, temp_awards_table, mvps_identifie
     main_awards_table %>%
     left_join(mvps_identifier_table, by = join_by(season))
 
+  full_awards_table
+}
+
+join_award_roys <- function(main_awards_table, temp_awards_table, roys_identifier) {
+  roys_identifier_table <-
+    temp_awards_table %>%
+    mutate(Player = str_trim(str_replace_all(Player, "\\(Tie\\)|\\*", ""))) %>%
+    left_join(roys_identifier, by = c("Player" = "roys_name", "row_number")) %>%
+    mutate(season = paste0("NBA_", as.numeric(str_replace(Season, "-.*", "")) + 1)) %>%
+    select(season, roys_id)
+  
+  full_awards_table <- 
+    main_awards_table %>%
+    left_join(roys_identifier_table,
+               by = join_by(season),
+               multiple = "all")
+  
   full_awards_table
 }
