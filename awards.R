@@ -21,8 +21,8 @@ get_awards_df <- function() {
       delim = "/",
       too_few = "align_start"
     ) %>%
-    mutate(type = "AWARD") %>% 
-    relocate(type)
+    mutate(type = "AWARD", id = paste(season, award, sep = "_")) %>% 
+    relocate(type, id)
 }
 
 m_get_awards_df <- memoise(get_awards_df)
