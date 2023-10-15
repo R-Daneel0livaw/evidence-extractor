@@ -10,7 +10,8 @@ get_team_df <- function() {
   teams_table <-
     join_teams_alternative_names(teams_identifier_table, teams_alts) %>% 
     mutate(type = "TEAM") %>%
-    select(!(current:level))
+    relocate(type, id, franchise, alternative_names) %>% 
+    select(!c(current:level, lg))
 
   teams_table
 }

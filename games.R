@@ -17,7 +17,8 @@ get_games_group <- function(month, season) {
     get_clean_games_table(games_view) %>%
     left_join(games_identifier, by = join_by(row_number)) %>%
     mutate(type = "GAME") %>%
-    select(!row_number)
+    relocate(type, id, date, start_et, ot, arena, attend) %>% 
+    select(!c(row_number, notes))
   
   games_table
 }

@@ -15,7 +15,8 @@ get_college_df <- function(players_table) {
     filter(nzchar(colleges)) %>%
     separate_wider_delim(colleges, names = c("name", "id"), delim = "/") %>%
     distinct() %>%
-    arrange(name)
+    arrange(name) %>% 
+    relocate(type, id)
   
   colleges_table
 }
@@ -36,7 +37,8 @@ get_players_group <- function(letter) {
   players_table <-
     players_identifier_table %>% 
     join_players_active(players_active_identifier) %>%
-    join_players_college(players_college_identifier)
+    join_players_college(players_college_identifier) %>% 
+    relocate(type, id, active)
 
   players_table
 }
