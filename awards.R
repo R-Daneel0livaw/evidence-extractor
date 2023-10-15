@@ -13,11 +13,11 @@ get_awards_df <- function() {
                    pts_page, asts_page, trbs_page) %>%
     pivot_longer(cols = -season,
                  names_to = "award",
-                 values_to = "value") %>%
+                 values_to = "awardee") %>%
     filter(complete.cases(.)) %>%
     separate_wider_delim(
-      value,
-      names = c("value", "extra"),
+      awardee,
+      names = c("awardee", "value"),
       delim = "/",
       too_few = "align_start"
     ) %>%
