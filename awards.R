@@ -1,75 +1,34 @@
 get_awards_df <- function() {
   playoffs_page <- discover_page("https://www.basketball-reference.com/playoffs/")
   playoffs_view <- playoffs_page("table#champions_index")
-
-  playoffs_initial_table <-
-    playoffs_view %>%
-    html_table() %>%
-    row_to_names(row_number = 1) %>%
-    clean_names() %>% 
-    select(where(is_character)) %>%
-    filter(nzchar(year)) %>%
-    mutate(row_number = row_number())
-
-  seasons_identifier <-
-    playoffs_view %>%
-    html_elements("tr th[data-stat='year_id'] a") %>%
-    html_attrs_dfr() %>%
-    rename_all(~ c("seasons_id", "seasons_name")) %>%
-    mutate(seasons_id = str_extract(seasons_id, ".*/([A-Z]+_\\d+).html", 1),
-           row_number = row_number())
-
-  awards_seasons_identifier_table <-
-    playoffs_initial_table %>%
-    left_join(seasons_identifier,
-              by = c("year" = "seasons_name", "row_number"))
-
-  champions_identifier <-
-    playoffs_view %>%
-    html_elements("tr td[data-stat='champion'] a") %>%
-    html_attrs_dfr() %>%
-    rename_all(~ c("champions_id", "champions_name")) %>%
-    mutate(champions_id = str_extract(champions_id, ".*/teams/([^/]+)/.*", 1),
-           row_number = row_number())
-
-  awards_champions_identifier_table <-
-    awards_seasons_identifier_table %>%
-    left_join(champions_identifier,
-              by = c("champion" = "champions_name", "row_number")) %>%
-    filter(lg == "NBA") %>%
-    select(seasons_id, champions_id) %>%
-    rename(all_of(c(
-      season = "seasons_id",
-      champion = "champions_id"
-    )))
-
+  
   mvp_page <- discover_page("https://www.basketball-reference.com/awards/mvp.html")
   mvp_view <- mvp_page("table#mvp_NBA")
 
-  mvp_initial_table <-
-    mvp_view %>%
-    html_table() %>%
-    row_to_names(row_number = 1) %>%
-    mutate(row_number = row_number())
+  awards_identifier_table <-
+    join_identifier_columns(playoffs_view,
+                            get_clean_champions_awards_table(playoffs_view))
 
-  mvps_identifier <-
-    mvp_view %>%
-    html_elements("tr td[data-stat='player'] a") %>%
-    html_attrs_dfr() %>%
-    rename_all(~ c("mvps_id", "mvps_name")) %>%
-    mutate(mvps_id = str_extract(mvps_id, "[^/]+(?=\\.html$)"),
-           row_number = row_number())
-
-  mvps_identifier_table <-
-    mvp_initial_table %>%
-    left_join(mvps_identifier, by = c("Player" = "mvps_name", "row_number")) %>%
-    mutate(season = paste0("NBA_", as.numeric(str_replace(Season, "-.*", "")) + 1)) %>%
-    select(season, mvps_id)
-
+  # champions_identifier <- get_award_champions(playoffs_view)
+  
   awards_mvp_identifier_table <-
-    awards_champions_identifier_table %>%
-    left_join(mvps_identifier_table, by = join_by(season)) %>%
+    awards_identifier_table %>%
+    join_award_champions(get_award_champions(playoffs_view)) %>%
+    join_award_mvps(get_clean_player_awards_table(mvp_view),
+                    get_award_mvps(mvp_view)) %>%
     rename(all_of(c(mvp = "mvps_id")))
+
+  # mvps_identifier_table <-
+  #   join_award_mvps(get_clean_player_awards_table(mvp_view),
+  #                   get_award_mvps(mvp_view))
+  
+  # awards_mvp_identifier_table <-
+  #   awards_champions_identifier_table %>%
+  #   left_join(mvps_identifier_table, by = join_by(season)) %>%
+  #   rename(all_of(c(mvp = "mvps_id")))
+  
+  
+  
 
   roy_page <- discover_page("https://www.basketball-reference.com/awards/roy.html")
   roy_view <- roy_page("table#roy_NBA")
@@ -243,3 +202,96 @@ get_awards_df <- function() {
 }
 
 m_get_awards_df <- memoise(get_awards_df)
+
+get_clean_champions_awards_table <- function(view) {
+  awards_initial_table <-
+    view %>%
+    html_table() %>%
+    row_to_names(row_number = 1) %>%
+    clean_names() %>% 
+    select(where(is_character)) %>%
+    filter(nzchar(year)) %>%
+    mutate(row_number = row_number())
+  
+  awards_initial_table
+}
+
+get_clean_player_awards_table <- function(view) {
+  player_awards_initial_table <-
+    view %>%
+    html_table() %>%
+    row_to_names(row_number = 1) %>%
+    mutate(row_number = row_number())
+  
+  player_awards_initial_table
+}
+
+join_identifier_columns <- function(view, initial_table) {
+  seasons_identifier <-
+    view %>%
+    html_elements("tr th[data-stat='year_id'] a") %>%
+    html_attrs_dfr() %>%
+    rename_all(~ c("seasons_id", "seasons_name")) %>%
+    mutate(seasons_id = str_extract(seasons_id, ".*/([A-Z]+_\\d+).html", 1),
+           row_number = row_number())
+  
+  awards_seasons_identifier_table <-
+    initial_table %>%
+    left_join(seasons_identifier,
+              by = c("year" = "seasons_name", "row_number"))
+  
+  awards_seasons_identifier_table
+}
+
+get_award_champions <- function(view) {
+  champions_identifier <-
+    view %>%
+    html_elements("tr td[data-stat='champion'] a") %>%
+    html_attrs_dfr() %>%
+    rename_all(~ c("champions_id", "champions_name")) %>%
+    mutate(champions_id = str_extract(champions_id, ".*/teams/([^/]+)/.*", 1),
+           row_number = row_number())
+  
+  champions_identifier
+}
+
+get_award_mvps <- function(view) {
+  mvps_identifier <-
+    view %>%
+    html_elements("tr td[data-stat='player'] a") %>%
+    html_attrs_dfr() %>%
+    rename_all(~ c("mvps_id", "mvps_name")) %>%
+    mutate(mvps_id = str_extract(mvps_id, "[^/]+(?=\\.html$)"),
+           row_number = row_number())
+  
+  mvps_identifier
+}
+
+join_award_champions <- function(awards_table, champions_identifier) {
+  awards_champions_identifier_table <-
+    awards_table %>%
+    left_join(champions_identifier,
+              by = c("champion" = "champions_name", "row_number")) %>%
+    filter(lg == "NBA") %>%
+    select(seasons_id, champions_id) %>%
+    rename(all_of(c(
+      season = "seasons_id",
+      champion = "champions_id"
+    )))
+  
+  awards_champions_identifier_table
+}
+
+join_award_mvps <- function(main_awards_table, temp_awards_table, mvps_identifier) {
+  mvps_identifier_table <-
+    temp_awards_table %>%
+    left_join(mvps_identifier, by = c("Player" = "mvps_name", "row_number")) %>%
+    mutate(season = paste0("NBA_", as.numeric(str_replace(Season, "-.*", "")) + 1)) %>%
+    select(season, mvps_id)
+  
+  full_awards_table <- 
+    main_awards_table %>%
+    left_join(mvps_identifier_table, by = join_by(season))
+
+  full_awards_table
+}
