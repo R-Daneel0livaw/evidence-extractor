@@ -6,9 +6,9 @@ get_player_df <- function() {
   players_table
 }
 
-get_college_df <- function(players_table) {
+get_college_df <- function() {
   colleges_table <-
-    players_table %>%
+    m_get_player_df() %>%
     select(colleges) %>%
     mutate(type = "COLLEGE") %>%
     separate_rows(colleges, sep = ", ") %>%
