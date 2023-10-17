@@ -29,9 +29,16 @@ teams_stats <-
   map2(
     names(filtered_df),
     filtered_df,
-    \(name, value, id) data.frame(name, value = as.character(value), id, type = "STAT"),
-    teams_table$id
+    \(name, value, connector_id, connector_type) data.frame(
+      name,
+      value = as.character(value),
+      connector_id,
+      connector_type,
+      type = "STAT"
+    ),
+    teams_table$id,
+    teams_table$type
   ) %>%
-  bind_rows() 
+  bind_rows()
 
 
