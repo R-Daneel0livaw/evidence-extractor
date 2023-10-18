@@ -23,7 +23,7 @@ get_team_stats <- function() {
   
   filtered_df <-
     teams_table %>%
-    select((which(names(.) == "to")):last_col())
+    select((which(names(.) == "yrs")):last_col())
   
   teams_stats <-
     map2(
