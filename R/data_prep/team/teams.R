@@ -18,6 +18,35 @@ get_team_df <- function() {
 
 m_get_team_df <- memoise(get_team_df)
 
+get_team_stats <- function() {
+  teams_table <- m_get_team_df()
+  
+  filtered_df <-
+    teams_table %>%
+    select((which(names(.) == "to")):last_col())
+  
+  teams_stats <-
+    map2(
+      names(filtered_df),
+      filtered_df,
+      \(name, value, connector_id, connector_type) data.frame(
+        name,
+        value = as.character(value),
+        connector_id,
+        connector_type,
+        type = "STAT"
+      ),
+      teams_table$id,
+      teams_table$type
+    ) %>%
+    bind_rows() %>%
+    relocate(type)
+  
+  teams_stats
+}
+
+m_get_team_stats <- memoise(get_team_stats)
+
 get_clean_teams_table <- function(view) {
   teams_initial_table <-
     view %>%
