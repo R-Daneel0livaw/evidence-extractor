@@ -18,7 +18,7 @@ get_team_df <- function() {
 
 m_get_team_df <- memoise(get_team_df)
 
-get_team_stats <- function() {
+get_team_top_stats <- function() {
   teams_table <- m_get_team_df()
   
   filtered_df <-
@@ -45,7 +45,7 @@ get_team_stats <- function() {
   teams_stats
 }
 
-m_get_team_stats <- memoise(get_team_stats)
+m_get_team_top_stats <- memoise(get_team_top_stats)
 
 get_clean_teams_table <- function(view) {
   teams_initial_table <-

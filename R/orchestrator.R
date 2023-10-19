@@ -13,9 +13,10 @@ source("R/data_prep/award/awards.R")
 source("R/utils.R")
 
 seasons_table <- m_get_season_df()
+seasons_stats <- m_get_season_top_stats()
 
 teams_nodes <- m_get_team_df()
-teams_stats <- m_get_team_stats()
+teams_stats <- m_get_team_top_stats()
 
 players_table <- m_get_player_df()
 colleges_table <- m_get_college_df()
