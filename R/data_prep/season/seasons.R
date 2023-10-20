@@ -3,7 +3,12 @@ get_season_df <- function() {
   seasons_view <- seasons_page("table#stats")
 
   seasons_identifier_table <-
-    join_identifier_columns(seasons_view, get_clean_seasons_table(seasons_view))
+    join_identifier_columns(
+      seasons_view,
+      get_clean_seasons_table(seasons_view),
+      "tr th[data-stat='season'] a",
+      ".*/([A-Z]+_\\d+).html"
+    )
 
   seasons_table <-
     seasons_identifier_table %>%
@@ -30,9 +35,14 @@ get_season_top_stats <- function() {
     select(-c(rk, lg))
   
   seasons_identifier_table <-
-    join_identifier_columns2(seasons_view, seasons_initial_table) %>% 
-    mutate(type = "SEASON") %>% 
-    relocate(type, id) %>% 
+    join_identifier_columns(
+      seasons_view,
+      seasons_initial_table,
+      "tr td[data-stat='season'] a",
+      ".*/([A-Z]+_\\d+).html"
+    ) %>%
+    mutate(type = "SEASON") %>%
+    relocate(type, id) %>%
     select(-season)
   
   filtered_df <-
@@ -58,9 +68,6 @@ get_season_top_stats <- function() {
     relocate(type)
 
   seasons_stats
-  
-  # seasons_stats_table
-  # seasons_identifier_table
 }
 
 m_get_season_top_stats <- memoise(get_season_top_stats)
@@ -76,29 +83,14 @@ get_clean_seasons_table <- function(view) {
   seasons_initial_table
 }
 
-join_identifier_columns <- function(view, initial_table) {
+join_identifier_columns <- function(view, initial_table,
+                                     identifier, extract) {
   seasons_identifier <-
     view %>%
-    html_elements("tr th[data-stat='season'] a") %>%
+    html_elements(identifier) %>%
     html_attrs_dfr() %>% 
     rename_all(~ c("id", "season")) %>% 
-    mutate(id = str_extract(id, ".*/([A-Z]+_\\d+).html", 1)) %>% 
-    filter(str_detect(id, "NBA"))
-  
-  seasons_identifier_table <-
-    initial_table %>%
-    left_join(seasons_identifier, by = join_by(season))
-  
-  seasons_identifier_table
-}
-
-join_identifier_columns2 <- function(view, initial_table) {
-  seasons_identifier <-
-    view %>%
-    html_elements("tr td[data-stat='season'] a") %>%
-    html_attrs_dfr() %>% 
-    rename_all(~ c("id", "season")) %>% 
-    mutate(id = str_extract(id, ".*/([A-Z]+_\\d+).html", 1)) %>% 
+    mutate(id = str_extract(id, extract, 1)) %>% 
     filter(str_detect(id, "NBA"))
   
   seasons_identifier_table <-

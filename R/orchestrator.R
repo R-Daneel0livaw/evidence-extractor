@@ -22,3 +22,15 @@ players_table <- m_get_player_df()
 colleges_table <- m_get_college_df()
 games_table <- m_get_game_df()
 awards_table <- m_get_awards_df()
+
+
+# df <- data.frame(
+#   type = c("A", "B", "C"),
+#   value = c(1, 2, 3)
+# )
+# 
+# 
+# new_df <- df %>%
+#   bind_rows(
+#     df %>% mutate(type = "TEST")
+#   )
