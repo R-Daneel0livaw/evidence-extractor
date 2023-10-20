@@ -25,48 +25,23 @@ m_get_season_df <- memoise(get_season_df)
 get_season_top_stats <- function() {
   seasons_stats_page <- discover_page("https://www.basketball-reference.com/leagues/NBA_stats_per_game.html")
   seasons_view <- seasons_stats_page("table#stats")
-  
-  seasons_initial_table <- 
-    seasons_view %>%
-    html_table() %>% 
-    row_to_names(row_number = 1) %>% 
-    clean_names() %>% 
-    filter(lg == "NBA", g > 0) %>% 
-    select(-c(rk, lg))
-  
+
   seasons_identifier_table <-
     join_identifier_columns(
       seasons_view,
-      seasons_initial_table,
+      get_clean_seasons_stats_table(seasons_view),
       "tr td[data-stat='season'] a",
       ".*/([A-Z]+_\\d+).html"
-    ) %>%
+    )
+  
+  seasons_stats_table <-
+    seasons_identifier_table %>%
     mutate(type = "SEASON") %>%
     relocate(type, id) %>%
     select(-season)
   
-  filtered_df <-
-    seasons_identifier_table %>%
-    select((which(names(.) == "age")):last_col())
-
-  seasons_stats <-
-    map2(
-      names(filtered_df),
-      filtered_df,
-      \(name, value, connector_id, connector_type) data.frame(
-        name,
-        value = as.character(value),
-        connector_id,
-        connector_type,
-        type = "STAT"
-      ),
-      seasons_identifier_table$id,
-      seasons_identifier_table$type
-    ) %>%
-    bind_rows() %>%
-    filter(nzchar(value)) %>% 
-    relocate(type)
-
+  seasons_stats <- convert_to_stats(seasons_stats_table)
+    
   seasons_stats
 }
 
@@ -79,6 +54,18 @@ get_clean_seasons_table <- function(view) {
     row_to_names(row_number = 1) %>%
     clean_names() %>% 
     filter(lg == "NBA")
+  
+  seasons_initial_table
+}
+
+get_clean_seasons_stats_table <- function(view) {
+  seasons_initial_table <- 
+    view %>%
+    html_table() %>% 
+    row_to_names(row_number = 1) %>% 
+    clean_names() %>% 
+    filter(lg == "NBA", g > 0) %>% 
+    select(-c(rk, lg))
   
   seasons_initial_table
 }
@@ -98,4 +85,30 @@ join_identifier_columns <- function(view, initial_table,
     left_join(seasons_identifier, by = join_by(season))
   
   seasons_identifier_table
+}
+
+convert_to_stats <- function(initial_table) {
+  filtered_df <-
+    initial_table %>%
+    select((which(names(.) == "age")):last_col())
+  
+  seasons_stats <-
+    map2(
+      names(filtered_df),
+      filtered_df,
+      \(name, value, connector_id, connector_type) data.frame(
+        name,
+        value = as.character(value),
+        connector_id,
+        connector_type,
+        type = "STAT"
+      ),
+      initial_table$id,
+      initial_table$type
+    ) %>%
+    bind_rows() %>%
+    filter(nzchar(value)) %>% 
+    relocate(type)
+  
+  seasons_stats
 }

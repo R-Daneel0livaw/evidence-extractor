@@ -12,7 +12,7 @@ source("R/data_prep/game/games.R")
 source("R/data_prep/award/awards.R")
 source("R/utils.R")
 
-seasons_table <- m_get_season_df()
+seasons_nodes <- m_get_season_df()
 seasons_stats <- m_get_season_top_stats()
 
 teams_nodes <- m_get_team_df()
