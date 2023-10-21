@@ -50,9 +50,7 @@ m_get_season_top_stats <- memoise(get_season_top_stats)
 get_clean_seasons_table <- function(view) {
   seasons_initial_table <-
     view %>%
-    html_table() %>% 
-    row_to_names(row_number = 1) %>%
-    clean_names() %>% 
+    get_clean_table(TRUE) %>% 
     filter(lg == "NBA")
   
   seasons_initial_table
@@ -61,9 +59,7 @@ get_clean_seasons_table <- function(view) {
 get_clean_seasons_stats_table <- function(view) {
   seasons_initial_table <- 
     view %>%
-    html_table() %>% 
-    row_to_names(row_number = 1) %>% 
-    clean_names() %>% 
+    get_clean_table(TRUE) %>% 
     filter(lg == "NBA", g > 0) %>% 
     select(-c(rk, lg))
   

@@ -3,7 +3,7 @@ get_team_df <- function() {
   teams_view <- teams_page("table#teams_active")
 
   teams_identifier_table <-
-    join_identifier_columns(teams_view, get_clean_teams_table(teams_view))
+    join_identifier_columns(teams_view, get_clean_table(teams_view))
 
   teams_alts <- get_teams_alternative_names(teams_identifier_table)
 
@@ -19,23 +19,12 @@ get_team_df <- function() {
 m_get_team_df <- memoise(get_team_df)
 
 get_team_top_stats <- function() {
-  teams_table <- m_get_team_df()
-  
-  teams_stats <- convert_to_stats(teams_table, "g")
+  teams_stats <- convert_to_stats(m_get_team_df(), "g")
     
   teams_stats
 }
 
 m_get_team_top_stats <- memoise(get_team_top_stats)
-
-get_clean_teams_table <- function(view) {
-  teams_initial_table <-
-    view %>%
-    html_table() %>% 
-    clean_names()
-  
-  teams_initial_table
-}
 
 join_identifier_columns <- function(view, initial_table) {
   teams_identifier <-
