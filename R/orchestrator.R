@@ -24,6 +24,7 @@ games_table <- m_get_game_df()
 awards_table <- m_get_awards_df()
 
 
+# Get multiple connector stats
 # df <- data.frame(
 #   type = c("A", "B", "C"),
 #   value = c(1, 2, 3)

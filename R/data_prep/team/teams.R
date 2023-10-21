@@ -2,15 +2,22 @@ get_team_df <- function() {
   teams_page <- discover_page("https://www.basketball-reference.com/teams/")
   teams_view <- teams_page("table#teams_active")
 
+  identifier <-
+    extract_identifier(teams_view,
+                       "tr th[data-stat$='name'] a",
+                       ".*/([^/]+)/$",
+                       "team") %>%
+    mutate(current = TRUE)
+  
   teams_identifier_table <-
-    join_identifier_columns(teams_view, get_clean_table(teams_view))
+    join_teams_identifier(get_clean_teams_table(teams_view), identifier)
 
   teams_alts <- get_teams_alternative_names(teams_identifier_table)
 
   teams_table <-
     join_teams_alternative_names(teams_identifier_table, teams_alts) %>% 
     mutate(type = "TEAM") %>%
-    relocate(type, id, franchise, alternative_names) %>% 
+    relocate(type, id, team, alternative_names) %>% 
     select(!c(current:level, lg))
 
   teams_table
@@ -26,38 +33,37 @@ get_team_top_stats <- function() {
 
 m_get_team_top_stats <- memoise(get_team_top_stats)
 
-join_identifier_columns <- function(view, initial_table) {
-  teams_identifier <-
+get_clean_teams_table <- function(view) {
+  seasons_initial_table <-
     view %>% 
-    html_elements("tr th[data-stat$='name'] a") %>%
-    html_attrs_dfr() %>% 
-    rename_all(~ c("id", "team")) %>% 
-    mutate(id = str_extract(id, ".*/([^/]+)/$", 1),
-           current = TRUE)
+    get_clean_table() %>% 
+    rename(team = franchise)
   
-  teams_identifier_table <-
-    initial_table %>%
-    left_join(teams_identifier, by = c("franchise" = "team")) %>%
+  seasons_initial_table
+}
+
+join_teams_identifier <- function(initial_table, identifier) {
+  joined_table <-
+    join_identifier(initial_table, identifier, team) %>%
     fill(id) %>%
     replace_na(list(current = FALSE)) %>%
-    mutate(level = ifelse(!duplicated(franchise) &
+    mutate(level = ifelse(!duplicated(team) &
                             current, "FRANCHISE", "TEAM"))
   
-  teams_identifier_table
+  joined_table
 }
 
 get_teams_alternative_names <- function(teams_identifier_table) {
   teams_alts <-
     teams_identifier_table %>%
     group_by(id) %>%
-    summarise(alternative_names = str_c(unique(franchise), collapse = ", "))
+    summarise(alternative_names = str_c(unique(team), collapse = ", "))
   
   teams_alts
 }
 
 join_teams_alternative_names <- function(teams_identifier_table, teams_alts) {
   teams_table <-
-    teams_identifier_table %>%
-    left_join(teams_alts, by = join_by(id)) %>%
+    join_identifier(teams_identifier_table, teams_alts, id) %>%
     filter(level == "FRANCHISE")
 }

@@ -27,6 +27,25 @@ select_until_end <- function(data, start) {
   filtered_df
 }
 
+extract_identifier <- function(view, identifier, extract, name) {
+  extracted_identifier <-
+    view %>%
+    html_elements(identifier) %>%
+    html_attrs_dfr() %>% 
+    rename_all(~ c("id", name)) %>% 
+    mutate(id = str_extract(id, extract, 1))
+  
+  extracted_identifier
+}
+
+join_identifier <- function(initial_table, identifier, join_col) {
+  joined_table <-
+    initial_table %>%
+    left_join(identifier, by = join_by({{join_col}}))
+  
+  joined_table
+}
+
 convert_to_stats <- function(stat_data, stats_start) {
   filtered_df <- select_until_end(stat_data, stats_start)
   
