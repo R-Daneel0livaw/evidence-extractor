@@ -27,13 +27,12 @@ select_until_end <- function(data, start) {
   filtered_df
 }
 
-extract_identifier <- function(view, identifier, name, ...) {
-  v <- c("id", name)
+extract_identifier <- function(view, identifier, names, add_text = TRUE, ...) {
   extracted_identifier <-
     view %>%
     html_elements(identifier) %>%
-    html_attrs_dfr() %>% 
-    rename_all(~ v) %>% 
+    html_attrs_dfr(add_text = add_text) %>% 
+    rename_all(~ names) %>% 
     mutate(...)
   
   extracted_identifier
@@ -43,6 +42,14 @@ join_identifier <- function(initial_table, identifier, join_col) {
   joined_table <-
     initial_table %>%
     left_join(identifier, by = join_by({{join_col}}))
+  
+  joined_table
+}
+
+join_identifier_multiple <- function(initial_table, identifier, join_cols) {
+  joined_table <-
+    initial_table %>%
+    left_join(identifier, by = join_cols)
   
   joined_table
 }

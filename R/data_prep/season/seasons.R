@@ -5,7 +5,7 @@ get_season_df <- function() {
   identifier <-
     extract_identifier(view = seasons_view,
                        identifier = "tr th[data-stat='season'] a",
-                       name = "season",
+                       names = c("id", "season"),
                        id = str_extract(id, ".*/([A-Z]+_\\d+).html", 1)) %>% 
     filter(str_detect(id, "NBA"))
   
@@ -31,7 +31,7 @@ get_season_top_stats <- function() {
   identifier <-
     extract_identifier(view = seasons_view,
                        identifier = "tr td[data-stat='season'] a",
-                       name = "season",
+                       name = c("id", "season"),
                        id = str_extract(id, ".*/([A-Z]+_\\d+).html", 1))
   
   seasons_identifier_table <-

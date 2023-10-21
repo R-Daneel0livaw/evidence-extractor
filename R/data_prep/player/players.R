@@ -29,8 +29,15 @@ get_players_group <- function(letter) {
   players_page <- discover_page(paste0("https://www.basketball-reference.com/players/", letter, "/"))
   players_view <- players_page("table#players")
 
+  identifier <-
+    extract_identifier(view = players_view,
+                       identifier = "tr th[data-stat='player'] a",
+                       name = "player",
+                       id = str_extract(id, "[^/]+(?=\\.html$)")) %>% 
+    mutate(row_number = row_number())
+  
   players_identifier_table <-
-    join_identifier_columns(players_view, get_clean_players_table(players_view))
+    join_players_identifier(get_clean_players_table(players_view), identifier)
 
   players_active_identifier <- get_players_active(players_view)
   players_college_identifier <- get_players_college(players_view)
@@ -55,20 +62,11 @@ get_clean_players_table <- function(view) {
   players_initial_table
 }
 
-join_identifier_columns <- function(view, initial_table) {
-  players_identifier <- 
-    view %>%
-    html_elements("tr th[data-stat='player'] a") %>%
-    html_attrs_dfr() %>%
-    rename_all( ~ c("id", "player")) %>%
-    mutate(id = str_extract(id, "[^/]+(?=\\.html$)"),
-           row_number = row_number())
+join_players_identifier <- function(initial_table, identifier) {
+  joined_table <-
+    join_identifier_multiple(initial_table, identifier, c("player", "row_number"))
   
-  players_identifier_table <-
-    initial_table %>%
-    left_join(players_identifier, by = c("player", "row_number"))
-  
-  players_identifier_table
+  joined_table
 }
 
 get_players_active <- function(view) {

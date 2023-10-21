@@ -5,7 +5,7 @@ get_team_df <- function() {
   identifier <-
     extract_identifier(view = teams_view,
                        identifier = "tr th[data-stat$='name'] a",
-                       name = "team",
+                       name = c("id", "team"),
                        id = str_extract(id, ".*/([^/]+)/$", 1)) %>%
     mutate(current = TRUE)
   
