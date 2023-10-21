@@ -11,13 +11,18 @@ get_games_group <- function(month, season) {
     "_games-", month, ".html"))
   games_view <- games_page("table#schedule")
 
-  games_identifier <- get_games_identifier(games_view)
+  identifier <-
+    extract_identifier(view = games_view,
+                       identifier = "tr td[data-stat='box_score_text'] a",
+                       names = c("id"),
+                       add_text = FALSE,
+                       id = str_extract(id, ".*/([^.]+)\\.html$", 1)) %>%
+    mutate(row_number = row_number())
 
   games_table <-
-    get_clean_games_table(games_view) %>%
-    left_join(games_identifier, by = join_by(row_number)) %>%
+    join_games_identifier(get_clean_games_table(games_view), identifier) %>% 
     mutate(type = "GAME") %>%
-    relocate(type, id, date, start_et, ot, arena, attend) %>% 
+    relocate(type, id, date, start_et, ot, arena, attend) %>%
     select(!c(row_number, notes, home_pts, visitor_pts))
   
   games_table
@@ -28,8 +33,7 @@ m_get_game_df <- memoise(get_game_df)
 get_clean_games_table <- function(view) {
   games_initial_table <-
     view %>%
-    html_table() %>%
-    clean_names() %>%
+    get_clean_table() %>% 
     rename(
       visitor = visitor_neutral,
       home = home_neutral,
@@ -47,14 +51,9 @@ get_clean_games_table <- function(view) {
   games_initial_table
 }
 
-get_games_identifier <- function(view) {
-  games_identifier <-
-    view %>%
-    html_elements("tr td[data-stat='box_score_text'] a") %>%
-    html_attrs_dfr(add_text = FALSE) %>% 
-    rename_all(~ c("id")) %>% 
-    mutate(id = str_extract(id, ".*/([^.]+)\\.html$", 1),
-           row_number = row_number())
+join_games_identifier <- function(initial_table, identifier) {
+  joined_table <-
+    join_identifier(initial_table = initial_table, identifier = identifier, row_number)
   
-  games_identifier
+  joined_table
 }
