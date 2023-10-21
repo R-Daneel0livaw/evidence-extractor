@@ -6,6 +6,8 @@ get_player_df <- function() {
   players_table
 }
 
+m_get_player_df <- memoise(get_player_df)
+
 get_college_df <- function() {
   colleges_table <-
     m_get_player_df() %>%
@@ -21,7 +23,6 @@ get_college_df <- function() {
   colleges_table
 }
 
-m_get_player_df <- memoise(get_player_df)
 m_get_college_df <- memoise(get_college_df)
 
 get_players_group <- function(letter) {

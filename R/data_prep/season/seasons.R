@@ -2,12 +2,11 @@ get_season_df <- function() {
   seasons_page <- discover_page("https://www.basketball-reference.com/leagues/")
   seasons_view <- seasons_page("table#stats")
 
-  
   identifier <-
-    extract_identifier(seasons_view,
-                       "tr th[data-stat='season'] a",
-                       ".*/([A-Z]+_\\d+).html",
-                       "season") %>% 
+    extract_identifier(view = seasons_view,
+                       identifier = "tr th[data-stat='season'] a",
+                       name = "season",
+                       id = str_extract(id, ".*/([A-Z]+_\\d+).html", 1)) %>% 
     filter(str_detect(id, "NBA"))
   
   seasons_identifier_table <-
@@ -30,10 +29,10 @@ get_season_top_stats <- function() {
   seasons_view <- seasons_stats_page("table#stats")
 
   identifier <-
-    extract_identifier(seasons_view,
-                       "tr td[data-stat='season'] a",
-                       ".*/([A-Z]+_\\d+).html",
-                       "season")
+    extract_identifier(view = seasons_view,
+                       identifier = "tr td[data-stat='season'] a",
+                       name = "season",
+                       id = str_extract(id, ".*/([A-Z]+_\\d+).html", 1))
   
   seasons_identifier_table <-
     join_identifier(get_clean_seasons_stats_table(seasons_view),

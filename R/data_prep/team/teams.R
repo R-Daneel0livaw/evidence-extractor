@@ -3,10 +3,10 @@ get_team_df <- function() {
   teams_view <- teams_page("table#teams_active")
 
   identifier <-
-    extract_identifier(teams_view,
-                       "tr th[data-stat$='name'] a",
-                       ".*/([^/]+)/$",
-                       "team") %>%
+    extract_identifier(view = teams_view,
+                       identifier = "tr th[data-stat$='name'] a",
+                       name = "team",
+                       id = str_extract(id, ".*/([^/]+)/$", 1)) %>%
     mutate(current = TRUE)
   
   teams_identifier_table <-
