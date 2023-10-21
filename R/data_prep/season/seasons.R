@@ -35,9 +35,9 @@ get_season_top_stats <- function() {
                        id = str_extract(id, ".*/([A-Z]+_\\d+).html", 1))
   
   seasons_identifier_table <-
-    join_identifier(get_clean_seasons_stats_table(seasons_view),
-                            identifier,
-                            season)
+    join_identifier(initial_table = get_clean_seasons_stats_table(seasons_view),
+                    identifier = identifier,
+                    season)
   
   seasons_stats_table <-
     seasons_identifier_table %>%
@@ -73,7 +73,7 @@ get_clean_seasons_stats_table <- function(view) {
 
 join_seasons_identifier <- function(initial_table, identifier) {
   joined_table <-
-    join_identifier(initial_table, identifier, season)
+    join_identifier(initial_table = initial_table, identifier = identifier, season)
   
   joined_table
 }
