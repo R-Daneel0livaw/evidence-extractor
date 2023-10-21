@@ -40,7 +40,7 @@ get_season_top_stats <- function() {
     relocate(type, id) %>%
     select(-season)
   
-  seasons_stats <- convert_to_stats(seasons_stats_table)
+  seasons_stats <- convert_to_stats(seasons_stats_table, "age")
     
   seasons_stats
 }
@@ -85,30 +85,4 @@ join_identifier_columns <- function(view, initial_table,
     left_join(seasons_identifier, by = join_by(season))
   
   seasons_identifier_table
-}
-
-convert_to_stats <- function(initial_table) {
-  filtered_df <-
-    initial_table %>%
-    select((which(names(.) == "age")):last_col())
-  
-  seasons_stats <-
-    map2(
-      names(filtered_df),
-      filtered_df,
-      \(name, value, connector_id, connector_type) data.frame(
-        name,
-        value = as.character(value),
-        connector_id,
-        connector_type,
-        type = "STAT"
-      ),
-      initial_table$id,
-      initial_table$type
-    ) %>%
-    bind_rows() %>%
-    filter(nzchar(value)) %>% 
-    relocate(type)
-  
-  seasons_stats
 }

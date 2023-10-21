@@ -21,7 +21,7 @@ m_get_team_df <- memoise(get_team_df)
 get_team_top_stats <- function() {
   teams_table <- m_get_team_df()
   
-  teams_stats <- convert_to_stats(teams_table)
+  teams_stats <- convert_to_stats(teams_table, "g")
     
   teams_stats
 }
@@ -71,29 +71,4 @@ join_teams_alternative_names <- function(teams_identifier_table, teams_alts) {
     teams_identifier_table %>%
     left_join(teams_alts, by = join_by(id)) %>%
     filter(level == "FRANCHISE")
-}
-
-convert_to_stats <- function(initial_table) {
-  filtered_df <-
-    initial_table %>%
-    select((which(names(.) == "g")):last_col())
-  
-  teams_stats <-
-    map2(
-      names(filtered_df),
-      filtered_df,
-      \(name, value, connector_id, connector_type) data.frame(
-        name,
-        value = as.character(value),
-        connector_id,
-        connector_type,
-        type = "STAT"
-      ),
-      initial_table$id,
-      initial_table$type
-    ) %>%
-    bind_rows() %>%
-    relocate(type)
-  
-  teams_stats
 }
