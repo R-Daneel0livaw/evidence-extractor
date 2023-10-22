@@ -8,6 +8,16 @@ get_player_df <- function() {
 
 m_get_player_df <- memoise(get_player_df)
 
+get_player_top_stats <- function() {
+  players_page <- discover_page("https://www.basketball-reference.com/players/a/adamsst01.html")
+  players_view <- players_page("table#per_game")
+  
+  pts_value <-
+    players_view %>%
+    html_elements("tfoot tr:nth-child(1) td") %>%
+    html_text2()
+}
+
 get_college_df <- function() {
   colleges_table <-
     m_get_player_df() %>%
