@@ -14,7 +14,7 @@ get_player_top_stats <- function() {
   
   pts_value <-
     players_view %>%
-    html_elements("tfoot tr:nth-child(1) td") %>%
+    html_elements("tfoot tr:nth-child(1) > *") %>%
     html_text2()
 }
 
