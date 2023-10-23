@@ -9,26 +9,11 @@ get_player_df <- function() {
 m_get_player_df <- memoise(get_player_df)
 
 get_player_top_stats <- function() {
-  players_page <- discover_page("https://www.basketball-reference.com/players/a/adamsst01.html")
-  players_view <- players_page("table#per_game")
-  
-  identifier <-
-    extract_identifier(view = players_view,
-                       identifier = "tfoot tr:nth-child(1) > *",
-                       name = c("data_stat", "text"),
-                       attrs = "data-stat",
-                       id = "adamsst01")
-  
   players_stats_table <-
-    identifier %>%
-    pivot_wider(names_from = data_stat, values_from = text) %>%
-    mutate(type = "PLAYER") %>%
-    relocate(type, id) %>%
-    select(!(season:pos))
+    m_get_player_df()$id[1:3] %>%
+    map_dfr(\(id) get_players_stats_group(id))
   
-  players_stats <- convert_to_stats(players_stats_table, "g")
-  
-  players_stats
+  players_stats_table
 }
 
 m_get_player_top_stats <- memoise(get_player_top_stats)
@@ -72,6 +57,30 @@ get_players_group <- function(letter) {
     relocate(type, id, active)
 
   players_table
+}
+
+get_players_stats_group <- function(id) {
+  players_page <- discover_page(paste0("https://www.basketball-reference.com/players/",
+                                       str_sub(id, 1, 1), "/", id, ".html"))
+  players_view <- players_page("table#per_game")
+
+  identifier <-
+    extract_identifier(view = players_view,
+                       identifier = "tfoot tr:nth-child(1) > *",
+                       name = c("data_stat", "text"),
+                       attrs = "data-stat",
+                       id = id)
+
+  players_stats_table <-
+    identifier %>%
+    pivot_wider(names_from = data_stat, values_from = text) %>%
+    mutate(type = "PLAYER") %>%
+    relocate(type, id) %>%
+    select(!(season:pos))
+
+  players_stats <- convert_to_stats(players_stats_table, "g")
+
+  players_stats
 }
 
 get_clean_players_table <- function(view) {
