@@ -12,18 +12,26 @@ get_player_top_stats <- function() {
   players_page <- discover_page("https://www.basketball-reference.com/players/a/adamsst01.html")
   players_view <- players_page("table#per_game")
   
-  career_stats <-
-    players_view %>%
-    html_elements("tfoot tr:nth-child(1) > *") %>%
-    html_attrs_dfr(c("data-stat")) %>% 
-    clean_names() %>% 
-    pivot_wider(names_from = data_stat, values_from = text) %>% 
-    mutate(player = "adamsst01") %>% 
-    relocate(player) %>% 
+  identifier <-
+    extract_identifier(view = players_view,
+                       identifier = "tfoot tr:nth-child(1) > *",
+                       name = c("data_stat", "text"),
+                       attrs = "data-stat",
+                       id = "adamsst01")
+  
+  players_stats_table <-
+    identifier %>%
+    pivot_wider(names_from = data_stat, values_from = text) %>%
+    mutate(type = "PLAYER") %>%
+    relocate(type, id) %>%
     select(!(season:pos))
   
-  career_stats
+  players_stats <- convert_to_stats(players_stats_table, "g")
+  
+  players_stats
 }
+
+m_get_player_top_stats <- memoise(get_player_top_stats)
 
 get_college_df <- function() {
   colleges_table <-

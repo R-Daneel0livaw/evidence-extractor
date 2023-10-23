@@ -19,7 +19,7 @@ teams_nodes <- m_get_team_df()
 teams_stats <- m_get_team_top_stats()
 
 players_table <- m_get_player_df()
-players_stats <- get_player_top_stats()
+players_stats <- m_get_player_top_stats()
 
 colleges_table <- m_get_college_df()
 games_table <- m_get_game_df()

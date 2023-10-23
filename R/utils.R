@@ -27,11 +27,12 @@ select_until_end <- function(data, start) {
   filtered_df
 }
 
-extract_identifier <- function(view, identifier, names, add_text = TRUE, ...) {
+extract_identifier <- function(view, identifier, names, 
+                               attrs = NULL, add_text = TRUE, ...) {
   extracted_identifier <-
     view %>%
     html_elements(identifier) %>%
-    html_attrs_dfr(add_text = add_text) %>% 
+    html_attrs_dfr(attrs = attrs, add_text = add_text) %>% 
     rename_all(~ names) %>% 
     mutate(...)
   
