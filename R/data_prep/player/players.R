@@ -59,27 +59,36 @@ get_players_group <- function(letter) {
   players_table
 }
 
-get_players_stats_group <- function(id) {
+get_players_stats_group <- function(player) {
   players_page <- discover_page(paste0("https://www.basketball-reference.com/players/",
-                                       str_sub(id, 1, 1), "/", id, ".html"))
-  players_view <- players_page("table#per_game")
+                                       str_sub(player, 1, 1), "/", player, ".html"))
+  views <- c("table#per_game", "table#totals")
+  
+  players_stats <-
+    views %>%
+    map_dfr(\(id) get_individual_players_stats_group(player, players_page(id))) %>% 
+    distinct(name, connector_id, .keep_all = TRUE)
 
+  players_stats
+}
+
+get_individual_players_stats_group <- function(player, view) {
   identifier <-
-    extract_identifier(view = players_view,
+    extract_identifier(view = view,
                        identifier = "tfoot tr:nth-child(1) > *",
-                       name = c("data_stat", "text"),
+                       names = c("data_stat", "text"),
                        attrs = "data-stat",
-                       id = id)
-
+                       id = player)
+  
   players_stats_table <-
     identifier %>%
     pivot_wider(names_from = data_stat, values_from = text) %>%
     mutate(type = "PLAYER") %>%
     relocate(type, id) %>%
     select(!(season:pos))
-
+  
   players_stats <- convert_to_stats(players_stats_table, "g")
-
+  
   players_stats
 }
 
