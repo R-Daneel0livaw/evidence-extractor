@@ -62,7 +62,7 @@ get_players_group <- function(letter) {
 get_players_stats_group <- function(player) {
   players_page <- discover_page(paste0("https://www.basketball-reference.com/players/",
                                        str_sub(player, 1, 1), "/", player, ".html"))
-  views <- c("table#per_game", "table#totals")
+  views <- c("table#per_game", "table#totals", "table#advanced")
   
   players_stats <-
     views %>%
@@ -78,7 +78,8 @@ get_individual_players_stats_group <- function(player, view) {
                        identifier = "tfoot tr:nth-child(1) > *",
                        names = c("data_stat", "text"),
                        attrs = "data-stat",
-                       id = player)
+                       id = player) %>% 
+    filter(data_stat != "DUMMY")
   
   players_stats_table <-
     identifier %>%
