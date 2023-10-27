@@ -52,6 +52,37 @@ get_season_top_stats <- function() {
 
 m_get_season_top_stats <- memoise(get_season_top_stats)
 
+get_season_team_stats <- function() {
+  seasons_team_stats_page <- discover_page("https://www.basketball-reference.com/leagues/NBA_2023.html")
+  seasons_view <- seasons_team_stats_page("table#per_game-team")
+  
+  season_team_stats <- get_clean_seasons_teams_stats_table(seasons_view)
+  
+  season_team_stats
+  
+  # identifier <-
+  #   extract_identifier(view = seasons_view,
+  #                      identifier = "tr td[data-stat='season'] a",
+  #                      name = c("id", "season"),
+  #                      id = str_extract(id, ".*/([A-Z]+_\\d+).html", 1))
+  # 
+  # seasons_identifier_table <-
+  #   join_identifier(initial_table = get_clean_seasons_stats_table(seasons_view),
+  #                   identifier = identifier,
+  #                   season)
+  # 
+  # seasons_stats_table <-
+  #   seasons_identifier_table %>%
+  #   mutate(type = "SEASON") %>%
+  #   relocate(type, id) %>%
+  #   select(-season)
+  # 
+  # seasons_stats <- convert_to_stats(seasons_stats_table, "age")
+  
+  # seasons_stats
+}
+
+
 get_clean_seasons_table <- function(view) {
   seasons_initial_table <-
     view %>%
@@ -67,6 +98,21 @@ get_clean_seasons_stats_table <- function(view) {
     get_clean_table(TRUE) %>% 
     filter(lg == "NBA", g > 0) %>% 
     select(-c(rk, lg))
+  
+  seasons_initial_table
+}
+
+get_clean_seasons_teams_stats_table <- function(view) {
+  seasons_initial_table <- get_clean_table(view)
+  
+  cloummn_names <-
+    extract_identifier(view = view,
+                       identifier = "tfoot tr:nth-child(1) > *",
+                       names = c("data_stat"),
+                       attrs = "data-stat",
+                       add_text = FALSE)
+  
+  colnames(seasons_initial_table) <- cloummn_names$data_stat
   
   seasons_initial_table
 }

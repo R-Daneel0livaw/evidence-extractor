@@ -14,6 +14,7 @@ source("R/utils.R")
 
 seasons_nodes <- m_get_season_df()
 seasons_stats <- m_get_season_top_stats()
+seasons_teams_stats <- get_season_team_stats()
 
 teams_nodes <- m_get_team_df()
 teams_stats <- m_get_team_top_stats()
