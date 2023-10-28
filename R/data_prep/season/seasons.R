@@ -60,11 +60,11 @@ get_season_team_stats <- function() {
   
   season_team_stats
   
-  # identifier <-
-  #   extract_identifier(view = seasons_view,
-  #                      identifier = "tr td[data-stat='season'] a",
-  #                      name = c("id", "season"),
-  #                      id = str_extract(id, ".*/([A-Z]+_\\d+).html", 1))
+  identifier <-
+    extract_identifier(view = seasons_view,
+                       identifier = "tr td[data-stat='team'] a",
+                       name = c("id", "team"),
+                       id = str_extract(id, ".*/teams/([^/]+)/.*", 1))
   # 
   # seasons_identifier_table <-
   #   join_identifier(initial_table = get_clean_seasons_stats_table(seasons_view),
