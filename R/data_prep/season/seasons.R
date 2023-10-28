@@ -71,15 +71,15 @@ get_season_team_stats <- function() {
                     identifier = identifier,
                     team)
 
-  # seasons_stats_table <-
-  #   seasons_identifier_table %>%
-  #   mutate(type = "SEASON") %>%
-  #   relocate(type, id) %>%
-  #   select(-season)
-  # 
-  # seasons_stats <- convert_to_stats(seasons_stats_table, "age")
+  seasons_stats_table <-
+    seasons_identifier_table %>%
+    mutate(type = "TEAM") %>%
+    relocate(type, id) %>%
+    select(-team, -ranker)
+
+  seasons_stats <- convert_to_stats(seasons_stats_table, "g")
   
-  # seasons_stats
+  seasons_stats
 }
 
 
