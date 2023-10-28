@@ -65,12 +65,12 @@ get_season_team_stats <- function() {
                        identifier = "tr td[data-stat='team'] a",
                        name = c("id", "team"),
                        id = str_extract(id, ".*/teams/([^/]+)/.*", 1))
-  # 
-  # seasons_identifier_table <-
-  #   join_identifier(initial_table = get_clean_seasons_stats_table(seasons_view),
-  #                   identifier = identifier,
-  #                   season)
-  # 
+
+  seasons_identifier_table <-
+    join_identifier(initial_table = season_team_stats,
+                    identifier = identifier,
+                    team)
+
   # seasons_stats_table <-
   #   seasons_identifier_table %>%
   #   mutate(type = "SEASON") %>%
@@ -103,7 +103,9 @@ get_clean_seasons_stats_table <- function(view) {
 }
 
 get_clean_seasons_teams_stats_table <- function(view) {
-  seasons_initial_table <- get_clean_table(view)
+  seasons_initial_table <- 
+    get_clean_table(view) %>% 
+    mutate(team = str_replace_all(team, "\\*", ""))
   
   cloummn_names <-
     extract_identifier(view = view,
