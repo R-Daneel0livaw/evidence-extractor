@@ -90,7 +90,8 @@ get_individual_seasons_teams_stats_group <- function(season, view) {
     seasons_identifier_table %>%
     mutate(type = "TEAM") %>%
     relocate(type, id) %>%
-    select(-team, -ranker)
+    select(-team, -ranker) %>% 
+    rename_with(~ paste0(.x, "_per_g"), .cols = starts_with("mp"):starts_with("pts"))
 
   teams_stats <- convert_to_stats(teams_stats_table, "g") %>%
     mutate(id = get_uuid(nrow(.))) %>%
