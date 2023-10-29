@@ -56,8 +56,6 @@ get_season_team_stats <- function() {
   seasons_team_stats_page <- discover_page("https://www.basketball-reference.com/leagues/NBA_2023.html")
   seasons_view <- seasons_team_stats_page("table#per_game-team")
   
-  season_team_stats_table <- get_clean_seasons_teams_stats_table(seasons_view)
-  
   identifier <-
     extract_identifier(view = seasons_view,
                        identifier = "tr td[data-stat='team'] a",
@@ -65,7 +63,7 @@ get_season_team_stats <- function() {
                        id = str_extract(id, ".*/teams/([^/]+)/.*", 1))
 
   seasons_identifier_table <-
-    join_identifier(initial_table = season_team_stats_table,
+    join_identifier(initial_table = get_clean_seasons_teams_stats_table(seasons_view),
                     identifier = identifier,
                     team) %>%
     filter(!is.na(id))
@@ -80,10 +78,7 @@ get_season_team_stats <- function() {
     mutate(id = get_uuid(nrow(.))) %>% 
     relocate(type, id)
   
-  seasons_teams_stats <-
-    teams_stats %>%
-    bind_rows(teams_stats %>% mutate(connector_type = "SEASON", connector_id = "NBA_2023")) %>% 
-    arrange(id)
+  seasons_teams_stats <- duplicate_stats(teams_stats, "SEASON", "NBA_2023")
 
   seasons_teams_stats
 }
@@ -112,15 +107,8 @@ get_clean_seasons_teams_stats_table <- function(view) {
   seasons_initial_table <- 
     get_clean_table(view) %>% 
     mutate(team = str_replace_all(team, "\\*", ""))
-  
-  cloummn_names <-
-    extract_identifier(view = view,
-                       identifier = "tfoot tr:nth-child(1) > *",
-                       names = c("data_stat"),
-                       attrs = "data-stat",
-                       add_text = FALSE)
-  
-  colnames(seasons_initial_table) <- cloummn_names$data_stat
+
+  colnames(seasons_initial_table) <- get_column_names(view, "tfoot tr:nth-child(1) > *")
   
   seasons_initial_table
 }

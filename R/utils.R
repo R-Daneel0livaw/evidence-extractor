@@ -19,6 +19,19 @@ get_clean_table <- function(view, include_row_to_names = FALSE) {
   clean_table
 }
 
+get_column_names <- function(view, identifier) {
+  cloummn_names <-
+    extract_identifier(view = view,
+                       identifier = identifier,
+                       names = c("data_stat"),
+                       attrs = "data-stat",
+                       add_text = FALSE)
+  
+  names <- cloummn_names$data_stat
+  
+  names
+}
+
 select_until_end <- function(data, start) {
   filtered_df <-
     data %>%
@@ -52,6 +65,16 @@ join_identifier <- function(initial_table, identifier, ...) {
   
   joined_table
 }
+
+duplicate_stats <-
+  function(base_stats, duplicate_type, duplicate_id) {
+    stats <-
+      base_stats %>%
+      bind_rows(base_stats %>% mutate(connector_type = duplicate_type, connector_id = duplicate_id)) %>%
+      arrange(id)
+    
+    stats
+  }
 
 convert_to_stats <- function(stat_data, stats_start) {
   filtered_df <- select_until_end(stat_data, stats_start)
