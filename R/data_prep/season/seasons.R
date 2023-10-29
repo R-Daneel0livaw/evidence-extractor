@@ -76,12 +76,15 @@ get_season_team_stats <- function() {
     relocate(type, id) %>%
     select(-team, -ranker)
   
-  teams_stats <- convert_to_stats(teams_stats_table, "g")
+  teams_stats <- convert_to_stats(teams_stats_table, "g") %>% 
+    mutate(id = get_uuid(nrow(.))) %>% 
+    relocate(type, id)
   
   seasons_teams_stats <-
     teams_stats %>%
-    bind_rows(teams_stats %>% mutate(connector_type = "SEASON", connector_id = "NBA_2023"))
-  
+    bind_rows(teams_stats %>% mutate(connector_type = "SEASON", connector_id = "NBA_2023")) %>% 
+    arrange(id)
+
   seasons_teams_stats
 }
 
