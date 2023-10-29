@@ -56,9 +56,7 @@ get_season_team_stats <- function() {
   seasons_team_stats_page <- discover_page("https://www.basketball-reference.com/leagues/NBA_2023.html")
   seasons_view <- seasons_team_stats_page("table#per_game-team")
   
-  season_team_stats <- get_clean_seasons_teams_stats_table(seasons_view)
-  
-  season_team_stats
+  season_team_stats_table <- get_clean_seasons_teams_stats_table(seasons_view)
   
   identifier <-
     extract_identifier(view = seasons_view,
@@ -67,19 +65,24 @@ get_season_team_stats <- function() {
                        id = str_extract(id, ".*/teams/([^/]+)/.*", 1))
 
   seasons_identifier_table <-
-    join_identifier(initial_table = season_team_stats,
+    join_identifier(initial_table = season_team_stats_table,
                     identifier = identifier,
-                    team)
+                    team) %>%
+    filter(!is.na(id))
 
-  seasons_stats_table <-
+  teams_stats_table <-
     seasons_identifier_table %>%
     mutate(type = "TEAM") %>%
     relocate(type, id) %>%
     select(-team, -ranker)
-
-  seasons_stats <- convert_to_stats(seasons_stats_table, "g")
   
-  seasons_stats
+  teams_stats <- convert_to_stats(teams_stats_table, "g")
+  
+  seasons_teams_stats <-
+    teams_stats %>%
+    bind_rows(teams_stats %>% mutate(connector_type = "SEASON", connector_id = "NBA_2023"))
+  
+  seasons_teams_stats
 }
 
 
