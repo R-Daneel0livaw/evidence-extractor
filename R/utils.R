@@ -27,6 +27,12 @@ select_until_end <- function(data, start) {
   filtered_df
 }
 
+get_uuid <- function(amount) {
+  uuids <- UUIDgenerate(n = amount)
+    
+  uuids
+}
+
 extract_identifier <- function(view, identifier, names, 
                                attrs = NULL, add_text = TRUE, ...) {
   extracted_identifier <-
