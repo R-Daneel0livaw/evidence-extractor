@@ -32,18 +32,18 @@ get_column_names <- function(view, identifier) {
   names
 }
 
+get_uuid <- function(amount) {
+  uuids <- UUIDgenerate(n = amount)
+  
+  uuids
+}
+
 select_until_end <- function(data, start) {
   filtered_df <-
     data %>%
     select((which(names(.) == start)):last_col())
   
   filtered_df
-}
-
-get_uuid <- function(amount) {
-  uuids <- UUIDgenerate(n = amount)
-    
-  uuids
 }
 
 extract_identifier <- function(view, identifier, names, 

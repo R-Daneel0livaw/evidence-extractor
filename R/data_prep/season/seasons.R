@@ -53,17 +53,35 @@ get_season_top_stats <- function() {
 m_get_season_top_stats <- memoise(get_season_top_stats)
 
 get_season_team_stats <- function() {
-  seasons_team_stats_page <- discover_page("https://www.basketball-reference.com/leagues/NBA_2023.html")
-  seasons_view <- seasons_team_stats_page("table#per_game-team")
+  seasons_teams_stats_table <-
+    m_get_season_df()$id[2] %>%
+    map_dfr(\(id) get_seasons_teams_stats_group(id))
   
+  seasons_teams_stats_table
+}
+
+m_get_season_team_stats <- memoise(get_season_team_stats)
+
+get_seasons_teams_stats_group <- function(season) {
+  seasons_team_stats_page <- discover_page(paste0("https://www.basketball-reference.com/leagues/", season, ".html"))
+  views <- c("table#per_game-team")
+  
+  seasons_teams_stats <-
+    views %>%
+    map_dfr(\(id) get_individual_seasons_teams_stats_group(season, seasons_team_stats_page(id)))
+
+  seasons_teams_stats
+}
+
+get_individual_seasons_teams_stats_group <- function(season, view) {
   identifier <-
-    extract_identifier(view = seasons_view,
+    extract_identifier(view = view,
                        identifier = "tr td[data-stat='team'] a",
                        name = c("id", "team"),
                        id = str_extract(id, ".*/teams/([^/]+)/.*", 1))
 
   seasons_identifier_table <-
-    join_identifier(initial_table = get_clean_seasons_teams_stats_table(seasons_view),
+    join_identifier(initial_table = get_clean_seasons_teams_stats_table(view),
                     identifier = identifier,
                     team) %>%
     filter(!is.na(id))
@@ -73,13 +91,13 @@ get_season_team_stats <- function() {
     mutate(type = "TEAM") %>%
     relocate(type, id) %>%
     select(-team, -ranker)
-  
-  teams_stats <- convert_to_stats(teams_stats_table, "g") %>% 
-    mutate(id = get_uuid(nrow(.))) %>% 
-    relocate(type, id)
-  
-  seasons_teams_stats <- duplicate_stats(teams_stats, "SEASON", "NBA_2023")
 
+  teams_stats <- convert_to_stats(teams_stats_table, "g") %>%
+    mutate(id = get_uuid(nrow(.))) %>%
+    relocate(type, id)
+
+  seasons_teams_stats <- duplicate_stats(teams_stats, "SEASON", season)
+  
   seasons_teams_stats
 }
 
