@@ -4,6 +4,7 @@ library(jsonlite)
 library(janitor)
 library(polite)
 library(memoise)
+library(uuid)
 
 source("R/data_prep/season/seasons.R")
 source("R/data_prep/team/teams.R")
