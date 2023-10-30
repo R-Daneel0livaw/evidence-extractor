@@ -64,16 +64,20 @@ m_get_season_team_stats <- memoise(get_season_team_stats)
 
 get_seasons_teams_stats_group <- function(season) {
   seasons_team_stats_page <- discover_page(paste0("https://www.basketball-reference.com/leagues/", season, ".html"))
-  views <- c("table#per_game-team")
+  views <- c("table#per_game-team","table#totals-team")
+  stat_suffix <- c("_per_g", "")
   
   seasons_teams_stats <-
     views %>%
-    map_dfr(\(id) get_individual_seasons_teams_stats_group(season, seasons_team_stats_page(id)))
+    map2_dfr(
+      stat_suffix,
+      \(id, stat_suffix) get_individual_seasons_teams_stats_group(season, seasons_team_stats_page(id), stat_suffix)
+    )
 
   seasons_teams_stats
 }
 
-get_individual_seasons_teams_stats_group <- function(season, view) {
+get_individual_seasons_teams_stats_group <- function(season, view, stat_suffix) {
   identifier <-
     extract_identifier(view = view,
                        identifier = "tr td[data-stat='team'] a",
@@ -91,7 +95,7 @@ get_individual_seasons_teams_stats_group <- function(season, view) {
     mutate(type = "TEAM") %>%
     relocate(type, id) %>%
     select(-team, -ranker) %>% 
-    rename_with(~ paste0(.x, "_per_g"), .cols = starts_with("mp"):starts_with("pts"))
+    rename_with(~ paste0(.x, stat_suffix), .cols = starts_with("mp"):starts_with("pts"))
 
   teams_stats <- convert_to_stats(teams_stats_table, "g") %>%
     mutate(id = get_uuid(nrow(.))) %>%
