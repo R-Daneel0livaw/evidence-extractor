@@ -136,6 +136,16 @@ get_clean_seasons_teams_stats_table <- function(view) {
   seasons_initial_table
 }
 
+get_season_team_config <- function() {
+  data <- tribble(
+    ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start,
+    "table#per_game-team", "per_g",  "g", "pts", "mp",
+    "table#totals-team", "",  "mp", "pts", ""
+  )
+  
+  data
+}
+
 join_seasons_identifier <- function(initial_table, identifier) {
   joined_table <-
     join_identifier(initial_table = initial_table, identifier = identifier, season)
