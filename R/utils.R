@@ -66,6 +66,12 @@ join_identifier <- function(initial_table, identifier, ...) {
   joined_table
 }
 
+join_config_stat <- function(config, stat) {
+  joined_table <- expand_grid(config, stat = stat)
+  
+  joined_table
+}
+
 duplicate_stats <-
   function(base_stats, duplicate_type, duplicate_id) {
     stats <-
