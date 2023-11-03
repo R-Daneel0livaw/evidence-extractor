@@ -53,6 +53,11 @@ get_season_top_stats <- function() {
 m_get_season_top_stats <- memoise(get_season_top_stats)
 
 get_season_team_stats <- function() {
+  # seasons_teams_stats_table <- 
+  #   join_config_stat(get_season_team_config(), m_get_season_df()$id[2]) %>% 
+  #   transpose() %>% 
+  #   map_dfr(\(config_row) get_seasons_teams_stats_group(config_row))
+  
   seasons_teams_stats_table <-
     m_get_season_df()$id[2] %>%
     map_dfr(\(id) get_seasons_teams_stats_group(id))
