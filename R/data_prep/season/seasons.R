@@ -53,14 +53,18 @@ get_season_top_stats <- function() {
 m_get_season_top_stats <- memoise(get_season_top_stats)
 
 get_season_team_stats <- function() {
-  # seasons_teams_stats_table <- 
-  #   join_config_stat(get_season_team_config(), m_get_season_df()$id[2]) %>% 
-  #   transpose() %>% 
-  #   map_dfr(\(config_row) get_seasons_teams_stats_group(config_row))
+  seasons_teams_stats_table <-  
+    join_config_stat(get_season_team_config(), m_get_season_df()$id[2]) %>%  
+    mutate(stat_sort = as.numeric(str_extract(stat, ".+_(\\d+)", 1))) %>%
+    arrange(stat_sort, desc(stat_sort)) %>% 
+    select(-stat_sort) %>% 
+    transpose() %>% 
+    map_dfr(\(config_row) get_seasons_teams_stats_group2(config_row))
   
-  seasons_teams_stats_table <-
-    m_get_season_df()$id[2] %>%
-    map_dfr(\(id) get_seasons_teams_stats_group(id))
+  
+  # seasons_teams_stats_table <-
+  #   m_get_season_df()$id[2] %>%
+  #   map_dfr(\(id) get_seasons_teams_stats_group(id))
   
   seasons_teams_stats_table
 }
