@@ -148,7 +148,7 @@ get_individual_seasons_teams_stats_group2 <- function(config_row, view) {
       .cols = starts_with(config_row$rename_start):starts_with(config_row$stats_end)
     )
 
-  teams_stats <- convert_to_stats(teams_stats_table, "g") %>%
+  teams_stats <- convert_to_stats(teams_stats_table, config_row$stats_start) %>%
     mutate(id = get_uuid(nrow(.))) %>%
     relocate(type, id)
 
