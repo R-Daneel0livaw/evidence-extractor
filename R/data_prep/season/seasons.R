@@ -206,3 +206,15 @@ join_seasons_identifier <- function(initial_table, identifier) {
   
   joined_table
 }
+
+rename_teams_stats <- function(teams_stats, suffix, start, end) {
+  stats <- teams_stats
+  
+  if (!nzchar(suffix)) {
+    stats <-
+      teams_stats %>%
+      rename_with( ~ paste0(.x, "_", suffix),
+                   .cols = starts_with(start):starts_with(end))
+  }
+  stats
+}
