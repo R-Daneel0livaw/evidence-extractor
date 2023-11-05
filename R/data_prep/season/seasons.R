@@ -207,7 +207,7 @@ join_seasons_identifier <- function(initial_table, identifier) {
 rename_teams_stats <- function(teams_stats, suffix, start, end) {
   stats <- teams_stats
   
-  if (!nzchar(suffix)) {
+  if (nzchar(suffix)) {
     stats <-
       teams_stats %>%
       rename_with( ~ paste0(.x, "_", suffix),
