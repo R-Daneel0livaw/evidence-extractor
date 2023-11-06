@@ -90,7 +90,7 @@ get_individual_seasons_teams_stats_group <- function(config_row, view) {
     mutate(type = "TEAM") %>%
     relocate(type, id) %>%
     select(-team,-ranker) %>%
-    rename_teams_stats(config_row$stat_suffix, config_row$rename_start, config_row$stats_end) 
+    rename_stats(config_row$stat_suffix, config_row$rename_start, config_row$stats_end) 
 
   teams_stats <- convert_to_stats(teams_stats_table, config_row$stats_start) %>%
     mutate(id = get_uuid(nrow(.))) %>%

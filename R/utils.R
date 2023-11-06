@@ -82,7 +82,7 @@ duplicate_stats <-
     stats
   }
 
-rename_teams_stats <- function(stats_table, suffix, start, end) {
+rename_stats <- function(stats_table, suffix, start, end) {
   stats <- stats_table
   
   if (nzchar(suffix)) {
