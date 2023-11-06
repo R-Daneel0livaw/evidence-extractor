@@ -82,6 +82,18 @@ duplicate_stats <-
     stats
   }
 
+rename_teams_stats <- function(stats_table, suffix, start, end) {
+  stats <- stats_table
+  
+  if (nzchar(suffix)) {
+    stats <-
+      stats_table %>%
+      rename_with( ~ paste0(.x, "_", suffix),
+                   .cols = starts_with(start):starts_with(end))
+  }
+  stats
+}
+
 convert_to_stats <- function(stat_data, stats_start) {
   filtered_df <- select_until_end(stat_data, stats_start)
   

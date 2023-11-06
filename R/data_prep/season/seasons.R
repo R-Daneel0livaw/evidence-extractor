@@ -59,77 +59,20 @@ get_season_team_stats <- function() {
     arrange(stat_sort, desc(stat_sort)) %>% 
     select(-stat_sort) %>% 
     transpose() %>% 
-    map_dfr(\(config_row) get_seasons_teams_stats_group2(config_row))
+    map_dfr(\(config_row) get_seasons_teams_stats_group(config_row))
   
-  
-  # seasons_teams_stats_table <-
-  #   m_get_season_df()$id[2] %>%
-  #   map_dfr(\(id) get_seasons_teams_stats_group(id))
   
   seasons_teams_stats_table
 }
 
 m_get_season_team_stats <- memoise(get_season_team_stats)
 
-get_seasons_teams_stats_group <- function(season) {
-  seasons_team_stats_page <- discover_page(paste0("https://www.basketball-reference.com/leagues/", season, ".html"))
-  views <- c("table#per_game-team","table#totals-team")
-  stat_suffix <- c("_per_g", "")
-  
-  seasons_teams_stats <-
-    views %>%
-    map2_dfr(
-      stat_suffix,
-      \(id, stat_suffix) get_individual_seasons_teams_stats_group(season, seasons_team_stats_page(id), stat_suffix)
-    )
-
-  seasons_teams_stats
-}
-
-get_seasons_teams_stats_group2 <- function(config_row) {
+get_seasons_teams_stats_group <- function(config_row) {
   seasons_team_stats_page <- discover_page(paste0("https://www.basketball-reference.com/leagues/", config_row$stat, ".html"))
-  # views <- c("table#per_game-team","table#totals-team")
-  # stat_suffix <- c("_per_g", "")
-  get_individual_seasons_teams_stats_group2(config_row, seasons_team_stats_page(config_row$view))
-  
-  # seasons_teams_stats <-
-  #   views %>%
-  #   map2_dfr(
-  #     stat_suffix,
-  #     \(id, stat_suffix) get_individual_seasons_teams_stats_group(season, seasons_team_stats_page(id), stat_suffix)
-  #   )
+  get_individual_seasons_teams_stats_group(config_row, seasons_team_stats_page(config_row$view))
 }
 
-get_individual_seasons_teams_stats_group <- function(season, view, stat_suffix) {
-  identifier <-
-    extract_identifier(view = view,
-                       identifier = "tr td[data-stat='team'] a",
-                       name = c("id", "team"),
-                       id = str_extract(id, ".*/teams/([^/]+)/.*", 1))
-
-  seasons_identifier_table <-
-    join_identifier(initial_table = get_clean_seasons_teams_stats_table(view),
-                    identifier = identifier,
-                    team) %>%
-    filter(!is.na(id))
-
-  teams_stats_table <-
-    seasons_identifier_table %>%
-    mutate(type = "TEAM") %>%
-    relocate(type, id) %>%
-    select(-team, -ranker) %>% 
-    rename_with(~ paste0(.x, stat_suffix), .cols = starts_with("mp"):starts_with("pts"))
-
-  teams_stats <- convert_to_stats(teams_stats_table, "g") %>%
-    mutate(id = get_uuid(nrow(.))) %>%
-    relocate(type, id)
-
-  seasons_teams_stats <- duplicate_stats(teams_stats, "SEASON", season)
-  
-  seasons_teams_stats
-}
-
-get_individual_seasons_teams_stats_group2 <- function(config_row, view) {
+get_individual_seasons_teams_stats_group <- function(config_row, view) {
   identifier <-
     extract_identifier(view = view,
                        identifier = "tr td[data-stat='team'] a",
@@ -202,16 +145,4 @@ join_seasons_identifier <- function(initial_table, identifier) {
     join_identifier(initial_table = initial_table, identifier = identifier, season)
   
   joined_table
-}
-
-rename_teams_stats <- function(teams_stats, suffix, start, end) {
-  stats <- teams_stats
-  
-  if (nzchar(suffix)) {
-    stats <-
-      teams_stats %>%
-      rename_with( ~ paste0(.x, "_", suffix),
-                   .cols = starts_with(start):starts_with(end))
-  }
-  stats
 }

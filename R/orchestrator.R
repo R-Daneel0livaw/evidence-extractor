@@ -26,25 +26,3 @@ players_stats <- m_get_player_top_stats()
 colleges_table <- m_get_college_df()
 games_table <- m_get_game_df()
 awards_table <- m_get_awards_df()
-
-# process_row <- function(row) {
-#   view <- row$view
-#   stat_suffix <- row$stat_suffix
-#   stats_start <- row$stats_start
-#   stats_end <- row$stats_end
-#   rename_start <- row$rename_start
-#   
-#   df <- data.frame(
-#     view = view,
-#     stat_suffix = stat_suffix,
-#     stats_start = stats_start,
-#     stats_end = stats_end,
-#     rename_start = rename_start
-#   )
-#   
-#   df
-# }
-# 
-# result <- get_season_team_data() %>%
-#   transpose() %>%
-#   map_dfr(process_row)
