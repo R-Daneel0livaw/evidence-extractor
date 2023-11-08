@@ -77,7 +77,8 @@ get_individual_seasons_teams_stats_group <- function(config_row, view) {
     extract_identifier(view = view,
                        identifier = "tr td[data-stat='team'] a",
                        name = c("id", "team"),
-                       id = str_extract(id, ".*/teams/([^/]+)/.*", 1))
+                       id = str_extract(id, ".*/teams/([^/]+)/.*", 1)) %>% 
+    filter(data_stat != "DUMMY")
 
   seasons_identifier_table <-
     join_identifier(initial_table = get_clean_seasons_teams_stats_table(view),
@@ -134,7 +135,8 @@ get_season_team_config <- function() {
   data <- tribble(
     ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start,
     "table#per_game-team", "per_g",  "g", "pts", "mp",
-    "table#totals-team", "",  "mp", "pts", ""
+    "table#totals-team", "",  "mp", "pts", "",
+    "table#advanced-team", "",  "age", "attendance_per_g", "",
   )
   
   data
