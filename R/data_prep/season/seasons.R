@@ -127,15 +127,19 @@ get_clean_seasons_teams_stats_table <- function(view, multi_row_header = FALSE) 
 
   colnames(seasons_initial_table) <- get_column_names(view, "tfoot tr:nth-child(1) > *")
   
+  seasons_initial_table <-
+    seasons_initial_table %>% 
+    select(-c(DUMMY))
+  
   seasons_initial_table
 }
 
 get_season_team_config <- function() {
   data <- tribble(
     ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header,
-    "table#per_game-team", "per_g",  "g", "pts", "mp", FALSE,
-    "table#totals-team", "",  "mp", "pts", "", FALSE,
-    # "table#advanced-team", "",  "age", "pts", "", TRUE
+    # "table#per_game-team", "per_g",  "g", "pts", "mp", FALSE,
+    # "table#totals-team", "",  "mp", "pts", "", FALSE,
+    "table#advanced-team", "",  "age", "pts", "", TRUE
   )
   
   data

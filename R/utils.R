@@ -11,7 +11,10 @@ get_clean_table <- function(view, include_row_to_names = FALSE) {
     html_table()
   
   if (include_row_to_names) {
-    clean_table <- clean_table %>% row_to_names(row_number = 1)
+    clean_table <-
+      clean_table %>% {
+        suppressWarnings(row_to_names(., row_number = 1))
+      }
   }
   
   clean_table <- clean_table %>% clean_names()
