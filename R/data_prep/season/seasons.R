@@ -80,7 +80,8 @@ get_individual_seasons_teams_stats_group <- function(config_row, view) {
                        id = str_extract(id, ".*/teams/([^/]+)/.*", 1))
 
   seasons_identifier_table <-
-    join_identifier(initial_table = get_clean_seasons_teams_stats_table(view, config_row$multi_row_header),
+    join_identifier(initial_table = get_clean_seasons_teams_stats_table(view, config_row$multi_row_header,
+                                                                        config_row$dummy_header),
                     identifier = identifier,
                     team) %>%
     filter(!is.na(id))
@@ -120,26 +121,29 @@ get_clean_seasons_stats_table <- function(view) {
   seasons_initial_table
 }
 
-get_clean_seasons_teams_stats_table <- function(view, multi_row_header = FALSE) {
+get_clean_seasons_teams_stats_table <- function(view, multi_row_header = FALSE, 
+                                                dummy_header = FALSE) {
   seasons_initial_table <- 
     get_clean_table(view, multi_row_header) %>% 
     mutate(team = str_replace_all(team, "\\*", ""))
 
   colnames(seasons_initial_table) <- get_column_names(view, "tfoot tr:nth-child(1) > *")
-  
-  seasons_initial_table <-
-    seasons_initial_table %>% 
-    select(-c(DUMMY))
+ 
+  if(dummy_header) {
+    seasons_initial_table <-
+      seasons_initial_table %>% 
+      select(-c(DUMMY))
+  } 
   
   seasons_initial_table
 }
 
 get_season_team_config <- function() {
   data <- tribble(
-    ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header,
-    # "table#per_game-team", "per_g",  "g", "pts", "mp", FALSE,
-    # "table#totals-team", "",  "mp", "pts", "", FALSE,
-    "table#advanced-team", "",  "age", "pts", "", TRUE
+    ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header,
+    "table#per_game-team", "per_g",  "g", "pts", "mp", FALSE, FALSE,
+    "table#totals-team", "",  "mp", "pts", "", FALSE, FALSE,
+    "table#advanced-team", "",  "age", "pts", "", TRUE, TRUE
   )
   
   data
