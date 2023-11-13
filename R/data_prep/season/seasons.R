@@ -61,7 +61,6 @@ get_season_team_stats <- function() {
     transpose() %>% 
     map_dfr(\(config_row) get_seasons_teams_stats_group(config_row))
   
-  
   seasons_teams_stats_table
 }
 
