@@ -33,7 +33,7 @@ get_games_group <- function(month, season) {
 get_game_player_stats <- function() {
   games_players_stats_table <-  
     get_game_df()$id[1] %>% 
-    map_dfr(\(game) get_games_group(str_to_lower(month), season))
+    map_dfr(\(game) get_games_players_stats_group(game))
     
     
     
