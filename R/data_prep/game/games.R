@@ -22,10 +22,12 @@ get_games_group <- function(month, season) {
     mutate(row_number = row_number())
 
   games_table <-
-    join_games_identifier(get_clean_games_table(games_view), identifier) %>% 
+    join_games_identifier(get_clean_games_table(games_view), identifier) %>%
+    join_games_identifier(get_visitor(games_view)) %>% 
+    join_games_identifier(get_home(games_view)) %>% 
     mutate(type = "GAME") %>%
     relocate(type, id, date, start_et, ot, arena, attend) %>%
-    select(!c(row_number, notes, home_pts, visitor_pts))
+    select(!c(row_number, notes, home_pts, visitor_pts, visitor, home))
   
   games_table
 }
@@ -74,6 +76,30 @@ get_clean_games_table <- function(view) {
     select(!x)
   
   games_initial_table
+}
+
+get_visitor <- function(view) {
+  visitor_identifier <-
+    extract_identifier(view = view,
+                       identifier = "tr td[data-stat='visitor_team_name'] a",
+                       names = c("visitor_id"),
+                       add_text = FALSE,
+                       visitor_id = str_extract(visitor_id,  ".*/teams/([^/]+)/.*", 1)) %>%
+    mutate(row_number = row_number())
+  
+  visitor_identifier
+}
+
+get_home <- function(view) {
+  home_identifier <-
+    extract_identifier(view = view,
+                       identifier = "tr td[data-stat='home_team_name'] a",
+                       names = c("home_id"),
+                       add_text = FALSE,
+                       home_id = str_extract(home_id,  ".*/teams/([^/]+)/.*", 1)) %>%
+    mutate(row_number = row_number())
+  
+  home_identifier
 }
 
 join_games_identifier <- function(initial_table, identifier) {
