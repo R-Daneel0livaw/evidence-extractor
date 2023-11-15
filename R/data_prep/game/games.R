@@ -35,7 +35,7 @@ get_games_group <- function(month, season) {
 get_game_player_stats <- function() {
   games_players_stats_table <-  
     get_game_df()$id[1] %>% 
-    map_dfr(\(game) get_games_players_stats_group(game))
+    imap_dfr(\(game, index) get_games_players_stats_group(game, index))
     
     
     
@@ -52,9 +52,11 @@ get_game_player_stats <- function() {
 
 m_get_game_player_stats <- memoise(get_game_player_stats)
 
-get_games_players_stats_group <- function(game) {
+get_games_players_stats_group <- function(game, index) {
   games_players_stats_page <- discover_page(paste0("https://www.basketball-reference.com/boxscores/", game, ".html"))
-  view <- games_players_stats_page("")
+  view <- games_players_stats_page(paste0("table#box-", get_game_df()$visitor_id[index], "-game-basic"))
+  
+  visitor_basic <- get_clean_table(view, TRUE)
 }
 
 get_clean_games_table <- function(view) {
