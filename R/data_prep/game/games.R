@@ -104,6 +104,17 @@ get_home <- function(view) {
   home_identifier
 }
 
+get_game_player_config <- function() {
+  data <- tribble(
+    ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header,
+    # "table#per_game-team", "per_g",  "g", "pts", "mp", FALSE, FALSE,
+    # "table#totals-team", "",  "mp", "pts", "", FALSE, FALSE,
+    # "table#advanced-team", "",  "age", "pts", "", TRUE, TRUE
+  )
+  
+  data
+}
+
 join_games_identifier <- function(initial_table, identifier) {
   joined_table <-
     join_identifier(initial_table = initial_table, identifier = identifier, row_number)
