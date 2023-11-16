@@ -106,10 +106,11 @@ get_home <- function(view) {
 
 get_game_player_config <- function() {
   data <- tribble(
-    ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header,
-    # "table#per_game-team", "per_g",  "g", "pts", "mp", FALSE, FALSE,
-    # "table#totals-team", "",  "mp", "pts", "", FALSE, FALSE,
-    # "table#advanced-team", "",  "age", "pts", "", TRUE, TRUE
+    ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header, ~dynamic_field,
+    "table#box-{{DYNAMIC}}-game-basic", "",  "mp", "plus_minus", "", TRUE, FALSE, "visitor_id",
+    "table#box-{{DYNAMIC}}-game-advanced", "",  "ts_pct", "bpm", "", TRUE, FALSE, "visitor_id",
+    "table#box-{{DYNAMIC}}-game-basic", "",  "mp", "plus_minus", "", TRUE, FALSE, "home_id",
+    "table#box-{{DYNAMIC}}-game-advanced", "",  "ts_pct", "bpm", "", TRUE, FALSE, "home_id"
   )
   
   data
