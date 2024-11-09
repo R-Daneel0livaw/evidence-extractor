@@ -26,27 +26,27 @@ m_get_season_df <- memoise(get_season_df)
 
 get_season_top_stats <- function() {
   seasons_stats_page <- discover_page("https://www.basketball-reference.com/leagues/NBA_stats_per_game.html")
-  seasons_view <- seasons_stats_page("table#stats")
+  seasons_view <- seasons_stats_page("table#stats-Regular-Season")
 
   identifier <-
     extract_identifier(view = seasons_view,
                        identifier = "tr td[data-stat='season'] a",
                        name = c("id", "season"),
                        id = str_extract(id, ".*/([A-Z]+_\\d+).html", 1))
-  
+
   seasons_identifier_table <-
     join_identifier(initial_table = get_clean_seasons_stats_table(seasons_view),
                     identifier = identifier,
                     season)
-  
+
   seasons_stats_table <-
     seasons_identifier_table %>%
     mutate(type = "SEASON") %>%
     relocate(type, id) %>%
     select(-season)
-  
+
   seasons_stats <- convert_to_stats(seasons_stats_table, "age")
-    
+
   seasons_stats
 }
 
