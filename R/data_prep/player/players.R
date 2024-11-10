@@ -10,7 +10,8 @@ m_get_player_df <- memoise(get_player_df)
 
 get_player_top_stats <- function() {
   players_stats_table <-
-    m_get_player_df()$id[1:3] %>%
+    m_get_player_df()$id[120] %>%
+    # m_get_player_df()$id[1:3] %>%
     map_dfr(\(id) get_players_stats_group(id))
   
   players_stats_table
@@ -62,11 +63,14 @@ get_players_group <- function(letter) {
 get_players_stats_group <- function(player) {
   players_page <- discover_page(paste0("https://www.basketball-reference.com/players/",
                                        str_sub(player, 1, 1), "/", player, ".html"))
-  views <- c("table#per_game", "table#totals", "table#advanced")
+  views <- c("table#per_game_stats",
+             # , "table#totals", 
+             "table#advanced"
+             )
   
   players_stats <-
     views %>%
-    map_dfr(\(id) get_individual_players_stats_group(player, players_page(id))) %>% 
+    map_dfr(\(id) get_individual_players_stats_group(player, players_page(id))) %>%
     distinct(name, connector_id, .keep_all = TRUE)
 
   players_stats
@@ -75,7 +79,8 @@ get_players_stats_group <- function(player) {
 get_individual_players_stats_group <- function(player, view) {
   identifier <-
     extract_identifier(view = view,
-                       identifier = "tfoot tr:nth-child(1) > *",
+                       identifier = "tfoot tr[id] > *",
+                       # identifier = "tfoot tr:nth-child(1) > *",
                        names = c("data_stat", "text"),
                        attrs = "data-stat",
                        id = player) %>% 
@@ -86,11 +91,11 @@ get_individual_players_stats_group <- function(player, view) {
     pivot_wider(names_from = data_stat, values_from = text) %>%
     mutate(type = "PLAYER") %>%
     relocate(type, id) %>%
-    select(!(season:pos))
+    select(!(year_id:pos))
   
-  players_stats <- convert_to_stats(players_stats_table, "g")
+    players_stats <- convert_to_stats(players_stats_table, "games")
   
-  players_stats
+    players_stats
 }
 
 get_clean_players_table <- function(view) {
