@@ -11,11 +11,11 @@ m_get_player_df <- memoise(get_player_df)
 get_player_top_stats <- function() {
   players_stats_table <-
     # m_get_player_df()$id[120] %>%
-    m_get_player_df()$id[1:3] %>%
-    # join_config_stat(get_player_top_stats_config(), m_get_player_df()$id[1:3]) %>%
-    # mutate(stat_sort = stat) %>%
-    # arrange(stat_sort, desc(stat_sort)) %>% 
-    # select(-stat_sort) %>% 
+    # m_get_player_df()$id[1:3] %>%
+    join_config_stat(get_player_top_stats_config(), m_get_player_df()$id[120]) %>%
+    mutate(stat_sort = stat) %>%
+    arrange(stat_sort, desc(stat_sort)) %>%
+    select(-stat_sort) %>%
     map_dfr(\(id) get_players_stats_group(id))
   
   players_stats_table
