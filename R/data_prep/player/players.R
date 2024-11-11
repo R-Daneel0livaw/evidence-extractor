@@ -10,8 +10,12 @@ m_get_player_df <- memoise(get_player_df)
 
 get_player_top_stats <- function() {
   players_stats_table <-
-    m_get_player_df()$id[120] %>%
-    # m_get_player_df()$id[1:3] %>%
+    # m_get_player_df()$id[120] %>%
+    m_get_player_df()$id[1:3] %>%
+    # join_config_stat(get_player_top_stats_config(), m_get_player_df()$id[1:3]) %>%
+    # mutate(stat_sort = stat) %>%
+    # arrange(stat_sort, desc(stat_sort)) %>% 
+    # select(-stat_sort) %>% 
     map_dfr(\(id) get_players_stats_group(id))
   
   players_stats_table
@@ -175,4 +179,15 @@ join_players_college <- function(players_table, players_college_identifier) {
     select(!college_id)
   
   players_table
+}
+
+get_player_top_stats_config <- function() {
+  data <- tribble(
+    ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header, ~identifier,
+    "table#per_game_stats", "per_g",  "g", "pts", "mp", FALSE, FALSE, "tfoot tr[id] > *",
+    "table#totals", "",  "mp", "pts", "", FALSE, FALSE, "tfoot tr:nth-child(1) > *",
+    "table#advanced", "",  "age", "pts", "", TRUE, TRUE, "tfoot tr[id] > *"
+  )
+  
+  data
 }
