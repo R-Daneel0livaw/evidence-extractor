@@ -184,9 +184,9 @@ join_players_college <- function(players_table, players_college_identifier) {
 get_player_top_stats_config <- function() {
   data <- tribble(
     ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header, ~identifier,
-    "table#per_game_stats", "",  "games", "pts", "", FALSE, FALSE, "tfoot tr[id] > *",
-    # "table#totals", "",  "mp", "pts", "", FALSE, FALSE, "tfoot tr:nth-child(1) > *",
-    "table#advanced", "",  "games", "pts", "", FALSE, FALSE, "tfoot tr[id] > *"
+    "table#per_game_stats", "",  "games", "pts_per_g", "", FALSE, FALSE, "tfoot tr[id] > *",
+    # "table#totals", "",  "g", "trp_dbl", "", FALSE, FALSE, "tfoot tr:nth-child(1) > *",
+    "table#advanced", "",  "games", "vorp", "", FALSE, FALSE, "tfoot tr[id] > *"
   )
   
   data
