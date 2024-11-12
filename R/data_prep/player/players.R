@@ -17,8 +17,9 @@ get_player_top_stats <- function() {
     arrange(stat_sort, desc(stat_sort)) %>%
     select(-stat_sort) %>%
     transpose() %>% View()
-    map_dfr(\(config_row) get_players_stats_group(config_row))
+    map_dfr(\(config_row) get_players_stats_group(config_row)) %>% 
     # map_dfr(\(id) get_players_stats_group(id))
+    distinct(name, connector_id, .keep_all = TRUE)
   
   players_stats_table
 }
