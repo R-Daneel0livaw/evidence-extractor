@@ -10,12 +10,12 @@ m_get_player_df <- memoise(get_player_df)
 
 get_player_top_stats <- function() {
   players_stats_table <-
-    join_config_stat(get_player_top_stats_config(), m_get_player_df()$id[120]) %>%
+    join_config_stat(get_player_top_stats_config(), m_get_player_df()$id[1:3]) %>%
     mutate(stat_sort = stat) %>%
     arrange(stat_sort, desc(stat_sort)) %>%
     select(-stat_sort) %>%
     transpose() %>% 
-    map_dfr(\(config_row) get_players_stats_group(config_row)) %>% 
+    map_dfr(\(config_row) get_players_stats_group(config_row)) %>%
     distinct(name, connector_id, .keep_all = TRUE)
   
   players_stats_table
@@ -84,10 +84,10 @@ get_individual_players_stats_group <- function(config_row, view) {
     pivot_wider(names_from = data_stat, values_from = text) %>%
     mutate(type = "PLAYER") %>%
     relocate(type, id) %>%
-    select(!(year_id:pos))
+    select(type, id, all_of(config_row$stats_start[1]):all_of(config_row$stats_end[1]))
   
     players_stats <- convert_to_stats(players_stats_table, config_row$stats_start)
-  
+
     players_stats
 }
 
@@ -174,7 +174,7 @@ get_player_top_stats_config <- function() {
   data <- tribble(
     ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header, ~identifier,
     "table#per_game_stats", "",  "games", "pts_per_g", "", FALSE, FALSE, "tfoot tr[id] > *",
-    # "table#totals", "",  "g", "trp_dbl", "", FALSE, TRUE, "tfoot tr:nth-child(1) > *",
+    # "table#totals", "",  "fg", "trp_dbl", "", FALSE, TRUE, "tfoot tr:nth-child(1) > *",
     "table#advanced", "",  "games", "vorp", "", FALSE, FALSE, "tfoot tr[id] > *"
   )
   
