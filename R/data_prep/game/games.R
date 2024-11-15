@@ -1,7 +1,7 @@
 get_game_df <- function() {
   games_table <-
     month.name[10:12] %>%
-    map2_dfr(2023, \(month, season) get_games_group(str_to_lower(month), season))
+    map2_dfr(2024, \(month, season) get_games_group(str_to_lower(month), season))
   
   games_table
 }
