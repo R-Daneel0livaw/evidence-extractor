@@ -34,7 +34,11 @@ get_games_group <- function(month, season) {
 
 get_game_player_stats <- function() {
   games_players_stats_table <-  
-    get_game_df()$id[1] %>% 
+    join_config_stat(get_game_player_config(), get_game_df()$id[1]) %>% 
+    left_join(get_game_df(), by = c("stat" = "id")) %>% 
+    rowwise() %>%
+    mutate(view = str_replace(view, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field))) %>%
+    ungroup() %>% 
     imap_dfr(\(game, index) get_games_players_stats_group(game, index))
     
     
