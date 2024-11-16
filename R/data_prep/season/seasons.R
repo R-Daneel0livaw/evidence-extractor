@@ -54,7 +54,7 @@ m_get_season_top_stats <- memoise(get_season_top_stats)
 
 get_season_team_stats <- function() {
   seasons_teams_stats_table <-  
-    join_config_stat(get_season_team_config(), m_get_season_df()$id[120]) %>%  
+    join_config_stat(get_season_team_config(), m_get_season_df()$id[2:3]) %>%  
     mutate(stat_sort = as.numeric(str_extract(stat, ".+_(\\d+)", 1))) %>%
     arrange(stat_sort, desc(stat_sort)) %>% 
     select(-stat_sort) %>% 
