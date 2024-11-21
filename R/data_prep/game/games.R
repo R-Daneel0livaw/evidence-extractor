@@ -41,6 +41,7 @@ get_game_player_stats <- function() {
     ungroup() %>% 
     imap_dfr(\(game, index) get_games_players_stats_group(game, index))
   
+  
     # join_config_stat(get_season_team_config(), m_get_season_df()$id[2:3]) %>%
     # mutate(stat_sort = as.numeric(str_extract(stat, ".+_(\\d+)", 1))) %>%
     # arrange(stat_sort, desc(stat_sort)) %>%
