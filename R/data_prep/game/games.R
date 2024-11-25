@@ -63,6 +63,14 @@ get_games_players_stats_group <- function(confid_row) {
   # visitor_basic <- get_clean_table(view, TRUE)
 }
 
+get_individual_games_players_stats_group <- function(config_row, view) {
+  identifier <-
+    extract_identifier(view = view,
+                       identifier = "tr th[data-stat='player'] a",
+                       name = c("id", "player"),
+                       id = str_extract(id, ".*/players/([^/]+)/.*", 1))
+}
+
 get_clean_games_table <- function(view) {
   games_initial_table <-
     view %>%
