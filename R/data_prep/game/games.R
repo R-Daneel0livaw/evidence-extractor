@@ -38,8 +38,9 @@ get_game_player_stats <- function() {
     left_join(get_game_df(), by = c("stat" = "id")) %>% 
     rowwise() %>%
     mutate(view = str_replace(view, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field))) %>%
-    ungroup() %>% 
-    imap_dfr(\(game, index) get_games_players_stats_group(game, index))
+    ungroup() %>%
+    imap_dfr(\(config_row, index) get_games_players_stats_group(game, index))
+    # imap_dfr(\(game, index) get_games_players_stats_group(game, index))
   
     # join_config_stat(get_season_team_config(), m_get_season_df()$id[2:3]) %>%
     # mutate(stat_sort = as.numeric(str_extract(stat, ".+_(\\d+)", 1))) %>%
@@ -53,11 +54,13 @@ get_game_player_stats <- function() {
 
 m_get_game_player_stats <- memoise(get_game_player_stats)
 
-get_games_players_stats_group <- function(game, index) {
-  games_players_stats_page <- discover_page(paste0("https://www.basketball-reference.com/boxscores/", game, ".html"))
-  view <- games_players_stats_page(paste0("table#box-", get_game_df()$visitor_id[index], "-game-basic"))
+# get_games_players_stats_group <- function(game, index) {
+get_games_players_stats_group <- function(confid_row) {
+  games_players_stats_page <- discover_page(paste0("https://www.basketball-reference.com/boxscores/", config_row$stat, ".html"))
+  # view <- games_players_stats_page(paste0("table#box-", get_game_df()$visitor_id[index], "-game-basic"))
+  get_individual_games_players_stats_group(config_row, games_players_stats_page(config_row$view))
   
-  visitor_basic <- get_clean_table(view, TRUE)
+  # visitor_basic <- get_clean_table(view, TRUE)
 }
 
 get_clean_games_table <- function(view) {
