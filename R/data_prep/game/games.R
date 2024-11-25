@@ -57,10 +57,7 @@ m_get_game_player_stats <- memoise(get_game_player_stats)
 # get_games_players_stats_group <- function(game, index) {
 get_games_players_stats_group <- function(confid_row) {
   games_players_stats_page <- discover_page(paste0("https://www.basketball-reference.com/boxscores/", config_row$stat, ".html"))
-  # view <- games_players_stats_page(paste0("table#box-", get_game_df()$visitor_id[index], "-game-basic"))
-  get_individual_games_players_stats_group(config_row, games_players_stats_page(config_row$view))
   
-  # visitor_basic <- get_clean_table(view, TRUE)
 }
 
 get_individual_games_players_stats_group <- function(config_row, view) {
