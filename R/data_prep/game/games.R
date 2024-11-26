@@ -55,17 +55,24 @@ get_game_player_stats <- function() {
 m_get_game_player_stats <- memoise(get_game_player_stats)
 
 # get_games_players_stats_group <- function(game, index) {
-get_games_players_stats_group <- function(confid_row) {
+get_games_players_stats_group <- function(config_row) {
   games_players_stats_page <- discover_page(paste0("https://www.basketball-reference.com/boxscores/", config_row$stat, ".html"))
-  
+  get_individual_games_players_stats_group(config_row, games_players_stats_page(config_row$view))
 }
 
-get_individual_games_players_stats_group <- function(config_row, view) {
+get_individual_games_players_stats_group <- function(view) {
   identifier <-
     extract_identifier(view = view,
                        identifier = "tr th[data-stat='player'] a",
                        name = c("id", "player"),
-                       id = str_extract(id, ".*/players/([^/]+)/.*", 1))
+                       id = str_extract(id, "(?<=/players/[a-z]/)[a-z0-9]+"))
+  
+  games_identifier_table <-
+    join_identifier(initial_table = get_clean_games_players_stats_table(view, config_row$multi_row_header,
+                                                                        config_row$dummy_header),
+                    identifier = identifier,
+                    team) %>%
+    filter(!is.na(id))
 }
 
 get_clean_games_table <- function(view) {
