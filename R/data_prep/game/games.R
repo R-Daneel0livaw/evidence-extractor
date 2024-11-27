@@ -71,7 +71,7 @@ get_individual_game_player_stats_group <- function(view) {
     join_identifier(initial_table = get_clean_game_player_stats_table(view, config_row$multi_row_header,
                                                                         config_row$dummy_header),
                     identifier = identifier,
-                    team) %>%
+                    player) %>%
     filter(!is.na(id))
 }
 
@@ -94,6 +94,22 @@ get_clean_games_table <- function(view) {
     select(!x)
   
   games_initial_table
+}
+
+get_clean_game_player_stats_table <- function(view, multi_row_header = FALSE, 
+                                                dummy_header = FALSE) {
+  game_initial_table <- 
+    get_clean_table(view, multi_row_header)
+  
+  colnames(game_initial_table) <- get_column_names(view, "tfoot tr:nth-child(1) > *")
+  
+  if(dummy_header) {
+    game_initial_table <-
+      game_initial_table %>% 
+      select(-c(DUMMY))
+  } 
+  
+  game_initial_table
 }
 
 get_visitor <- function(view) {
