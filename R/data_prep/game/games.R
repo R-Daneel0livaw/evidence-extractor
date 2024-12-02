@@ -73,6 +73,27 @@ get_individual_game_player_stats_group <- function(view) {
                     identifier = identifier,
                     player) %>%
     filter(!is.na(id))
+  
+  
+  # player_stats_table <-
+  #   games_identifier_table %>%
+  #   mutate(type = "GAME") %>%
+  #   relocate(type, id) %>%
+  #   select(-team,-ranker) %>%
+  #   rename_stats(config_row$stat_suffix, config_row$rename_start, config_row$stats_end) 
+  # 
+  # player_stats <- convert_to_stats(player_stats_table, config_row$stats_start) %>%
+  #   mutate(id = get_uuid(nrow(.))) %>%
+  #   relocate(type, id)
+  # 
+  # game_player_stats <- duplicate_stats(teams_stats, "PLAYER", config_row$stat)
+  # 
+  # game_player_stats
+  
+  join_identifier(initial_table = get_clean_game_player_stats_table(games_players_stats_page("table#box-LAL-game-basic"), TRUE, FALSE),
+                  identifier = ident,
+                  player) %>%  filter(!is.na(id)) %>%  View() 
+
 }
 
 get_clean_games_table <- function(view) {
