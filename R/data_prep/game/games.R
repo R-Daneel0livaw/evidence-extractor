@@ -77,25 +77,30 @@ get_individual_game_player_stats_group <- function(view) {
   
   player_stats_table <-
     games_identifier_table %>%
-    mutate(type = "GAME") %>%
+    mutate(type = "PLAYER") %>%
     relocate(type, id) %>%
     rename_stats(config_row$stat_suffix, config_row$rename_start, config_row$stats_end)
 
-  # player_stats <- convert_to_stats(player_stats_table, config_row$stats_start) %>%
-  #   mutate(id = get_uuid(nrow(.))) %>%
-  #   relocate(type, id)
-  # 
-  # game_player_stats <- duplicate_stats(teams_stats, "PLAYER", config_row$stat)
-  # 
-  # game_player_stats
+  player_stats <- convert_to_stats(player_stats_table, config_row$stats_start) %>%
+    mutate(id = get_uuid(nrow(.))) %>%
+    relocate(type, id)
+
+  game_player_stats <- duplicate_stats(player_stats, "GAME", config_row$stat)
+
+  game_player_stats
   
-  join_identifier(initial_table = get_clean_game_player_stats_table(games_players_stats_page("table#box-LAL-game-basic"), TRUE, FALSE),
-                  identifier = ident,
-                  player) %>%  filter(!is.na(id)) %>%
-    mutate(type = "GAME") %>% 
-    relocate(type, id) %>% 
-    rename_stats("", "", "plus_minus") %>% 
-    convert_to_stats("mp") %>% View()
+  # pst <- join_identifier(initial_table = get_clean_game_player_stats_table(games_players_stats_page("table#box-LAL-game-basic"), TRUE, FALSE),
+  #                 identifier = ident,
+  #                 player) %>%  filter(!is.na(id)) %>%
+  #   mutate(type = "PLAYER") %>% 
+  #   relocate(type, id) %>% 
+  #   rename_stats("", "", "plus_minus") 
+  #  
+  #   ps <- convert_to_stats(pst, "mp") %>%
+  #     mutate(id = get_uuid(nrow(.))) %>%
+  #     relocate(type, id)
+  #   
+  #   duplicate_stats(ps, "GAME", "202310240DEN") %>% filter(name == "mp") %>%  View()
 
 }
 
@@ -164,9 +169,9 @@ get_game_player_config <- function() {
   data <- tribble(
     ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header, ~dynamic_field,
     "table#box-{{DYNAMIC}}-game-basic", "",  "mp", "plus_minus", "", TRUE, FALSE, "visitor_id",
-    "table#box-{{DYNAMIC}}-game-advanced", "",  "ts_pct", "bpm", "", TRUE, FALSE, "visitor_id",
-    "table#box-{{DYNAMIC}}-game-basic", "",  "mp", "plus_minus", "", TRUE, FALSE, "home_id",
-    "table#box-{{DYNAMIC}}-game-advanced", "",  "ts_pct", "bpm", "", TRUE, FALSE, "home_id"
+    # "table#box-{{DYNAMIC}}-game-advanced", "",  "ts_pct", "bpm", "", TRUE, FALSE, "visitor_id",
+    # "table#box-{{DYNAMIC}}-game-basic", "",  "mp", "plus_minus", "", TRUE, FALSE, "home_id",
+    # "table#box-{{DYNAMIC}}-game-advanced", "",  "ts_pct", "bpm", "", TRUE, FALSE, "home_id"
   )
   
   data
