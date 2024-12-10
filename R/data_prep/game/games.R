@@ -40,7 +40,9 @@ get_game_player_stats <- function() {
     mutate(view = str_replace(view, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field))) %>%
     ungroup() %>%
     transpose() %>% 
-    map_dfr(\(config_row) get_game_player_stats_group(config_row))
+    map_dfr(\(config_row) get_game_player_stats_group(config_row)) 
+  # %>% 
+    # distinct(type, name, value, connector_id, connector_type, .keep_all = T)
   
   games_players_stats_table
 }
