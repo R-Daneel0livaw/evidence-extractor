@@ -40,7 +40,13 @@ get_game_player_stats <- function() {
     mutate(view = str_replace(view, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field))) %>%
     ungroup() %>%
     transpose() %>% 
-    map_dfr(\(config_row) get_game_player_stats_group(config_row)) 
+    reduce(function(accumulator, config_row) {
+      previous_columns <- if (nrow(accumulator) > 0) names(accumulator) else character(0)
+      config_row$previous_columns <- previous_columns
+      new_data <- get_game_player_stats_group(config_row)
+      bind_rows(accumulator, new_data)
+    }, .init = data.frame()) 
+    # map_dfr(\(config_row) get_game_player_stats_group(config_row)) 
   # %>% 
     # distinct(type, name, value, connector_id, connector_type, .keep_all = T)
   
