@@ -41,12 +41,12 @@ get_game_player_stats <- function() {
     ungroup() %>%
     transpose() %>% 
     reduce(function(accumulator, config_row) {
-      previous_names <- if (nrow(accumulator) > 0) {
+      previous_stats <- if (nrow(accumulator) > 0) {
         unique(accumulator$name)
       } else {
         character(0)  
       }
-      config_row$previous_names <- previous_names
+      config_row$previous_stats <- previous_stats
       new_data <- get_game_player_stats_group(config_row)
       bind_rows(accumulator, new_data)
     }, .init = data.frame()) 
