@@ -41,14 +41,15 @@ get_game_player_stats <- function() {
     ungroup() %>%
     transpose() %>% 
     reduce(function(accumulator, config_row) {
-      previous_columns <- if (nrow(accumulator) > 0) names(accumulator) else character(0)
-      config_row$previous_columns <- previous_columns
+      previous_names <- if (nrow(accumulator) > 0) {
+        unique(accumulator$name)
+      } else {
+        character(0)  
+      }
+      config_row$previous_names <- previous_names
       new_data <- get_game_player_stats_group(config_row)
       bind_rows(accumulator, new_data)
     }, .init = data.frame()) 
-    # map_dfr(\(config_row) get_game_player_stats_group(config_row)) 
-  # %>% 
-    # distinct(type, name, value, connector_id, connector_type, .keep_all = T)
   
   games_players_stats_table
 }
