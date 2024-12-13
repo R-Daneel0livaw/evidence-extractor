@@ -41,16 +41,17 @@ get_game_player_stats <- function() {
     ungroup() %>%
     transpose() %>% 
     reduce(function(accumulator, config_row) {
-      previous_stats <- if (nrow(accumulator) > 0) {
-        unique(accumulator$name)
+      previous_stats <- if ("previous_stats" %in% names(accumulator)) {
+        accumulator$previous_stats  
       } else {
-        character(0)  
+        character(0) 
       }
       config_row$previous_stats <- previous_stats
       new_data <- get_game_player_stats_group(config_row)
-      bind_rows(accumulator, new_data)
-    }, .init = data.frame()) 
-  
+      accumulator$previous_stats <- unique(new_data$name)
+      accumulator$data <- bind_rows(accumulator$data, new_data)
+      accumulator
+    }, .init = list(data = data.frame(), previous_stats = character(0))) %>% .$data
   games_players_stats_table
 }
 
@@ -84,6 +85,7 @@ get_individual_game_player_stats_group <- function(config_row, view) {
     mutate(starter = row_number() <= 5)
 
   player_stats <- convert_to_stats(player_stats_table, config_row$stats_start) %>%
+    filter(!(name %in% config_row$previous_stats)) %>%
     mutate(id = get_uuid(nrow(.))) %>%
     relocate(type, id)
 
