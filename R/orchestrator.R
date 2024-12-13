@@ -24,7 +24,7 @@ players_nodes <- m_get_player_df()
 players_stats <- m_get_player_top_stats()
 
 games_nodes <- m_get_game_df()
-games_stats
+# games_stats <- m_get_games_top_stats()
 games_players_stats <- m_get_game_player_stats()
 
 colleges_nodes <- m_get_college_df()
