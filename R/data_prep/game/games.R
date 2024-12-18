@@ -63,6 +63,31 @@ get_game_player_stats <- function() {
 
 m_get_game_player_stats <- memoise(get_game_player_stats)
 
+get_game_team_stats <- function() {
+  games_teams_stats_table <-  
+    join_config_stat(get_game_team_config(), get_game_df()$id[1]) %>% 
+    # left_join(get_game_df(), by = c("stat" = "id")) %>% 
+    # rowwise() %>%
+    # mutate(view = str_replace(view, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field))) %>%
+    # ungroup() %>%
+    # transpose() %>% 
+    # reduce(function(accumulator, config_row) {
+    #   previous_stats <- if ("previous_stats" %in% names(accumulator)) {
+    #     accumulator$previous_stats  
+    #   } else {
+    #     character(0) 
+    #   }
+    #   config_row$previous_stats <- previous_stats
+    #   new_data <- get_game_player_stats_group(config_row)
+    #   accumulator$previous_stats <- unique(new_data$name)
+    #   accumulator$data <- bind_rows(accumulator$data, new_data)
+    #   accumulator
+    # }, .init = list(data = data.frame(), previous_stats = character(0))) %>% .$data
+  games_teams_stats_table
+}
+
+m_get_game_team_stats <- memoise(get_game_team_stats)
+
 get_game_player_stats_group <- function(config_row) {
   game_player_stats_page <- discover_page(paste0("https://www.basketball-reference.com/boxscores/", config_row$stat, ".html"))
   get_individual_game_player_stats_group(config_row, game_player_stats_page(config_row$view))
@@ -168,6 +193,18 @@ get_game_player_config <- function() {
     "table#box-{{DYNAMIC}}-game-advanced", "",  "ts_pct", "bpm", "", TRUE, FALSE, "visitor_id",
     "table#box-{{DYNAMIC}}-game-basic", "",  "mp", "plus_minus", "", TRUE, FALSE, "home_id",
     "table#box-{{DYNAMIC}}-game-advanced", "",  "ts_pct", "bpm", "", TRUE, FALSE, "home_id"
+  )
+  
+  data
+}
+
+get_game_team_config <- function() {
+  data <- tribble(
+    ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header, ~dynamic_field,
+    # "table#box-{{DYNAMIC}}-game-basic", "",  "mp", "plus_minus", "", TRUE, FALSE, "visitor_id",
+    # "table#box-{{DYNAMIC}}-game-advanced", "",  "ts_pct", "bpm", "", TRUE, FALSE, "visitor_id",
+    # "table#box-{{DYNAMIC}}-game-basic", "",  "mp", "plus_minus", "", TRUE, FALSE, "home_id",
+    # "table#box-{{DYNAMIC}}-game-advanced", "",  "ts_pct", "bpm", "", TRUE, FALSE, "home_id"
   )
   
   data
