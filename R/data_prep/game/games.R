@@ -201,7 +201,7 @@ get_game_player_config <- function() {
 get_game_team_config <- function() {
   data <- tribble(
     ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header,
-    "table#line_score", "",  "1", "4", "", TRUE, FALSE,
+    "table#line_score", "",  "1", "T", "", TRUE, FALSE,
     "table#four_factors", "",  "pace", "off_rtg", "", TRUE, FALSE,
   )
   
