@@ -119,8 +119,8 @@ get_game_team_stats_group <- function(config_row) {
 get_individual_game_team_stats_group <- function(config_row, view) {
   # identifier <-
   #   extract_identifier(view = view,
-  #                      identifier = "tr th[data-stat='player'] a",
-  #                      name = c("id", "player"),
+  #                      identifier = "tr th[data-stat='team'] a",
+  #                      name = c("id", "team"),
   #                      id = str_extract(id, "(?<=/players/[a-z]/)[a-z0-9]+"))
   # 
   # game_identifier_table <-
