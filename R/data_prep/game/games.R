@@ -66,23 +66,9 @@ m_get_game_player_stats <- memoise(get_game_player_stats)
 get_game_team_stats <- function() {
   games_teams_stats_table <-  
     join_config_stat(get_game_team_config(), get_game_df()$id[1]) %>% 
-    # left_join(get_game_df(), by = c("stat" = "id")) %>% 
-    # rowwise() %>%
-    # mutate(view = str_replace(view, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field))) %>%
-    # ungroup() %>%
-    # transpose() %>% 
-    # reduce(function(accumulator, config_row) {
-    #   previous_stats <- if ("previous_stats" %in% names(accumulator)) {
-    #     accumulator$previous_stats  
-    #   } else {
-    #     character(0) 
-    #   }
-    #   config_row$previous_stats <- previous_stats
-    #   new_data <- get_game_player_stats_group(config_row)
-    #   accumulator$previous_stats <- unique(new_data$name)
-    #   accumulator$data <- bind_rows(accumulator$data, new_data)
-    #   accumulator
-    # }, .init = list(data = data.frame(), previous_stats = character(0))) %>% .$data
+    transpose() %>%
+    map_dfr(\(config_row) get_game_team_stats_group(config_row))
+  
   games_teams_stats_table
 }
 
@@ -123,6 +109,43 @@ get_individual_game_player_stats_group <- function(config_row, view) {
   game_player_stats <- duplicate_stats(player_stats, "GAME", config_row$stat)
 
   game_player_stats
+}
+
+get_game_team_stats_group <- function(config_row) {
+  game_team_stats_page <- discover_page(paste0("https://www.basketball-reference.com/boxscores/", config_row$stat, ".html"))
+  get_individual_game_team_stats_group(config_row, game_player_stats_page(config_row$view))
+}
+
+get_individual_game_team_stats_group <- function(config_row, view) {
+  # identifier <-
+  #   extract_identifier(view = view,
+  #                      identifier = "tr th[data-stat='player'] a",
+  #                      name = c("id", "player"),
+  #                      id = str_extract(id, "(?<=/players/[a-z]/)[a-z0-9]+"))
+  # 
+  # game_identifier_table <-
+  #   join_identifier(initial_table = get_clean_game_player_stats_table(view, config_row$multi_row_header,
+  #                                                                       config_row$dummy_header),
+  #                   identifier = identifier,
+  #                   player) %>%
+  #   filter(!is.na(id))
+  # 
+  # 
+  # player_stats_table <-
+  #   game_identifier_table %>%
+  #   mutate(type = "PLAYER") %>%
+  #   relocate(type, id) %>%
+  #   rename_stats(config_row$stat_suffix, config_row$rename_start, config_row$stats_end) %>% 
+  #   mutate(starter = row_number() <= 5)
+  # 
+  # player_stats <- convert_to_stats(player_stats_table, config_row$stats_start) %>%
+  #   filter(!(name %in% config_row$previous_stats)) %>%
+  #   mutate(id = get_uuid(nrow(.))) %>%
+  #   relocate(type, id)
+  # 
+  # game_player_stats <- duplicate_stats(player_stats, "GAME", config_row$stat)
+  # 
+  # game_player_stats
 }
 
 get_clean_games_table <- function(view) {
