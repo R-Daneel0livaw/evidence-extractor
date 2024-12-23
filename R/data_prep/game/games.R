@@ -228,9 +228,9 @@ get_game_player_config <- function() {
 
 get_game_team_config <- function() {
   data <- tribble(
-    ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header, ~dynamic_field,
-    "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "visitor_id",
-    "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "home_id",
+    ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header, ~dynamic_field, ~identifier,
+    "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "visitor_id", "table#box-DEN-q1-basic tfoot tr td[data-stat='pts']",
+    "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "home_id", "box-DEN-q1-basic"
   )
   
   data
