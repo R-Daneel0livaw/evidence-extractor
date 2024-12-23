@@ -49,6 +49,18 @@ select_until_end <- function(data, start) {
   filtered_df
 }
 
+extract_value <- function(view, identifier, name, ...) {
+  extracted_value <-
+    view %>%
+    html_elements(identifier) %>%
+    html_text() %>% 
+    as.data.frame() %>% 
+    setNames(name) %>% 
+    mutate(...)
+  
+  extracted_value
+}
+
 extract_identifier <- function(view, identifier, names, 
                                attrs = NULL, add_text = TRUE, ...) {
   extracted_identifier <-

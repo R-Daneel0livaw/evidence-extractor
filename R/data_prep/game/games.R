@@ -69,6 +69,7 @@ get_game_team_stats <- function() {
     left_join(get_game_df(), by = c("stat" = "id")) %>% 
     rowwise() %>%
     mutate(view = str_replace(view, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field)),
+           identifier = str_replace(identifier, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field)),
            dynamic_field = get(dynamic_field)) %>%
     ungroup() %>%
     transpose() %>% 
@@ -124,25 +125,16 @@ get_game_team_stats_group <- function(config_row) {
 
 get_individual_game_team_stats_group <- function(config_row, view) {
   identifier <-
-    extract_identifier(view = view,
-                       identifier = "tr th[data-stat^='team'] a",
-                       name = c("id", "team"),
-                       id = str_extract(id, "(?<=/teams/)[^/]+(?=/)"))
-  # game_identifier_table <-
-  #   join_identifier(initial_table = get_clean_game_player_stats_table(view, config_row$multi_row_header,
-  #                                                                       config_row$dummy_header),
-  #                   identifier = identifier,
-  #                   player) %>%
-  #   filter(!is.na(id))
-  # 
-  # 
-  # player_stats_table <-
-  #   game_identifier_table %>%
-  #   mutate(type = "PLAYER") %>%
-  #   relocate(type, id) %>%
-  #   rename_stats(config_row$stat_suffix, config_row$rename_start, config_row$stats_end) %>% 
-  #   mutate(starter = row_number() <= 5)
-  # 
+    extract_value(view = view,
+                  identifier = config_row$identifier,
+                  name = "pts",
+                  id = config_row$dynamic_field)
+  
+  team_stats <-
+    identifier %>% 
+    mutate(type = "TEAM")
+    relocate(type, id)
+    
   # player_stats <- convert_to_stats(player_stats_table, config_row$stats_start) %>%
   #   filter(!(name %in% config_row$previous_stats)) %>%
   #   mutate(id = get_uuid(nrow(.))) %>%
@@ -229,8 +221,14 @@ get_game_player_config <- function() {
 get_game_team_config <- function() {
   data <- tribble(
     ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header, ~dynamic_field, ~identifier,
-    "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "visitor_id", "table#box-DEN-q1-basic tfoot tr td[data-stat='pts']",
-    "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "home_id", "box-DEN-q1-basic"
+    "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "visitor_id", "table#box-{{DYNAMIC}}-q1-basic tfoot tr td[data-stat='pts']",
+    # "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "home_id", "table#box-{{DYNAMIC}}-q1-basic tfoot tr td[data-stat='pts']",
+    # "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "visitor_id", "table#box-{{DYNAMIC}}-q2-basic tfoot tr td[data-stat='pts']",
+    # "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "home_id", "table#box-{{DYNAMIC}}-q2-basic tfoot tr td[data-stat='pts']",
+    # "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "visitor_id", "table#box-{{DYNAMIC}}-q3-basic tfoot tr td[data-stat='pts']",
+    # "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "home_id", "table#box-{{DYNAMIC}}-q3-basic tfoot tr td[data-stat='pts']",
+    # "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "visitor_id", "table#box-{{DYNAMIC}}-q4-basic tfoot tr td[data-stat='pts']",
+    # "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "home_id", "table#box-{{DYNAMIC}}-q4-basic tfoot tr td[data-stat='pts']"
   )
   
   data
