@@ -54,8 +54,8 @@ extract_identifier <- function(view, identifier, names,
   extracted_identifier <-
     view %>%
     html_elements(identifier) %>%
-    html_attrs_dfr(attrs = attrs, add_text = add_text) %>% 
-    rename_all(~ names) %>% 
+    html_attrs_dfr(attrs = attrs, add_text = add_text) %>%
+    rename_all(~ names) %>%
     mutate(...)
   
   extracted_identifier

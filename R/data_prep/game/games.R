@@ -66,7 +66,12 @@ m_get_game_player_stats <- memoise(get_game_player_stats)
 get_game_team_stats <- function() {
   games_teams_stats_table <-  
     join_config_stat(get_game_team_config(), get_game_df()$id[1]) %>% 
-    transpose() %>%
+    left_join(get_game_df(), by = c("stat" = "id")) %>% 
+    rowwise() %>%
+    mutate(view = str_replace(view, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field)),
+           dynamic_field = get(dynamic_field)) %>%
+    ungroup() %>%
+    transpose() %>% 
     map_dfr(\(config_row) get_game_team_stats_group(config_row))
   
   games_teams_stats_table
@@ -113,16 +118,16 @@ get_individual_game_player_stats_group <- function(config_row, view) {
 
 get_game_team_stats_group <- function(config_row) {
   game_team_stats_page <- discover_page(paste0("https://www.basketball-reference.com/boxscores/", config_row$stat, ".html"))
-  get_individual_game_team_stats_group(config_row, game_player_stats_page(config_row$view))
+  print(game_team_stats_page)
+  get_individual_game_team_stats_group(config_row, game_team_stats_page(config_row$view))
 }
 
 get_individual_game_team_stats_group <- function(config_row, view) {
-  # identifier <-
-  #   extract_identifier(view = view,
-  #                      identifier = "tr th[data-stat^='team'] a",
-  #                      name = c("id", "team"),
-  #                      id = str_extract(id, "(?<=/teams/)[^/]+(?=/)"))
-  # 
+  identifier <-
+    extract_identifier(view = view,
+                       identifier = "tr th[data-stat^='team'] a",
+                       name = c("id", "team"),
+                       id = str_extract(id, "(?<=/teams/)[^/]+(?=/)"))
   # game_identifier_table <-
   #   join_identifier(initial_table = get_clean_game_player_stats_table(view, config_row$multi_row_header,
   #                                                                       config_row$dummy_header),
@@ -223,9 +228,9 @@ get_game_player_config <- function() {
 
 get_game_team_config <- function() {
   data <- tribble(
-    ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header,
-    "table#line_score", "",  "1", "T", "", TRUE, FALSE,
-    "table#four_factors", "",  "pace", "off_rtg", "", TRUE, FALSE,
+    ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header, ~dynamic_field,
+    "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "visitor_id",
+    "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "home_id",
   )
   
   data
