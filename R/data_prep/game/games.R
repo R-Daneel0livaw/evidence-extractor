@@ -135,8 +135,6 @@ get_individual_game_team_stats_group <- function(config_row, view) {
     setNames("pts") %>% 
     mutate(id = config_row$dynamic_field)
   
-  # print("Got here")
-  
   team_stats_table <-
     identifier %>%
     mutate(type = "TEAM") %>%
@@ -149,7 +147,6 @@ get_individual_game_team_stats_group <- function(config_row, view) {
 
   game_team_stats <- duplicate_stats(team_stats, "GAME", config_row$stat)
 
-  # print(game_team_stats)
   game_team_stats
 }
 
