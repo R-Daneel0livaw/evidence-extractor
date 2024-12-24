@@ -119,30 +119,38 @@ get_individual_game_player_stats_group <- function(config_row, view) {
 
 get_game_team_stats_group <- function(config_row) {
   game_team_stats_page <- discover_page(paste0("https://www.basketball-reference.com/boxscores/", config_row$stat, ".html"))
-  print(game_team_stats_page)
   get_individual_game_team_stats_group(config_row, game_team_stats_page(config_row$view))
 }
 
 get_individual_game_team_stats_group <- function(config_row, view) {
-  identifier <-
-    extract_value(view = view,
-                  identifier = config_row$identifier,
-                  name = "pts",
-                  id = config_row$dynamic_field)
+  # identifier <-
+  #   extract_value(view = read_html("https://www.basketball-reference.com/boxscores/202310240DEN.html") ,
+  #                 identifier = config_row$identifier,
+  #                 name = "pts",
+  #                 id = config_row$dynamic_field)
   
-  team_stats <-
-    identifier %>% 
-    mutate(type = "TEAM")
+  identifier <- read_html("https://www.basketball-reference.com/boxscores/202310240DEN.html") %>% 
+    html_elements(config_row$identifier) %>% html_text() %>% 
+    as.data.frame() %>% 
+    setNames("pts") %>% 
+    mutate(id = config_row$dynamic_field)
+  
+  # print("Got here")
+  
+  team_stats_table <-
+    identifier %>%
+    mutate(type = "TEAM") %>%
+    relocate(type, id) %>%
+    rename_stats(config_row$stat_suffix, config_row$rename_start, config_row$stats_end)
+  
+  team_stats <- convert_to_stats(team_stats_table, paste0(config_row$stats_start, "_", config_row$stat_suffix)) %>%
+    mutate(id = get_uuid(nrow(.))) %>%
     relocate(type, id)
-    
-  # player_stats <- convert_to_stats(player_stats_table, config_row$stats_start) %>%
-  #   filter(!(name %in% config_row$previous_stats)) %>%
-  #   mutate(id = get_uuid(nrow(.))) %>%
-  #   relocate(type, id)
-  # 
-  # game_player_stats <- duplicate_stats(player_stats, "GAME", config_row$stat)
-  # 
-  # game_player_stats
+
+  game_team_stats <- duplicate_stats(team_stats, "GAME", config_row$stat)
+
+  # print(game_team_stats)
+  game_team_stats
 }
 
 get_clean_games_table <- function(view) {
@@ -221,10 +229,10 @@ get_game_player_config <- function() {
 get_game_team_config <- function() {
   data <- tribble(
     ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header, ~dynamic_field, ~identifier,
-    "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "visitor_id", "table#box-{{DYNAMIC}}-q1-basic tfoot tr td[data-stat='pts']",
-    # "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "home_id", "table#box-{{DYNAMIC}}-q1-basic tfoot tr td[data-stat='pts']",
-    # "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "visitor_id", "table#box-{{DYNAMIC}}-q2-basic tfoot tr td[data-stat='pts']",
-    # "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "home_id", "table#box-{{DYNAMIC}}-q2-basic tfoot tr td[data-stat='pts']",
+    "table#box-{{DYNAMIC}}-game-basic", "q1",  "pts", "pts", "pts", TRUE, FALSE, "visitor_id", "table#box-{{DYNAMIC}}-q1-basic tfoot tr td[data-stat='pts']",
+    "table#box-{{DYNAMIC}}-game-basic", "q1",  "pts", "pts", "pts", TRUE, FALSE, "home_id", "table#box-{{DYNAMIC}}-q1-basic tfoot tr td[data-stat='pts']",
+    "table#box-{{DYNAMIC}}-game-basic", "q2",  "pts", "pts", "pts", TRUE, FALSE, "visitor_id", "table#box-{{DYNAMIC}}-q2-basic tfoot tr td[data-stat='pts']",
+    "table#box-{{DYNAMIC}}-game-basic", "q2",  "pts", "pts", "pts", TRUE, FALSE, "home_id", "table#box-{{DYNAMIC}}-q2-basic tfoot tr td[data-stat='pts']",
     # "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "visitor_id", "table#box-{{DYNAMIC}}-q3-basic tfoot tr td[data-stat='pts']",
     # "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "home_id", "table#box-{{DYNAMIC}}-q3-basic tfoot tr td[data-stat='pts']",
     # "table#box-{{DYNAMIC}}-game-basic", "",  "pts", "pts", "", TRUE, FALSE, "visitor_id", "table#box-{{DYNAMIC}}-q4-basic tfoot tr td[data-stat='pts']",
