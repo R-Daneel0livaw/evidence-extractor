@@ -129,11 +129,11 @@ get_individual_game_team_stats_group <- function(config_row, view) {
   #                 name = "pts",
   #                 id = config_row$dynamic_field)
   
-  identifier <- read_html("https://www.basketball-reference.com/boxscores/202310240DEN.html") %>% 
-    html_elements(config_row$identifier) %>% html_text() %>% 
-    as.data.frame() %>% 
-    setNames("pts") %>% 
-    mutate(id = config_row$dynamic_field)
+  # identifier <- read_html("https://www.basketball-reference.com/boxscores/202310240DEN.html") %>% 
+  #   html_elements(config_row$identifier) %>% html_text() %>% 
+  #   as.data.frame() %>% 
+  #   setNames("pts") %>% 
+  #   mutate(id = config_row$dynamic_field)
   
   team_stats_table <-
     identifier %>%
