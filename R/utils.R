@@ -52,14 +52,11 @@ select_until_end <- function(data, start) {
 extract_value <- function(view, identifier, name, ...) {
   extracted_value <-
     view %>%
-    html_elements(identifier)
-  # %>%
-    # html_text() %>% 
-    # as.data.frame() %>% 
-    # setNames(name) %>% 
-    # mutate(...)
-  
-  print(extracted_value)
+    html_elements(identifier) %>%
+    html_text() %>%
+    as.data.frame() %>%
+    setNames(name) %>%
+    mutate(...)
   
   extracted_value
 }
