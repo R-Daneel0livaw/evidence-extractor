@@ -124,7 +124,7 @@ get_game_team_stats_group <- function(config_row) {
 
 get_individual_game_team_stats_group <- function(config_row, view) {
   identifier <-
-    extract_value(view = read_html("https://www.basketball-reference.com/boxscores/202310240DEN.html") ,
+    extract_value(view = view,
                   identifier = config_row$identifier,
                   name = "pts",
                   id = config_row$dynamic_field)
@@ -219,17 +219,17 @@ get_game_player_config <- function() {
 
 get_game_team_config <- function() {
   data <- tribble(
-    ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header, ~dynamic_field, ~identifier, ~url
-    "table#box-{{DYNAMIC}}-q1-basic", "q1",  "pts", "pts", "pts", TRUE, FALSE, "visitor_id", "table#box-{{DYNAMIC}}-q1-basic tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
-    "table#box-{{DYNAMIC}}-q1-basic", "q1",  "pts", "pts", "pts", TRUE, FALSE, "home_id", "table#box-{{DYNAMIC}}-q1-basic tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
-    "table#box-{{DYNAMIC}}-q2-basic", "q2",  "pts", "pts", "pts", TRUE, FALSE, "visitor_id", "table#box-{{DYNAMIC}}-q2-basic tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
-    "table#box-{{DYNAMIC}}-q2-basic", "q2",  "pts", "pts", "pts", TRUE, FALSE, "home_id", "table#box-{{DYNAMIC}}-q2-basic tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
-    "table#box-{{DYNAMIC}}-q3-basic", "q3",  "pts", "pts", "pts", TRUE, FALSE, "visitor_id", "table#box-{{DYNAMIC}}-q3-basic tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
-    "table#box-{{DYNAMIC}}-q3-basic", "q3",  "pts", "pts", "pts", TRUE, FALSE, "home_id", "table#box-{{DYNAMIC}}-q3-basic tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
-    "table#box-{{DYNAMIC}}-q4-basic", "q4",  "pts", "pts", "pts", TRUE, FALSE, "visitor_id", "table#box-{{DYNAMIC}}-q4-basic tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
-    "table#box-{{DYNAMIC}}-q4-basic", "q4",  "pts", "pts", "pts", TRUE, FALSE, "home_id", "table#box-{{DYNAMIC}}-q4-basic tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
-    "table#box-{{DYNAMIC}}-game-basic", "total",  "pts", "pts", "pts", TRUE, FALSE, "visitor_id", "table#box-{{DYNAMIC}}-game-basic tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
-    "table#box-{{DYNAMIC}}-game-basic", "total",  "pts", "pts", "pts", TRUE, FALSE, "home_id", "table#box-{{DYNAMIC}}-game-basic tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/"
+    ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header, ~dynamic_field, ~identifier, ~url,
+    "table#box-{{DYNAMIC}}-q1-basic", "q1",  "pts", "pts", "pts", TRUE, FALSE, "visitor_id", "tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
+    "table#box-{{DYNAMIC}}-q1-basic", "q1",  "pts", "pts", "pts", TRUE, FALSE, "home_id", "tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
+    "table#box-{{DYNAMIC}}-q2-basic", "q2",  "pts", "pts", "pts", TRUE, FALSE, "visitor_id", "tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
+    "table#box-{{DYNAMIC}}-q2-basic", "q2",  "pts", "pts", "pts", TRUE, FALSE, "home_id", "tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
+    "table#box-{{DYNAMIC}}-q3-basic", "q3",  "pts", "pts", "pts", TRUE, FALSE, "visitor_id", "tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
+    "table#box-{{DYNAMIC}}-q3-basic", "q3",  "pts", "pts", "pts", TRUE, FALSE, "home_id", "tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
+    "table#box-{{DYNAMIC}}-q4-basic", "q4",  "pts", "pts", "pts", TRUE, FALSE, "visitor_id", "tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
+    "table#box-{{DYNAMIC}}-q4-basic", "q4",  "pts", "pts", "pts", TRUE, FALSE, "home_id", "tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
+    "table#box-{{DYNAMIC}}-game-basic", "total",  "pts", "pts", "pts", TRUE, FALSE, "visitor_id", "tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
+    "table#box-{{DYNAMIC}}-game-basic", "total",  "pts", "pts", "pts", TRUE, FALSE, "home_id", "tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/"
   )
   
   data
