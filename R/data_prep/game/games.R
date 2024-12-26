@@ -118,7 +118,7 @@ get_individual_game_player_stats_group <- function(config_row, view) {
 }
 
 get_game_team_stats_group <- function(config_row) {
-  game_team_stats_page <- discover_page(paste0("https://www.basketball-reference.com/boxscores/", config_row$stat, ".html"))
+  game_team_stats_page <- discover_page(paste0(config_row$url, config_row$stat, ".html"))
   get_individual_game_team_stats_group(config_row, game_team_stats_page(config_row$view))
 }
 
