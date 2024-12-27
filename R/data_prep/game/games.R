@@ -64,7 +64,7 @@ get_game_player_stats <- function() {
 m_get_game_player_stats <- memoise(get_game_player_stats)
 
 get_game_team_stats <- function() {
-  games_teams_stats_table <-  
+  games_teams_stats_box_table <-  
     join_config_stat(get_game_team_config(), get_game_df()$id[1]) %>% 
     left_join(get_game_df(), by = c("stat" = "id")) %>% 
     rowwise() %>%
@@ -75,7 +75,21 @@ get_game_team_stats <- function() {
     transpose() %>% 
     map_dfr(\(config_row) get_game_team_stats_group(config_row))
   
-  games_teams_stats_table
+  
+  games_teams_stats_shoot_table <-  
+    join_config_stat(get_game_team_config(), get_game_df()$id[1]) %>% 
+    left_join(get_game_df(), by = c("stat" = "id")) %>% 
+    rowwise() %>%
+    mutate(view = str_replace(view, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field)),
+           identifier = str_replace(identifier, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field)),
+           dynamic_field = get(dynamic_field)) %>%
+    ungroup() %>%
+    transpose() %>% 
+    map_dfr(\(config_row) get_game_team_stats_group_2(config_row))
+  
+  games_teams_stats_table <- rbind(df1, df2)
+  
+  games_teams_stats_box_table
 }
 
 m_get_game_team_stats <- memoise(get_game_team_stats)
@@ -122,6 +136,11 @@ get_game_team_stats_group <- function(config_row) {
   get_individual_game_team_stats_group(config_row, game_team_stats_page(config_row$view))
 }
 
+get_game_team_stats_group_2 <- function(config_row) {
+  game_team_stats_page <- discover_page(paste0("https://www.basketball-reference.com/boxscores/shot-chart/", config_row$stat, ".html"))
+  get_individual_game_team_stats_group_2(config_row, game_team_stats_page(config_row$view))
+}
+
 get_individual_game_team_stats_group <- function(config_row, view) {
   identifier <-
     extract_value(view = view,
@@ -142,6 +161,28 @@ get_individual_game_team_stats_group <- function(config_row, view) {
   game_team_stats <- duplicate_stats(team_stats, "GAME", config_row$stat)
 
   game_team_stats
+}
+
+get_individual_game_team_stats_group_2 <- function(config_row, view) {
+  # identifier <-
+  #   extract_value(view = view,
+  #                 identifier = config_row$identifier,
+  #                 name = "pts",
+  #                 id = config_row$dynamic_field)
+  # 
+  # team_stats_table <-
+  #   identifier %>%
+  #   mutate(type = "TEAM") %>%
+  #   relocate(type, id) %>%
+  #   rename_stats(config_row$stat_suffix, config_row$rename_start, config_row$stats_end)
+  # 
+  # team_stats <- convert_to_stats(team_stats_table, paste0(config_row$stats_start, "_", config_row$stat_suffix)) %>%
+  #   mutate(id = get_uuid(nrow(.))) %>%
+  #   relocate(type, id)
+  # 
+  # game_team_stats <- duplicate_stats(team_stats, "GAME", config_row$stat)
+  # 
+  # game_team_stats
 }
 
 get_clean_games_table <- function(view) {
