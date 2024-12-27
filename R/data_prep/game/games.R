@@ -235,6 +235,17 @@ get_game_team_config <- function() {
   data
 }
 
+
+get_game_team_config_2 <- function() {
+  data <- tribble(
+    ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header, ~dynamic_field,
+    "table#shooting-{{DYNAMIC}}", "",  "quarter", "fg_ast_pct", "", FALSE, FALSE, "visitor_id",
+    "table#shooting-{{DYNAMIC}}", "",  "quarter", "fg_ast_pct", "", FALSE, FALSE, "home_id",
+  )
+  
+  data
+}
+
 join_games_identifier <- function(initial_table, identifier) {
   joined_table <-
     join_identifier(initial_table = initial_table, identifier = identifier, row_number)
