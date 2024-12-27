@@ -76,20 +76,20 @@ get_game_team_stats <- function() {
     map_dfr(\(config_row) get_game_team_stats_group(config_row))
   
   
-  games_teams_stats_shoot_table <-  
-    join_config_stat(get_game_team_config(), get_game_df()$id[1]) %>% 
-    left_join(get_game_df(), by = c("stat" = "id")) %>% 
-    rowwise() %>%
-    mutate(view = str_replace(view, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field)),
-           identifier = str_replace(identifier, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field)),
-           dynamic_field = get(dynamic_field)) %>%
-    ungroup() %>%
-    transpose() %>% 
-    map_dfr(\(config_row) get_game_team_stats_group_2(config_row))
-  
-  games_teams_stats_table <- rbind(df1, df2)
-  
-  games_teams_stats_box_table
+  # games_teams_stats_shoot_table <-  
+  #   join_config_stat(get_game_team_config(), get_game_df()$id[1]) %>% 
+  #   left_join(get_game_df(), by = c("stat" = "id")) %>% 
+  #   rowwise() %>%
+  #   mutate(view = str_replace(view, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field)),
+  #          identifier = str_replace(identifier, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field)),
+  #          dynamic_field = get(dynamic_field)) %>%
+  #   ungroup() %>%
+  #   transpose() %>% 
+  #   map_dfr(\(config_row) get_game_team_stats_group_2(config_row))
+  # 
+  # games_teams_stats_table <- rbind(df1, df2)
+  # 
+  # games_teams_stats_table
 }
 
 m_get_game_team_stats <- memoise(get_game_team_stats)
@@ -132,7 +132,7 @@ get_individual_game_player_stats_group <- function(config_row, view) {
 }
 
 get_game_team_stats_group <- function(config_row) {
-  game_team_stats_page <- discover_page(paste0(config_row$url, config_row$stat, ".html"))
+  game_team_stats_page <- discover_page(paste0("https://www.basketball-reference.com/boxscores/", config_row$stat, ".html"))
   get_individual_game_team_stats_group(config_row, game_team_stats_page(config_row$view))
 }
 
@@ -260,17 +260,17 @@ get_game_player_config <- function() {
 
 get_game_team_config <- function() {
   data <- tribble(
-    ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header, ~dynamic_field, ~identifier, ~url,
-    "table#box-{{DYNAMIC}}-q1-basic", "q1",  "pts", "pts", "pts", TRUE, FALSE, "visitor_id", "tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
-    "table#box-{{DYNAMIC}}-q1-basic", "q1",  "pts", "pts", "pts", TRUE, FALSE, "home_id", "tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
-    "table#box-{{DYNAMIC}}-q2-basic", "q2",  "pts", "pts", "pts", TRUE, FALSE, "visitor_id", "tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
-    "table#box-{{DYNAMIC}}-q2-basic", "q2",  "pts", "pts", "pts", TRUE, FALSE, "home_id", "tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
-    "table#box-{{DYNAMIC}}-q3-basic", "q3",  "pts", "pts", "pts", TRUE, FALSE, "visitor_id", "tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
-    "table#box-{{DYNAMIC}}-q3-basic", "q3",  "pts", "pts", "pts", TRUE, FALSE, "home_id", "tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
-    "table#box-{{DYNAMIC}}-q4-basic", "q4",  "pts", "pts", "pts", TRUE, FALSE, "visitor_id", "tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
-    "table#box-{{DYNAMIC}}-q4-basic", "q4",  "pts", "pts", "pts", TRUE, FALSE, "home_id", "tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
-    "table#box-{{DYNAMIC}}-game-basic", "total",  "pts", "pts", "pts", TRUE, FALSE, "visitor_id", "tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/",
-    "table#box-{{DYNAMIC}}-game-basic", "total",  "pts", "pts", "pts", TRUE, FALSE, "home_id", "tfoot tr td[data-stat='pts']", "https://www.basketball-reference.com/boxscores/"
+    ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header, ~dynamic_field, ~identifier,
+    "table#box-{{DYNAMIC}}-q1-basic", "q1",  "pts", "pts", "pts", TRUE, FALSE, "visitor_id", "tfoot tr td[data-stat='pts']",
+    "table#box-{{DYNAMIC}}-q1-basic", "q1",  "pts", "pts", "pts", TRUE, FALSE, "home_id", "tfoot tr td[data-stat='pts']",
+    "table#box-{{DYNAMIC}}-q2-basic", "q2",  "pts", "pts", "pts", TRUE, FALSE, "visitor_id", "tfoot tr td[data-stat='pts']",
+    "table#box-{{DYNAMIC}}-q2-basic", "q2",  "pts", "pts", "pts", TRUE, FALSE, "home_id", "tfoot tr td[data-stat='pts']",
+    "table#box-{{DYNAMIC}}-q3-basic", "q3",  "pts", "pts", "pts", TRUE, FALSE, "visitor_id", "tfoot tr td[data-stat='pts']",
+    "table#box-{{DYNAMIC}}-q3-basic", "q3",  "pts", "pts", "pts", TRUE, FALSE, "home_id", "tfoot tr td[data-stat='pts']",
+    "table#box-{{DYNAMIC}}-q4-basic", "q4",  "pts", "pts", "pts", TRUE, FALSE, "visitor_id", "tfoot tr td[data-stat='pts']",
+    "table#box-{{DYNAMIC}}-q4-basic", "q4",  "pts", "pts", "pts", TRUE, FALSE, "home_id", "tfoot tr td[data-stat='pts']",
+    "table#box-{{DYNAMIC}}-game-basic", "total",  "pts", "pts", "pts", TRUE, FALSE, "visitor_id", "tfoot tr td[data-stat='pts']",
+    "table#box-{{DYNAMIC}}-game-basic", "total",  "pts", "pts", "pts", TRUE, FALSE, "home_id", "tfoot tr td[data-stat='pts']"
   )
   
   data
