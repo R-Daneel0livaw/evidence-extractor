@@ -64,19 +64,7 @@ get_game_player_stats <- function() {
 m_get_game_player_stats <- memoise(get_game_player_stats)
 
 get_game_team_stats <- function() {
-  games_teams_stats_box_table <-  
-    join_config_stat(get_game_team_config(), get_game_df()$id[1]) %>% 
-    left_join(get_game_df(), by = c("stat" = "id")) %>% 
-    rowwise() %>%
-    mutate(view = str_replace(view, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field)),
-           identifier = str_replace(identifier, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field)),
-           dynamic_field = get(dynamic_field)) %>%
-    ungroup() %>%
-    transpose() %>% 
-    map_dfr(\(config_row) get_game_team_stats_group(config_row))
-  
-  
-  # games_teams_stats_shoot_table <-  
+  # games_teams_stats_box_table <-  
   #   join_config_stat(get_game_team_config(), get_game_df()$id[1]) %>% 
   #   left_join(get_game_df(), by = c("stat" = "id")) %>% 
   #   rowwise() %>%
@@ -85,7 +73,18 @@ get_game_team_stats <- function() {
   #          dynamic_field = get(dynamic_field)) %>%
   #   ungroup() %>%
   #   transpose() %>% 
-  #   map_dfr(\(config_row) get_game_team_stats_group_2(config_row))
+  #   map_dfr(\(config_row) get_game_team_stats_group(config_row))
+  
+  
+  games_teams_stats_shoot_table <-
+    join_config_stat(get_game_team_config_2(), get_game_df()$id[1]) %>%
+    left_join(get_game_df(), by = c("stat" = "id")) %>%
+    rowwise() %>%
+    mutate(view = str_replace(view, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field)),
+           dynamic_field = get(dynamic_field)) %>%
+    ungroup() %>%
+    transpose() %>%
+    map_dfr(\(config_row) get_game_team_stats_group_2(config_row))
   # 
   # games_teams_stats_table <- rbind(df1, df2)
   # 
@@ -164,25 +163,27 @@ get_individual_game_team_stats_group <- function(config_row, view) {
 }
 
 get_individual_game_team_stats_group_2 <- function(config_row, view) {
-  # identifier <-
-  #   extract_value(view = view,
-  #                 identifier = config_row$identifier,
-  #                 name = "pts",
-  #                 id = config_row$dynamic_field)
+  team_stats_table <- get_clean_game_team_stats_table(view, config_row$multi_row_header, 
+                                                       config_row$dummy_header) %>% 
+    mutate(type = "TEAM", 
+           id = config_row$dynamic_field) %>% 
+    relocate(type, id)
+  
+  
   # 
   # team_stats_table <-
   #   identifier %>%
   #   mutate(type = "TEAM") %>%
   #   relocate(type, id) %>%
   #   rename_stats(config_row$stat_suffix, config_row$rename_start, config_row$stats_end)
-  # 
-  # team_stats <- convert_to_stats(team_stats_table, paste0(config_row$stats_start, "_", config_row$stat_suffix)) %>%
-  #   mutate(id = get_uuid(nrow(.))) %>%
-  #   relocate(type, id)
-  # 
-  # game_team_stats <- duplicate_stats(team_stats, "GAME", config_row$stat)
-  # 
-  # game_team_stats
+
+  team_stats <- convert_to_stats(team_stats_table, config_row$stats_start) %>%
+    mutate(id = get_uuid(nrow(.))) %>%
+    relocate(type, id)
+
+  game_team_stats <- duplicate_stats(team_stats, "GAME", config_row$stat)
+
+  game_team_stats
 }
 
 get_clean_games_table <- function(view) {
@@ -207,6 +208,22 @@ get_clean_games_table <- function(view) {
 }
 
 get_clean_game_player_stats_table <- function(view, multi_row_header = FALSE, 
+                                                dummy_header = FALSE) {
+  game_initial_table <- 
+    get_clean_table(view, multi_row_header)
+  
+  colnames(game_initial_table) <- get_column_names(view, "tfoot tr:nth-child(1) > *")
+  
+  if(dummy_header) {
+    game_initial_table <-
+      game_initial_table %>% 
+      select(-c(DUMMY))
+  } 
+  
+  game_initial_table
+}
+
+get_clean_game_team_stats_table <- function(view, multi_row_header = FALSE, 
                                                 dummy_header = FALSE) {
   game_initial_table <- 
     get_clean_table(view, multi_row_header)
@@ -281,7 +298,7 @@ get_game_team_config_2 <- function() {
   data <- tribble(
     ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header, ~dynamic_field,
     "table#shooting-{{DYNAMIC}}", "",  "quarter", "fg_ast_pct", "", FALSE, FALSE, "visitor_id",
-    "table#shooting-{{DYNAMIC}}", "",  "quarter", "fg_ast_pct", "", FALSE, FALSE, "home_id",
+    # "table#shooting-{{DYNAMIC}}", "",  "quarter", "fg_ast_pct", "", FALSE, FALSE, "home_id",
   )
   
   data
