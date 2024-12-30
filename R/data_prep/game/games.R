@@ -167,17 +167,11 @@ get_individual_game_team_stats_group_2 <- function(config_row, view) {
                                                        config_row$dummy_header) %>% 
     mutate(type = "TEAM", 
            id = config_row$dynamic_field) %>% 
-    relocate(type, id)
+    pivot_wider(names_from = quarter, values_from = config_row$stats_start:config_row$stats_end, names_prefix = "q_")
+    relocate(type, id) %>% 
+    clean_names()
   
-  
-  # 
-  # team_stats_table <-
-  #   identifier %>%
-  #   mutate(type = "TEAM") %>%
-  #   relocate(type, id) %>%
-  #   rename_stats(config_row$stat_suffix, config_row$rename_start, config_row$stats_end)
-
-  team_stats <- convert_to_stats(team_stats_table, config_row$stats_start) %>%
+  team_stats <- convert_to_stats(team_stats_table, "fg_q_1st") %>%
     mutate(id = get_uuid(nrow(.))) %>%
     relocate(type, id)
 
