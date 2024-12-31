@@ -64,16 +64,16 @@ get_game_player_stats <- function() {
 m_get_game_player_stats <- memoise(get_game_player_stats)
 
 get_game_team_stats <- function() {
-  # games_teams_stats_box_table <-  
-  #   join_config_stat(get_game_team_config(), get_game_df()$id[1]) %>% 
-  #   left_join(get_game_df(), by = c("stat" = "id")) %>% 
-  #   rowwise() %>%
-  #   mutate(view = str_replace(view, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field)),
-  #          identifier = str_replace(identifier, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field)),
-  #          dynamic_field = get(dynamic_field)) %>%
-  #   ungroup() %>%
-  #   transpose() %>% 
-  #   map_dfr(\(config_row) get_game_team_stats_group(config_row))
+  games_teams_stats_box_table <-
+    join_config_stat(get_game_team_config(), get_game_df()$id[1]) %>%
+    left_join(get_game_df(), by = c("stat" = "id")) %>%
+    rowwise() %>%
+    mutate(view = str_replace(view, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field)),
+           identifier = str_replace(identifier, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field)),
+           dynamic_field = get(dynamic_field)) %>%
+    ungroup() %>%
+    transpose() %>%
+    map_dfr(\(config_row) get_game_team_stats_group(config_row))
   
   
   games_teams_stats_shoot_table <-
@@ -85,10 +85,10 @@ get_game_team_stats <- function() {
     ungroup() %>%
     transpose() %>%
     map_dfr(\(config_row) get_game_team_stats_group_2(config_row))
-  # 
-  # games_teams_stats_table <- rbind(df1, df2)
-  # 
-  # games_teams_stats_table
+
+  games_teams_stats_table <- rbind(games_teams_stats_box_table, games_teams_stats_shoot_table)
+
+  games_teams_stats_table
 }
 
 m_get_game_team_stats <- memoise(get_game_team_stats)
@@ -167,7 +167,7 @@ get_individual_game_team_stats_group_2 <- function(config_row, view) {
                                                        config_row$dummy_header) %>% 
     mutate(type = "TEAM", 
            id = config_row$dynamic_field) %>% 
-    pivot_wider(names_from = quarter, values_from = config_row$stats_start:config_row$stats_end, names_prefix = "q_")
+    pivot_wider(names_from = quarter, values_from = config_row$stats_start:config_row$stats_end, names_prefix = "q_") %>% 
     relocate(type, id) %>% 
     clean_names()
   
