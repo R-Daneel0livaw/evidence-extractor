@@ -25,8 +25,12 @@ players_stats <- m_get_player_top_stats()
 
 games_nodes <- m_get_game_df()
 games_stats <- m_get_games_top_stats()
+
 games_players_stats <- m_get_game_player_stats()
+game_player_relationships <- generate_relationships(games_players_stats, "PARTICIPATED_IN")
+
 games_teams_stats <- m_get_game_team_stats()
+game_team_relationships <- generate_relationships(games_teams_stats, "PARTICIPATED_IN")
 
 colleges_nodes <- m_get_college_df()
 awards_nodes <- m_get_awards_df()
