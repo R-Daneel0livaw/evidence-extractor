@@ -11,6 +11,7 @@ source("R/data_prep/team/teams.R")
 source("R/data_prep/player/players.R")
 source("R/data_prep/game/games.R")
 source("R/data_prep/award/awards.R")
+source("R/data_prep/relationship/relationships.R")
 source("R/utils.R")
 
 seasons_nodes <- m_get_season_df()
@@ -31,6 +32,13 @@ game_player_relationships <- generate_relationships(games_players_stats, "PARTIC
 
 games_teams_stats <- m_get_game_team_stats()
 game_team_relationships <- generate_relationships(games_teams_stats, "PARTICIPATED_IN")
+
+game_season_relationships <- generate_simple_relationships(
+  games_nodes %>%
+    select(id, season) %>%
+    rename(a = season, b = id), 
+  "HAS_EVENT"
+)
 
 colleges_nodes <- m_get_college_df()
 awards_nodes <- m_get_awards_df()

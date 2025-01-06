@@ -1,7 +1,8 @@
 get_game_df <- function() {
+  season <- seasons_nodes %>% filter(id == "NBA_2024") %>% pull(id)
   games_table <-
     month.name[10:12] %>%
-    map2_dfr(2024, \(month, season) get_games_group(str_to_lower(month), season))
+    map2_dfr(season, \(month, season) get_games_group(str_to_lower(month), season))
   
   games_table
 }
@@ -15,7 +16,7 @@ get_games_top_stats <- function() {
 m_get_games_top_stats <- memoise(get_games_top_stats)
 
 get_games_group <- function(month, season) {
-  games_page <- discover_page(paste0("https://www.basketball-reference.com/leagues/NBA_", season,
+  games_page <- discover_page(paste0("https://www.basketball-reference.com/leagues/", season,
     "_games-", month, ".html"))
   games_view <- games_page("table#schedule")
 
@@ -31,7 +32,8 @@ get_games_group <- function(month, season) {
     join_games_identifier(get_clean_games_table(games_view), identifier) %>%
     join_games_identifier(get_visitor(games_view)) %>% 
     join_games_identifier(get_home(games_view)) %>% 
-    mutate(type = "GAME") %>%
+    mutate(type = "GAME",
+           season = season) %>%
     relocate(type, id, date, start_et, ot, arena, attend) %>%
     select(!c(row_number, notes, visitor, home))
   
