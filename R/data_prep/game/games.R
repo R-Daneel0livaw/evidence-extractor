@@ -95,6 +95,23 @@ get_game_team_stats <- function() {
 
 m_get_game_team_stats <- memoise(get_game_team_stats)
 
+
+get_player_team <- function() {
+  players_teams_table <-  
+    join_config_stat(get_player_team_config(), get_game_df()$id[1]) %>% 
+    left_join(get_game_df(), by = c("stat" = "id")) %>% 
+    rowwise() %>%
+    mutate(view = str_replace(view, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field)),
+           dynamic_field = get(dynamic_field)) %>%
+    ungroup() %>%
+    transpose() %>% 
+    map_dfr(\(config_row) get_player_team_group(config_row))
+    
+  players_teams_table
+}
+
+m_get_player_team <- memoise(get_player_team)
+
 get_game_player_stats_group <- function(config_row) {
   game_player_stats_page <- discover_page(paste0("https://www.basketball-reference.com/boxscores/", config_row$stat, ".html"))
   get_individual_game_player_stats_group(config_row, game_player_stats_page(config_row$view))
@@ -180,6 +197,27 @@ get_individual_game_team_stats_group_2 <- function(config_row, view) {
   game_team_stats <- duplicate_stats(team_stats, "GAME", config_row$stat)
 
   game_team_stats
+}
+
+get_player_team_group <- function(config_row) {
+  player_team_page <- discover_page(paste0("https://www.basketball-reference.com/boxscores/", config_row$stat, ".html"))
+  get_individual_player_team_group(config_row, player_team_page(config_row$view))
+}
+
+get_individual_player_team_group <- function(config_row, view) {
+  identifier <-
+    extract_identifier(view = view,
+                       identifier = "tr th[data-stat='player'] a",
+                       name = c("id", "player"),
+                       id = str_extract(id, "(?<=/players/[a-z]/)[a-z0-9]+"))
+
+  player_team <- 
+    identifier %>% 
+    mutate(player = id,
+           team = config_row$dynamic_field) %>% 
+    select(player, team)
+
+  player_team
 }
 
 get_clean_games_table <- function(view) {
@@ -295,6 +333,17 @@ get_game_team_config_2 <- function() {
     ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header, ~dynamic_field,
     "table#shooting-{{DYNAMIC}}", "",  "quarter", "fg_ast_pct", "", FALSE, FALSE, "visitor_id",
     "table#shooting-{{DYNAMIC}}", "",  "quarter", "fg_ast_pct", "", FALSE, FALSE, "home_id",
+  )
+  
+  data
+}
+
+
+get_player_team_config <- function() {
+  data <- tribble(
+    ~view, ~dynamic_field,
+    "table#box-{{DYNAMIC}}-game-basic", "visitor_id",
+    "table#box-{{DYNAMIC}}-game-basic", "home_id",
   )
   
   data
