@@ -24,6 +24,11 @@ teams_stats <- m_get_team_top_stats()
 players_nodes <- m_get_player_df()
 players_stats <- m_get_player_top_stats()
 player_team_group <- m_get_player_team()
+player_team_relationships <- generate_simple_relationships(
+  player_team_group %>%
+    rename(a = player, b = team), 
+  "PLAYED_FOR"
+)
 
 games_nodes <- m_get_game_df()
 games_stats <- m_get_games_top_stats()
