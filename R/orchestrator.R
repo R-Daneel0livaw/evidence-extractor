@@ -47,4 +47,16 @@ game_season_relationships <- generate_simple_relationships(
 )
 
 colleges_nodes <- m_get_college_df()
+players_colleges <- players_nodes %>%
+  filter(colleges != "" & !is.na(colleges)) %>%
+  separate_rows(colleges, sep = ",\\s*") %>%
+  separate(colleges, into = c("college_name", "college_id"), sep = "/") %>%
+  select(player = id, college = college_id)
+
+player_college_relationship <- generate_simple_relationships(
+  players_colleges %>%
+    rename(a = player, b = college), 
+  "ATTENDED"
+)
+
 awards_nodes <- m_get_awards_df()
