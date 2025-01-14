@@ -1,16 +1,20 @@
 Page <- function(config) {
-  structure(
-    list(config = config),
-    class = "Page"
+  page <- list(
+    config = config,
+    fetch_table = function(identifier) {
+      message("Fetching page: ", config$url)
+      page_content <- read_html(config$url) %>%
+        html_element(identifier)
+      return(page_content)
+    }
   )
+  structure(page, class = "Page")
 }
 
-discover_page <- function(page) {
+discover_page <- function(page, identifier) {
   UseMethod("discover_page")
 }
 
-discover_page.Page <- function(page) {
-  message("Fetching page: ", page$config$url)
-  page_content <- "HTML_CONTENT"  
-  return(page_content)
+discover_page.Page <- function(page, identifier) {
+  page$fetch_table(identifier)
 }
