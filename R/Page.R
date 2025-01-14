@@ -10,11 +10,3 @@ Page <- function(config) {
   )
   structure(page, class = "Page")
 }
-
-discover_page <- function(page, identifier) {
-  UseMethod("discover_page")
-}
-
-discover_page.Page <- function(page, identifier) {
-  page$fetch_table(identifier)
-}
