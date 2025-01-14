@@ -10,3 +10,15 @@ Page <- function(config) {
   )
   structure(page, class = "Page")
 }
+
+get_page_node <- function(page) {
+  UseMethod("get_page_nodes")
+}
+
+get_page_node_stats <- function(page) {
+  UseMethod("get_page_node_stats")
+}
+
+get_page_multi_node_stats <- function(page) {
+  UseMethod("get_page_multi_node_stats")
+}
