@@ -24,7 +24,8 @@ source("R/utils.R")
 seasons_page <- SeasonsPage(get_season_node_config())
 seasons_nodes_new <- get_page_node(seasons_page)
 
-
+seasons_stats_page <- SeasonsPage(get_season_stats_config())
+seasons_stats_new <- get_page_node_stats(seasons_stats_page)
 
 
 
