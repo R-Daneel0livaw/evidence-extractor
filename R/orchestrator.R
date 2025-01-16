@@ -12,7 +12,21 @@ source("R/data_prep/player/players.R")
 source("R/data_prep/game/games.R")
 source("R/data_prep/award/awards.R")
 source("R/data_prep/relationship/relationships.R")
+
+
+
+source("R/Page.R")
+source("R/SeasonsPage.R")
+source("R/Config.R")
 source("R/utils.R")
+
+
+seasons_page <- SeasonsPage(get_season_node_config())
+seasons_nodes_new <- get_page_node(seasons_page)
+
+
+
+
 
 seasons_nodes <- m_get_season_df()
 seasons_stats <- m_get_season_top_stats()

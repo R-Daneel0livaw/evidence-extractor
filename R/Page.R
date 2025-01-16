@@ -12,7 +12,7 @@ Page <- function(config) {
 }
 
 get_page_node <- function(page) {
-  UseMethod("get_page_nodes")
+  UseMethod("get_page_node")
 }
 
 get_page_node_stats <- function(page) {
