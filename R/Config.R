@@ -23,3 +23,12 @@ get_season_team_stats_config <- function() {
   )
   data
 }
+
+get_page_config <- function(page_type) {
+  config <- get_config()
+  page_config <- config %>% filter(page_type == page_type)
+  if (nrow(page_config) == 0) {
+    stop("No configuration found for page type: ", page_type)
+  }
+  return(page_config)
+}
