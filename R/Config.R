@@ -16,7 +16,7 @@ get_season_stats_config <- function() {
 
 get_season_team_stats_config <- function() {
   data <- tribble(
-    ~type, ~secondaryType, ~url, ~table_identifier, ~key_data_identifier, ~suffix,  ~start, ~end, ~rename_start, ~multi_row_header, ~dummy_header,
+    ~type, ~secondary_type, ~url, ~table_identifier, ~key_data_identifier, ~suffix,  ~start, ~end, ~rename_start, ~multi_row_header, ~dummy_header,
     "SEASON", "TEAM", "https://www.basketball-reference.com/leagues/", "table#per_game-team", "tr td[data-stat='team'] a", "per_g",  "g", "pts", "mp", FALSE, FALSE,
     "SEASON", "TEAM", "https://www.basketball-reference.com/leagues/", "table#totals-team", "tr td[data-stat='team'] a", "",  "mp", "pts", "", FALSE, FALSE,
     "SEASON", "TEAM", "https://www.basketball-reference.com/leagues/", "table#advanced-team", "tr td[data-stat='team'] a", "",  "age", "pts", "", TRUE, TRUE

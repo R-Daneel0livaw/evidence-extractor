@@ -19,6 +19,6 @@ get_page_node_stats <- function(page) {
   UseMethod("get_page_node_stats")
 }
 
-get_page_multi_node_stats <- function(page) {
+get_page_multi_node_stats <- function(page, base_nodes) {
   UseMethod("get_page_multi_node_stats")
 }
