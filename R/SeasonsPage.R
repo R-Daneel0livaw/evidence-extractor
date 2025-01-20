@@ -60,22 +60,12 @@ get_page_multi_node_stats.SeasonsPage <- function(page, base_nodes) {
     transpose() %>% 
     map_dfr(\(config_row) get_seasons_teams_stats_group(config_row))
   
-  # seasons_teams_stats <-  
-  #   join_config_stat(get_season_team_config(), m_get_season_df()$id[2:3]) %>%  
-  #   mutate(stat_sort = as.numeric(str_extract(stat, ".+_(\\d+)", 1))) %>%
-  #   arrange(stat_sort, desc(stat_sort)) %>% 
-  #   select(-stat_sort) %>% 
-  #   transpose() %>% 
-  #   map_dfr(\(config_row) get_seasons_teams_stats_group(config_row))
-  
   return(seasons_teams_stats)
 }
 
 get_seasons_teams_stats_group <- function(config_row) {
   get_individual_seasons_teams_stats_group(config_row, page$fetch_table(page$config$table_identifier, 
                                                                         dynamic_values = list(season = config_row$stat)))
-  # seasons_team_stats_page <- discover_page(paste0("https://www.basketball-reference.com/leagues/", config_row$stat, ".html"))
-  # get_individual_seasons_teams_stats_group(config_row, seasons_team_stats_page(config_row$view))
 }
 
 get_individual_seasons_teams_stats_group <- function(config_row, view) {
