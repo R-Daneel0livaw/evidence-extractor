@@ -27,6 +27,8 @@ seasons_nodes_new <- get_page_node(seasons_page)
 seasons_stats_page <- SeasonsPage(get_season_stats_config())
 seasons_stats_new <- get_page_node_stats(seasons_stats_page)
 
+seasons_teams_stats_page <- SeasonsPage(get_season_team_stats_config())
+seasons_teams_stats_new <- get_page_multi_node_stats(seasons_teams_stats_page, seasons_nodes_new)
 
 
 seasons_nodes <- m_get_season_df()
