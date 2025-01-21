@@ -53,7 +53,7 @@ get_page_node_stats.SeasonsPage <- function(page) {
 
 get_page_multi_node_stats.SeasonsPage <- function(page, base_nodes) {
   seasons_teams_stats <-  
-    join_config_stat(page$config, base_nodes$id[2:3]) %>%  
+    join_config_stat(add_index_column(page$config), base_nodes$id[2:3]) %>%  
     mutate(stat_sort = as.numeric(str_extract(stat, ".+_(\\d+)", 1))) %>%
     arrange(stat_sort, desc(stat_sort)) %>% 
     select(-stat_sort) %>% 
@@ -64,8 +64,9 @@ get_page_multi_node_stats.SeasonsPage <- function(page, base_nodes) {
 }
 
 get_seasons_teams_stats_group <- function(config_row) {
-  get_individual_seasons_teams_stats_group(config_row, page$fetch_table(config_row$table_identifier, 
-                                                                        dynamic_values = list(season = config_row$stat)))
+  get_individual_seasons_teams_stats_group(config_row, page$fetch_table(identifier = config_row$table_identifier, 
+                                                                        dynamic_values = list(season = config_row$stat),
+                                                                        index = config_row$index))
 }
 
 get_individual_seasons_teams_stats_group <- function(config_row, view) {

@@ -12,7 +12,6 @@ Page <- function(config) {
           url <- gsub(placeholder, dynamic_values[[key]], url)
         }
       }
-      
       message("Fetching page: ", url)
       page_content <- read_html(url) %>%
         html_element(identifier)

@@ -5,6 +5,13 @@ discover_page <- function(url) {
     }
 }
 
+add_index_column <- function(df, index_name = "index") {
+  updated_df <- df %>%
+    mutate(!!index_name := row_number())
+  
+  updated_df
+}
+
 get_clean_table <- function(view, include_row_to_names = FALSE) {
   clean_table <-
     view %>%
