@@ -53,26 +53,29 @@ get_page_node_stats.SeasonsPage <- function(page) {
 
 get_page_multi_node_stats.SeasonsPage <- function(page, base_nodes) {
   seasons_teams_stats <-  
-    join_config_stat(add_index_column(page$config), base_nodes$id[2:3]) %>%  
+    join_config_stat(add_index_column(page$config), base_nodes$id[2:3]) %>%
     mutate(stat_sort = as.numeric(str_extract(stat, ".+_(\\d+)", 1))) %>%
-    arrange(stat_sort, desc(stat_sort)) %>% 
-    select(-stat_sort) %>% 
-    transpose() %>% 
-    map_dfr(\(config_row) get_seasons_teams_stats_group(config_row))
+    arrange(stat_sort, desc(stat_sort)) %>%
+    select(-stat_sort) %>%
+    transpose() %>%
+    map_dfr(\(config_row) get_seasons_teams_stats_group(config_row, page))
   
   return(seasons_teams_stats)
 }
 
-get_seasons_teams_stats_group <- function(config_row) {
+get_seasons_teams_stats_group <- function(config_row, page) {
+  print("Innnnn")
+  print(config_row)
+  print(page)
   get_individual_seasons_teams_stats_group(config_row, page$fetch_table(identifier = config_row$table_identifier, 
                                                                         dynamic_values = list(season = config_row$stat),
-                                                                        index = config_row$index))
+                                                                        index = config_row$index), page)
 }
 
-get_individual_seasons_teams_stats_group <- function(config_row, view) {
+get_individual_seasons_teams_stats_group <- function(config_row, view, page) {
   identifier <-
     extract_identifier(view = view,
-                       identifier = page$config$key_data_identifier,
+                       identifier = config_row$key_data_identifier,
                        name = c("id", "team"),
                        id = str_extract(id, ".*/teams/([^/]+)/.*", 1))
 
