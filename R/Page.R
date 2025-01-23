@@ -1,4 +1,5 @@
 Page <- function(config) {
+  cache <- new.env(parent = emptyenv())
   page <- list(
     config = config,
     fetch_table = function(identifier, dynamic_values = list(), index = 1) {
@@ -12,10 +13,17 @@ Page <- function(config) {
           url <- gsub(placeholder, dynamic_values[[key]], url)
         }
       }
-      message("Fetching page: ", url)
-      page_content <- read_html(url) %>%
+      if (!exists(url, envir = cache)) {
+        message("Fetching page: ", url)
+        page_content <- read_html(url)
+        assign(url, page_content, envir = cache)
+      } else {
+        message("Using cached page: ", url)
+      }
+      page_content <- get(url, envir = cache)
+      table_content <- page_content %>%
         html_element(identifier)
-      return(page_content)
+      return(table_content)
     }
   )
   structure(page, class = "Page")
