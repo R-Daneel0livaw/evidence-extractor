@@ -1,3 +1,8 @@
+rate_limiter <- new.env(parent = emptyenv())
+rate_limiter$call_timestamps <- numeric()  
+rate_limiter$max_calls <- 10         
+rate_limiter$time_window <- 60    
+
 Page <- function(config) {
   cache <- new.env(parent = emptyenv())
   page <- list(
