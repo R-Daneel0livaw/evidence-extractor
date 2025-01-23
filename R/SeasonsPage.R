@@ -64,9 +64,6 @@ get_page_multi_node_stats.SeasonsPage <- function(page, base_nodes) {
 }
 
 get_seasons_teams_stats_group <- function(config_row, page) {
-  print("Innnnn")
-  print(config_row)
-  print(page)
   get_individual_seasons_teams_stats_group(config_row, page$fetch_table(identifier = config_row$table_identifier, 
                                                                         dynamic_values = list(season = config_row$stat),
                                                                         index = config_row$index), page)
