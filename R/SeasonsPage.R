@@ -27,13 +27,7 @@ get_page_node_stats.SeasonsPage <- function(page) {
   base_get_page_node(
     page = page,
     clean_fn = get_clean_seasons_stats_table, 
-    join_fn = function(initial_table, identifier) {
-      join_identifier(
-        initial_table = initial_table,
-        identifier = identifier,
-        season
-      )
-    },
+    join_fn = join_seasons_identifier,
     mutate_fn = function(data) {
       data %>%
         mutate(type = page$config$type) %>%
