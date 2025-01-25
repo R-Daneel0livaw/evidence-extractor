@@ -24,28 +24,24 @@ get_page_node.SeasonsPage <- function(page) {
 }
 
 get_page_node_stats.SeasonsPage <- function(page) {
-  seasons_view <- page$fetch_table(page$config$table_identifier)
-
-  identifier <-
-    extract_identifier(view = seasons_view,
-                       identifier = page$config$key_data_identifier,
-                       name = c("id", "season"),
-                       id = str_extract(id, ".*/([A-Z]+_\\d+).html", 1))
-
-  seasons_identifier_table <-
-    join_identifier(initial_table = get_clean_seasons_stats_table(seasons_view),
-                    identifier = identifier,
-                    season)
-
-  seasons_stats_table <-
-    seasons_identifier_table %>%
-    mutate(type = page$config$type) %>%
-    relocate(type, id) %>%
-    select(-season)
-
-  seasons_stats <- convert_to_stats(seasons_stats_table, "age")
-
-  return(seasons_stats)
+  base_get_page_node(
+    page = page,
+    clean_fn = get_clean_seasons_stats_table, 
+    join_fn = function(initial_table, identifier) {
+      join_identifier(
+        initial_table = initial_table,
+        identifier = identifier,
+        season
+      )
+    },
+    mutate_fn = function(data) {
+      data %>%
+        mutate(type = page$config$type) %>%
+        relocate(type, id) %>%
+        convert_to_stats(page$config$start) 
+    },
+    select_cols = c("-season") 
+  )
 }
 
 get_page_multi_node_stats.SeasonsPage <- function(page, base_nodes) {
