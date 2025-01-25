@@ -12,13 +12,16 @@ Page <- function(config) {
       if (index > nrow(config) || index < 1) {
         stop("Invalid index: Please provide a valid row index.")
       }
+      
       url <- config$url[index]
+      
       if (!is.null(dynamic_values) && length(dynamic_values) > 0) {
         for (key in names(dynamic_values)) {
           placeholder <- paste0("\\{", key, "\\}")
           url <- gsub(placeholder, dynamic_values[[key]], url)
         }
       }
+      
       if (!exists(url, envir = page_cache)) {
         enforce_rate_limit()
         message("Fetching page: ", url)
@@ -27,9 +30,11 @@ Page <- function(config) {
       } else {
         message("Using cached page: ", url)
       }
+      
       page_content <- get(url, envir = page_cache)
       table_content <- page_content %>%
         html_element(identifier)
+      
       return(table_content)
     }
   )
