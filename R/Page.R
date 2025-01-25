@@ -85,7 +85,12 @@ base_get_page_node <- function(page, clean_fn, join_fn, mutate_fn, filter_fn = N
   result <- mutate_fn(identifier_table)
   
   if (!is.null(select_cols)) {
-    result <- result %>% select(any_of(select_cols))
+    if (all(grepl("^-", select_cols))) {
+      exclude_cols <- gsub("^-", "", select_cols)
+      result <- result %>% select(-any_of(exclude_cols))
+    } else {
+      result <- result %>% select(any_of(select_cols))
+    }
   }
   
   return(result)
