@@ -50,10 +50,13 @@ get_page_multi_node_stats <- function(page, base_nodes) {
 
 enforce_rate_limit <- function() {
   current_time <- as.numeric(Sys.time())
+  
   valid_timestamps <- rate_limiter$call_timestamps[
     rate_limiter$call_timestamps > (current_time - rate_limiter$time_window)
   ]
+  
   rate_limiter$call_timestamps <- valid_timestamps
+  
   if (length(rate_limiter$call_timestamps) < rate_limiter$max_calls) {
     rate_limiter$call_timestamps <- c(rate_limiter$call_timestamps, current_time)
   } else {
