@@ -4,26 +4,23 @@ SeasonsPage <- function(config) {
 }
 
 get_page_node.SeasonsPage <- function(page) {
-  seasons_view <- page$fetch_table(page$config$table_identifier)
-  
-  identifier <-
-    extract_identifier(view = seasons_view,
-                       identifier = page$config$key_data_identifier,
-                       names = c("id", "season"),
-                       id = str_extract(id, ".*/([A-Z]+_\\d+).html", 1)) %>% 
-    filter(str_detect(id, "NBA"))
-  
-  seasons_identifier_table <-
-    join_seasons_identifier(get_clean_seasons_table(seasons_view), identifier)
-  
-  seasons <-
-    seasons_identifier_table %>%
-    mutate(start = as.numeric(str_replace(season, "-.*", "")),
-           end = start + 1,
-           type = page$config$type) %>% 
-    select(type, id, season, start, end)
-  
-  return(seasons)
+  base_get_page_node(
+    page = page,
+    clean_fn = get_clean_seasons_table,  
+    join_fn = join_seasons_identifier, 
+    mutate_fn = function(data) {
+      data %>%
+        mutate(
+          start = as.numeric(str_replace(season, "-.*", "")),
+          end = start + 1,
+          type = page$config$type
+        )
+    },
+    filter_fn = function(data) {
+      data %>% filter(str_detect(id, "NBA"))
+    },
+    select_cols = c("type", "id", "season", "start", "end")
+  )
 }
 
 get_page_node_stats.SeasonsPage <- function(page) {

@@ -6,7 +6,6 @@ rate_limiter$max_calls <- 10
 rate_limiter$time_window <- 60    
 
 Page <- function(config) {
-  cache <- new.env(parent = emptyenv())
   page <- list(
     config = config,
     fetch_table = function(identifier, dynamic_values = list(), index = 1) {
@@ -37,6 +36,18 @@ Page <- function(config) {
   structure(page, class = "Page")
 }
 
+get_page_node <- function(page) {
+  UseMethod("get_page_node")
+}
+
+get_page_node_stats <- function(page) {
+  UseMethod("get_page_node_stats")
+}
+
+get_page_multi_node_stats <- function(page, base_nodes) {
+  UseMethod("get_page_multi_node_stats")
+}
+
 enforce_rate_limit <- function() {
   current_time <- as.numeric(Sys.time())
   valid_timestamps <- rate_limiter$call_timestamps[
@@ -55,15 +66,27 @@ enforce_rate_limit <- function() {
   }
 }
 
-
-get_page_node <- function(page) {
-  UseMethod("get_page_node")
-}
-
-get_page_node_stats <- function(page) {
-  UseMethod("get_page_node_stats")
-}
-
-get_page_multi_node_stats <- function(page, base_nodes) {
-  UseMethod("get_page_multi_node_stats")
+base_get_page_node <- function(page, clean_fn, join_fn, mutate_fn, filter_fn = NULL, select_cols = NULL) {
+  view <- page$fetch_table(page$config$table_identifier)
+  
+  identifier <- extract_identifier(
+    view = view,
+    identifier = page$config$key_data_identifier,
+    names = c("id", "season"), 
+    id = str_extract(id, ".*/([A-Z]+_\\d+).html", 1)
+  )
+  
+  if (!is.null(filter_fn)) {
+    identifier <- filter_fn(identifier)
+  }
+  
+  identifier_table <- join_fn(clean_fn(view), identifier)
+  
+  result <- mutate_fn(identifier_table)
+  
+  if (!is.null(select_cols)) {
+    result <- result %>% select(any_of(select_cols))
+  }
+  
+  return(result)
 }
