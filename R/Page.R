@@ -80,7 +80,7 @@ base_get_page_node <- function(page, clean_fn, join_fn, mutate_fn, filter_fn = N
   identifier <- extract_identifier(
     view = view,
     identifier = page$config$key_data_identifier,
-    names = c("id", "season"), 
+    names = unlist(page$config$id_extract_names), 
     id = str_extract(id, page$config$id_extract_regex, 1)
   )
   
