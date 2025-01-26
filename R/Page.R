@@ -103,3 +103,30 @@ base_get_page_node <- function(page, clean_fn, join_fn, mutate_fn, filter_fn = N
   
   return(result)
 }
+
+base_get_page_multi_nodes <- function(
+    page, 
+    base_nodes, 
+    join_fn, 
+    mutate_fn = NULL, 
+    map_fn, 
+    select_cols = NULL
+) {
+  stats_table <- join_fn(base_nodes)
+  
+  if (!is.null(mutate_fn)) {
+    stats_table <- mutate_fn(stats_table)
+  }
+  
+  if (!is.null(select_cols)) {
+    stats_table <- stats_table %>% select(any_of(select_cols))
+  }
+  
+  config_rows <- stats_table %>%
+    transpose()
+  
+  result <- map_dfr(config_rows, map_fn)
+  
+  return(result)
+}
+
