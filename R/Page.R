@@ -81,7 +81,7 @@ base_get_page_node <- function(page, clean_fn, join_fn, mutate_fn, filter_fn = N
     view = view,
     identifier = page$config$key_data_identifier,
     names = c("id", "season"), 
-    id = str_extract(id, ".*/([A-Z]+_\\d+).html", 1)
+    id = str_extract(id, page$config$id_extract_regex, 1)
   )
   
   if (!is.null(filter_fn)) {
