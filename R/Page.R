@@ -104,7 +104,7 @@ base_get_page_node <- function(page, clean_fn, join_fn, mutate_fn, filter_fn = N
   return(result)
 }
 
-base_get_page_multi_nodes <- function(
+base_get_config_rows <- function(
     page, 
     base_nodes, 
     join_fn, 
