@@ -39,7 +39,7 @@ get_page_node_stats.SeasonsPage <- function(page) {
 }
 
 get_page_multi_node_stats.SeasonsPage <- function(page, base_nodes) {
-  join_fn <- function(base_nodes) {
+  join_fn <- function(page, base_nodes) {
     join_config_stat(add_index_column(page$config), base_nodes$id[2:3])
   }
   
@@ -50,7 +50,7 @@ get_page_multi_node_stats.SeasonsPage <- function(page, base_nodes) {
       select(-stat_sort)
   }
   
-  map_fn <- function(config_row) {
+  map_fn <- function(page, config_row) {
     get_seasons_teams_stats_group(config_row, page)
   }
   

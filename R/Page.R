@@ -112,7 +112,7 @@ base_get_config_rows <- function(
     map_fn, 
     select_cols = NULL
 ) {
-  stats_table <- join_fn(base_nodes)
+  stats_table <- join_fn(page, base_nodes)
   
   if (!is.null(mutate_fn)) {
     stats_table <- mutate_fn(stats_table)
@@ -125,7 +125,7 @@ base_get_config_rows <- function(
   config_rows <- stats_table %>%
     transpose()
   
-  result <- map_dfr(config_rows, map_fn)
+  result <- map_dfr(config_rows, \(config_row) map_fn(page, config_row))
   
   return(result)
 }
