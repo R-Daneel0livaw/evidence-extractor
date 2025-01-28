@@ -71,8 +71,8 @@ get_individual_seasons_teams_stats_group <- function(config_row, page) {
   identifier <-
     extract_identifier(view = view,
                        identifier = config_row$key_data_identifier,
-                       name = c("id", "team"),
-                       id = str_extract(id, ".*/teams/([^/]+)/.*", 1))
+                       name = unlist(config_row$id_extract_names),
+                       id = str_extract(id, config_row$id_extract_regex, 1))
 
   seasons_identifier_table <-
     join_identifier(initial_table = get_clean_seasons_teams_stats_table(view, config_row$multi_row_header,
