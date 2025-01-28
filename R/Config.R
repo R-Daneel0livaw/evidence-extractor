@@ -16,10 +16,10 @@ get_season_stats_config <- function() {
 
 get_season_team_stats_config <- function() {
   data <- tribble(
-    ~type, ~secondary_type, ~url, ~table_identifier, ~key_data_identifier, ~suffix,  ~start, ~end, ~rename_start, ~multi_row_header, ~dummy_header,
-    "SEASON", "TEAM", "https://www.basketball-reference.com/leagues/{season}.html", "table#per_game-team", "tr td[data-stat='team'] a", "per_g",  "g", "pts", "mp", FALSE, FALSE,
-    "SEASON", "TEAM", "https://www.basketball-reference.com/leagues/{season}.html", "table#totals-team", "tr td[data-stat='team'] a", "",  "mp", "pts", "", FALSE, FALSE,
-    "SEASON", "TEAM", "https://www.basketball-reference.com/leagues/{season}.html", "table#advanced-team", "tr td[data-stat='team'] a", "",  "age", "pts", "", TRUE, TRUE
+    ~type, ~secondary_type, ~url, ~table_identifier, ~key_data_identifier, ~suffix,  ~start, ~end, ~rename_start, ~multi_row_header, ~dummy_header, ~id_extract_names, ~id_extract_regex,
+    "SEASON", "TEAM", "https://www.basketball-reference.com/leagues/{season}.html", "table#per_game-team", "tr td[data-stat='team'] a", "per_g",  "g", "pts", "mp", FALSE, FALSE, c("id", "team"), ".*/teams/([^/]+)/.*",
+    "SEASON", "TEAM", "https://www.basketball-reference.com/leagues/{season}.html", "table#totals-team", "tr td[data-stat='team'] a", "",  "mp", "pts", "", FALSE, FALSE, c("id", "team"), ".*/teams/([^/]+)/.*",
+    "SEASON", "TEAM", "https://www.basketball-reference.com/leagues/{season}.html", "table#advanced-team", "tr td[data-stat='team'] a", "",  "age", "pts", "", TRUE, TRUE, c("id", "team"), ".*/teams/([^/]+)/.*"
   )
   data
 }
