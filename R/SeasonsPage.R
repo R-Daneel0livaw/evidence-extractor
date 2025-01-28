@@ -63,12 +63,6 @@ get_page_multi_node_stats.SeasonsPage <- function(page, base_nodes) {
   )
 }
 
-# get_seasons_teams_stats_group <- function(config_row, page) {
-#   get_individual_seasons_teams_stats_group(config_row, page$fetch_table(identifier = config_row$table_identifier, 
-#                                                                         dynamic_values = list(season = config_row$stat),
-#                                                                         index = config_row$index), page)
-# }
-
 get_individual_seasons_teams_stats_group <- function(config_row, page) {
   view <- page$fetch_table(identifier = config_row$table_identifier, 
                    dynamic_values = list(season = config_row$stat),
