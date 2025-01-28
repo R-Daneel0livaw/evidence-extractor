@@ -51,7 +51,7 @@ get_page_multi_node_stats.SeasonsPage <- function(page, base_nodes) {
   }
   
   map_fn <- function(page, config_row) {
-    get_seasons_teams_stats_group(config_row, page)
+    get_individual_seasons_teams_stats_group(config_row, page)
   }
   
   base_get_config_rows(
@@ -63,13 +63,17 @@ get_page_multi_node_stats.SeasonsPage <- function(page, base_nodes) {
   )
 }
 
-get_seasons_teams_stats_group <- function(config_row, page) {
-  get_individual_seasons_teams_stats_group(config_row, page$fetch_table(identifier = config_row$table_identifier, 
-                                                                        dynamic_values = list(season = config_row$stat),
-                                                                        index = config_row$index), page)
-}
+# get_seasons_teams_stats_group <- function(config_row, page) {
+#   get_individual_seasons_teams_stats_group(config_row, page$fetch_table(identifier = config_row$table_identifier, 
+#                                                                         dynamic_values = list(season = config_row$stat),
+#                                                                         index = config_row$index), page)
+# }
 
-get_individual_seasons_teams_stats_group <- function(config_row, view, page) {
+get_individual_seasons_teams_stats_group <- function(config_row, page) {
+  view <- page$fetch_table(identifier = config_row$table_identifier, 
+                   dynamic_values = list(season = config_row$stat),
+                   index = config_row$index)
+  
   identifier <-
     extract_identifier(view = view,
                        identifier = config_row$key_data_identifier,
