@@ -74,61 +74,6 @@ enforce_rate_limit <- function() {
   }
 }
 
-# base_get_page_node <- function(page,
-#                                config = NULL,
-#                                clean_fn,
-#                                join_fn,
-#                                mutate_fn,
-#                                filter_fn = NULL,
-#                                select_cols = NULL,
-#                                rename_fn = NULL) {
-#   
-#   if (is.null(config)) {
-#     config = page$config
-#   }
-#   
-#   fetch_args <- list(identifier = config$table_identifier)
-#   
-#   if (!is.null(config[["stat"]])) {
-#     fetch_args$dynamic_values <- list(season = config[["stat"]])
-#   }
-#   if (!is.null(config[["index"]])) {
-#     fetch_args$index <- config[["index"]]
-#   }
-#   
-#   view <- do.call(page$fetch_table, fetch_args)
-#   
-#   identifier <- extract_identifier(
-#     view = view,
-#     identifier = config$key_data_identifier,
-#     names = unlist(config$id_extract_names), 
-#     id = str_extract(id, config$id_extract_regex, 1)
-#   )
-#   
-#   if (!is.null(filter_fn)) {
-#     identifier <- filter_fn(identifier)
-#   }
-#   
-#   identifier_table <- join_fn(clean_fn(view), identifier)
-#   
-#   result <- mutate_fn(identifier_table)
-#   
-#   if (!is.null(select_cols)) {
-#     if (all(grepl("^-", select_cols))) {
-#       exclude_cols <- gsub("^-", "", select_cols)
-#       result <- result %>% select(-any_of(exclude_cols))
-#     } else {
-#       result <- result %>% select(any_of(select_cols))
-#     }
-#   }
-#   
-#   if (!is.null(rename_fn)) {
-#     rename_fn(config$suffix, config$rename_start, config$end) 
-#   }
-#   
-#   return(result)
-# }
-
 base_get_page_node <- function(page,
                                config = NULL,
                                clean_fn,
