@@ -74,7 +74,14 @@ enforce_rate_limit <- function() {
   }
 }
 
-base_get_page_node <- function(page, clean_fn, join_fn, mutate_fn, filter_fn = NULL, select_cols = NULL) {
+base_get_page_node <- function(page,
+                               clean_fn,
+                               join_fn,
+                               mutate_fn,
+                               filter_fn = NULL,
+                               select_cols = NULL,
+                               rename_fn = NULL) {
+  
   view <- page$fetch_table(page$config$table_identifier)
   
   identifier <- extract_identifier(
@@ -99,6 +106,10 @@ base_get_page_node <- function(page, clean_fn, join_fn, mutate_fn, filter_fn = N
     } else {
       result <- result %>% select(any_of(select_cols))
     }
+  }
+  
+  if(is.null(rename_fn)) {
+    rename_fn(page$config_row$suffix, page$config_row$rename_start, page$config_row$end) 
   }
   
   return(result)

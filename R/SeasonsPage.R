@@ -51,7 +51,7 @@ get_page_multi_node_stats.SeasonsPage <- function(page, base_nodes) {
   }
   
   map_fn <- function(page, config_row) {
-    get_individual_seasons_teams_stats_group(config_row, page)
+    get_seasons_teams_stats(config_row, page)
   }
   
   base_get_config_rows(
@@ -63,7 +63,25 @@ get_page_multi_node_stats.SeasonsPage <- function(page, base_nodes) {
   )
 }
 
-get_individual_seasons_teams_stats_group <- function(config_row, page) {
+get_seasons_teams_stats <- function(config_row, page) {
+  # base_get_page_node(
+  #   page = page,
+  #   clean_fn = get_clean_seasons_table,  
+  #   join_fn = join_seasons_identifier, 
+  #   mutate_fn = function(data) {
+  #     data %>%
+  #       mutate(
+  #         start = as.numeric(str_replace(season, "-.*", "")),
+  #         end = start + 1,
+  #         type = page$config$type
+  #       )
+  #   },
+  #   filter_fn = function(data) {
+  #     data %>% filter(str_detect(id, "NBA"))
+  #   },
+  #   select_cols = c("type", "id", "season", "start", "end")
+  # )
+  
   view <- page$fetch_table(identifier = config_row$table_identifier, 
                    dynamic_values = list(season = config_row$stat),
                    index = config_row$index)
