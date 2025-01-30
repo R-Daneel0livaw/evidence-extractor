@@ -87,7 +87,16 @@ base_get_page_node <- function(page,
     config = page$config
   }
   
-  view <- page$fetch_table(config$table_identifier)
+  fetch_args <- list(identifier = config$table_identifier)
+  
+  if (!is.null(config[["stat"]])) {
+    fetch_args$dynamic_values <- list(season = config[["stat"]])
+  }
+  if (!is.null(config[["index"]])) {
+    fetch_args$index <- config[["index"]]
+  }
+  
+  view <- do.call(page$fetch_table, fetch_args)
   
   identifier <- extract_identifier(
     view = view,

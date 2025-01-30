@@ -83,7 +83,7 @@ get_seasons_teams_stats <- function(config_row, page) {
   # )
   
   view <- page$fetch_table(identifier = config_row$table_identifier, 
-                   dynamic_values = list(season = config_row$stat),
+                   dynamic_values = list(node = config_row$stat),
                    index = config_row$index)
   
   identifier <-
