@@ -108,7 +108,7 @@ base_get_page_node <- function(page,
     }
   }
   
-  if(is.null(rename_fn)) {
+  if(!is.null(rename_fn)) {
     rename_fn(page$config_row$suffix, page$config_row$rename_start, page$config_row$end) 
   }
   
