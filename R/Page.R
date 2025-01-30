@@ -75,12 +75,17 @@ enforce_rate_limit <- function() {
 }
 
 base_get_page_node <- function(page,
+                               config = NULL,
                                clean_fn,
                                join_fn,
                                mutate_fn,
                                filter_fn = NULL,
                                select_cols = NULL,
                                rename_fn = NULL) {
+  
+  if (is.null(config)) {
+    config = page$config
+  }
   
   view <- page$fetch_table(page$config$table_identifier)
   
@@ -108,7 +113,7 @@ base_get_page_node <- function(page,
     }
   }
   
-  if(!is.null(rename_fn)) {
+  if (!is.null(rename_fn)) {
     rename_fn(page$config_row$suffix, page$config_row$rename_start, page$config_row$end) 
   }
   
