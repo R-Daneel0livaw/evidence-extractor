@@ -87,13 +87,13 @@ base_get_page_node <- function(page,
     config = page$config
   }
   
-  view <- page$fetch_table(page$config$table_identifier)
+  view <- page$fetch_table(config$table_identifier)
   
   identifier <- extract_identifier(
     view = view,
-    identifier = page$config$key_data_identifier,
-    names = unlist(page$config$id_extract_names), 
-    id = str_extract(id, page$config$id_extract_regex, 1)
+    identifier = config$key_data_identifier,
+    names = unlist(config$id_extract_names), 
+    id = str_extract(id, config$id_extract_regex, 1)
   )
   
   if (!is.null(filter_fn)) {
@@ -114,7 +114,7 @@ base_get_page_node <- function(page,
   }
   
   if (!is.null(rename_fn)) {
-    rename_fn(page$config_row$suffix, page$config_row$rename_start, page$config_row$end) 
+    rename_fn(config$suffix, config$rename_start, config$end) 
   }
   
   return(result)
