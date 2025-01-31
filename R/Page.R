@@ -98,7 +98,7 @@ base_get_page_node <- function(page,
     identifier <- filter_fn(identifier)
   }
   
-  result <- join_fn(clean_fn(view), identifier) %>%
+  result <- join_fn(get_cleaned_view(clean_fn, view, config), identifier) %>%
     mutate_fn() %>%
     apply_column_selection(select_cols)
   
@@ -113,13 +113,24 @@ build_fetch_args <- function(config) {
   fetch_args <- list(identifier = config$table_identifier)
   
   if (!is.null(config[["stat"]])) {
-    fetch_args$dynamic_values <- list(season = config[["stat"]])
+    fetch_args$dynamic_values <- list(node = config[["stat"]])
   }
   if (!is.null(config[["index"]])) {
     fetch_args$index <- config[["index"]]
   }
   
   fetch_args
+}
+
+get_cleaned_view <- function(clean_fn, view, config) {
+  extra_params <- config[c("multi_row_header", "dummy_header")]
+  extra_params <- extra_params[extra_params == TRUE]
+  
+  if (length(extra_params) > 0) {
+    do.call(clean_fn, c(list(view), extra_params))
+  } else {
+    clean_fn(view)
+  }
 }
 
 apply_column_selection <- function(data, select_cols) {
