@@ -103,7 +103,7 @@ base_get_page_node <- function(page,
     apply_column_selection(select_cols)
   
   if (!is.null(rename_fn)) {
-    rename_fn(config$suffix, config$rename_start, config$end)
+    result <- rename_fn(result, config$suffix, config$rename_start, config$end)
   }
   
   return(result)
