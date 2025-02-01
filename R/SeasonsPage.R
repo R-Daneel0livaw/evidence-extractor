@@ -31,10 +31,12 @@ get_page_node_stats.SeasonsPage <- function(page) {
     mutate_fn = function(data) {
       data %>%
         mutate(type = page$config$type) %>%
-        relocate(type, id) %>%
-        convert_to_stats(page$config$start) 
+        relocate(type, id)
     },
-    select_cols = c("-season") 
+    select_cols = c("-season"),
+    stats_fn = function(data, start) {
+        convert_to_stats(data, start) 
+    }
   )
 }
 

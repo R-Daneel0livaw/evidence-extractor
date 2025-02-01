@@ -81,7 +81,8 @@ base_get_page_node <- function(page,
                                mutate_fn,
                                filter_fn = NULL,
                                select_cols = NULL,
-                               rename_fn = NULL) {
+                               rename_fn = NULL,
+                               stats_fn = NULL) {
   
   config <- config %||% page$config 
   
@@ -104,6 +105,10 @@ base_get_page_node <- function(page,
   
   if (!is.null(rename_fn)) {
     result <- rename_fn(result, config$suffix, config$rename_start, config$end)
+  }
+  
+  if (!is.null(stats_fn)) {
+    result <- stats_fn(result, config$start)
   }
   
   return(result)
