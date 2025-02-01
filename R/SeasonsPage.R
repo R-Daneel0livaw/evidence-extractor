@@ -7,7 +7,9 @@ get_page_node.SeasonsPage <- function(page) {
   base_get_page_node(
     page = page,
     clean_fn = get_clean_seasons_table,  
-    join_fn = join_seasons_identifier, 
+    join_fn = function(cleaned_view, identifier) {
+      join_identifier(cleaned_view, identifier, season)
+    },
     mutate_fn = function(data) {
       data %>%
         mutate(
@@ -27,7 +29,9 @@ get_page_node_stats.SeasonsPage <- function(page) {
   base_get_page_node(
     page = page,
     clean_fn = get_clean_seasons_stats_table, 
-    join_fn = join_seasons_identifier,
+    join_fn = function(cleaned_view, identifier) {
+      join_identifier(cleaned_view, identifier, season)
+    },
     mutate_fn = function(data) {
       data %>%
         mutate(type = page$config$type) %>%
@@ -68,8 +72,9 @@ get_page_multi_node_stats.SeasonsPage <- function(page, base_nodes) {
 get_seasons_teams_stats <- function(config_row, page) {
   # base_get_page_node(
   #   page = page,
-  #   clean_fn = get_clean_seasons_table,  
-  #   join_fn = join_seasons_identifier, 
+  #   config = config_row,
+  #   clean_fn = get_clean_seasons_teams_stats_table,
+  #   join_fn = join_seasons_identifier,
   #   mutate_fn = function(data) {
   #     data %>%
   #       mutate(
@@ -115,13 +120,6 @@ get_seasons_teams_stats <- function(config_row, page) {
   seasons_teams_stats <- duplicate_stats(teams_stats, config_row$type, config_row$stat)
   
   return(seasons_teams_stats)
-}
-
-join_seasons_identifier <- function(initial_table, identifier) {
-  joined_table <-
-    join_identifier(initial_table = initial_table, identifier = identifier, season)
-  
-  joined_table
 }
 
 get_clean_seasons_table <- function(view) {
