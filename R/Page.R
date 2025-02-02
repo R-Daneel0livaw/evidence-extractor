@@ -108,7 +108,7 @@ base_get_page_node <- function(page,
   }
   
   if (!is.null(stats_fn)) {
-    result <- stats_fn(result, config$start)
+    result <- stats_fn(result, config)
   }
   
   return(result)
