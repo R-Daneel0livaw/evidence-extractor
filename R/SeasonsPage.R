@@ -95,37 +95,70 @@ get_seasons_teams_stats <- function(config_row, page) {
 }
 
 get_clean_seasons_table <- function(view) {
-  seasons_initial_table <-
-    view %>%
-    get_clean_table(TRUE) %>% 
-    filter(lg == "NBA")
-  
-  seasons_initial_table
+  get_clean_seasons_table_base(view, filter_nba = TRUE)
 }
 
 get_clean_seasons_stats_table <- function(view) {
-  seasons_initial_table <- 
-    view %>%
-    get_clean_table(TRUE) %>% 
-    filter(lg == "NBA", g > 0) %>% 
-    select(-c(rk, lg))
-  
+  get_clean_seasons_table_base(view, filter_nba = TRUE, filter_games = TRUE, drop_columns = c("rk", "lg"))
+}
+
+# get_clean_seasons_teams_stats_table <- function(view, multi_row_header = FALSE, dummy_header = FALSE) {
+#   cleaned_table <- get_clean_seasons_table_base(view, multi_row_header, dummy_header, clean_team_names = TRUE)
+#   
+#   colnames(cleaned_table) <- get_column_names(view, "tfoot tr:nth-child(1) > *")
+#   
+#   return(cleaned_table)
+# }
+
+get_clean_seasons_teams_stats_table <- function(view, multi_row_header = FALSE,
+                                                dummy_header = FALSE) {
+  seasons_initial_table <-
+    get_clean_table(view, multi_row_header) %>%
+    mutate(team = str_replace_all(team, "\\*", ""))
+
+  colnames(seasons_initial_table) <- get_column_names(view, "tfoot tr:nth-child(1) > *")
+
+  if(dummy_header) {
+    seasons_initial_table <-
+      seasons_initial_table %>%
+      select(-c(DUMMY))
+  }
+
   seasons_initial_table
 }
 
-get_clean_seasons_teams_stats_table <- function(view, multi_row_header = FALSE, 
-                                                dummy_header = FALSE) {
-  seasons_initial_table <- 
-    get_clean_table(view, multi_row_header) %>% 
-    mutate(team = str_replace_all(team, "\\*", ""))
+get_clean_seasons_table_base <- function(view, 
+                                         include_row_to_names = TRUE,
+                                         dummy_header = FALSE, 
+                                         filter_nba = FALSE, 
+                                         filter_games = FALSE, 
+                                         drop_columns = NULL, 
+                                         clean_team_names = FALSE) {
   
-  colnames(seasons_initial_table) <- get_column_names(view, "tfoot tr:nth-child(1) > *")
+  cleaned_table <- get_clean_table(view, include_row_to_names)
   
-  if(dummy_header) {
-    seasons_initial_table <-
-      seasons_initial_table %>% 
-      select(-c(DUMMY))
-  } 
+  if (filter_nba) {
+    cleaned_table <- cleaned_table %>% filter(lg == "NBA")
+  }
   
-  seasons_initial_table
+  if (filter_games) {
+    cleaned_table <- cleaned_table %>% filter(g > 0)
+  }
+  
+  if (!is.null(drop_columns)) {
+    cleaned_table <- cleaned_table %>% select(-all_of(drop_columns))
+  }
+  
+  if (clean_team_names) {
+    cleaned_table <- cleaned_table %>% mutate(team = str_replace_all(team, "\\*", ""))
+  }
+  
+  if (dummy_header) {
+    cleaned_table <- cleaned_table %>% select(-c(DUMMY))
+  }
+  
+  return(cleaned_table)
 }
+
+
+
