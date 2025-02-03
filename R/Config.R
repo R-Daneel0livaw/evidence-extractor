@@ -1,3 +1,28 @@
+get_page_config <- function(page_type, secondary_type = NULL) {
+  config_functions <- list(
+    "SEASON" = get_season_node_config,
+    "SEASON_STATS" = get_season_stats_config,
+    "SEASON_TEAM_STATS" = get_season_team_stats_config
+  )
+  
+  if (!page_type %in% names(config_functions)) {
+    stop("Invalid page type: ", page_type)
+  }
+  
+  config_data <- config_functions[[page_type]]()
+  
+  if (!is.null(secondary_type) && "secondary_type" %in% colnames(config_data)) {
+    config_data <- config_data %>% filter(secondary_type == !!secondary_type)
+  }
+  
+  if (nrow(config_data) == 0) {
+    stop("No configuration found for page type: ", page_type, 
+         if (!is.null(secondary_type)) paste(" and secondary type: ", secondary_type))
+  }
+  
+  return(config_data)
+}
+
 get_season_node_config <- function() {
   data <- tribble(
     ~type, ~url, ~table_identifier, ~key_data_identifier, ~suffix,  ~start, ~end, ~rename_start, ~multi_row_header, ~dummy_header, ~id_extract_names, ~id_extract_regex,
@@ -22,13 +47,4 @@ get_season_team_stats_config <- function() {
     "SEASON", "TEAM", "https://www.basketball-reference.com/leagues/{node}.html", "table#advanced-team", "tr td[data-stat='team'] a", "",  "age", "pts", "", TRUE, TRUE, c("id", "team"), ".*/teams/([^/]+)/.*"
   )
   data
-}
-
-get_page_config <- function(page_type) {
-  config <- get_config()
-  page_config <- config %>% filter(page_type == page_type)
-  if (nrow(page_config) == 0) {
-    stop("No configuration found for page type: ", page_type)
-  }
-  return(page_config)
 }
