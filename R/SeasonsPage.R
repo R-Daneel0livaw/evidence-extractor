@@ -102,34 +102,22 @@ get_clean_seasons_stats_table <- function(view) {
   get_clean_seasons_table_base(view, filter_nba = TRUE, filter_games = TRUE, drop_columns = c("rk", "lg"))
 }
 
-# get_clean_seasons_teams_stats_table <- function(view, multi_row_header = FALSE, dummy_header = FALSE) {
-#   cleaned_table <- get_clean_seasons_table_base(view, multi_row_header, dummy_header, clean_team_names = TRUE)
-#   
-#   colnames(cleaned_table) <- get_column_names(view, "tfoot tr:nth-child(1) > *")
-#   
-#   return(cleaned_table)
-# }
-
-get_clean_seasons_teams_stats_table <- function(view, multi_row_header = FALSE,
-                                                dummy_header = FALSE) {
-  seasons_initial_table <-
-    get_clean_table(view, multi_row_header) %>%
-    mutate(team = str_replace_all(team, "\\*", ""))
-
-  colnames(seasons_initial_table) <- get_column_names(view, "tfoot tr:nth-child(1) > *")
-
+get_clean_seasons_teams_stats_table <- function(view, multi_row_header = FALSE, dummy_header = FALSE) {
+  cleaned_table <- get_clean_seasons_table_base(view, include_row_to_names = multi_row_header, clean_team_names = TRUE)
+  
+  colnames(cleaned_table) <- get_column_names(view, "tfoot tr:nth-child(1) > *")
+  
   if(dummy_header) {
-    seasons_initial_table <-
-      seasons_initial_table %>%
+    cleaned_table <-
+      cleaned_table %>%
       select(-c(DUMMY))
   }
-
-  seasons_initial_table
+  
+  return(cleaned_table)
 }
 
 get_clean_seasons_table_base <- function(view, 
                                          include_row_to_names = TRUE,
-                                         dummy_header = FALSE, 
                                          filter_nba = FALSE, 
                                          filter_games = FALSE, 
                                          drop_columns = NULL, 
@@ -153,12 +141,5 @@ get_clean_seasons_table_base <- function(view,
     cleaned_table <- cleaned_table %>% mutate(team = str_replace_all(team, "\\*", ""))
   }
   
-  if (dummy_header) {
-    cleaned_table <- cleaned_table %>% select(-c(DUMMY))
-  }
-  
   return(cleaned_table)
 }
-
-
-
