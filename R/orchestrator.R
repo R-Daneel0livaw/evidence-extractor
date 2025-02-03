@@ -31,10 +31,6 @@ seasons_teams_stats_page <- SeasonsPage(get_page_config("SEASON_TEAM_STATS"))
 seasons_teams_stats_new <- get_page_multi_node_stats(seasons_teams_stats_page, seasons_nodes_new)
 
 
-seasons_nodes <- m_get_season_df()
-seasons_stats <- m_get_season_top_stats()
-seasons_teams_stats <- m_get_season_team_stats()
-
 teams_nodes <- m_get_team_df()
 teams_stats <- m_get_team_top_stats()
 
