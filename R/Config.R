@@ -2,7 +2,8 @@ get_page_config <- function(page_type, secondary_type = NULL) {
   config_functions <- list(
     "SEASON" = get_season_node_config,
     "SEASON_STATS" = get_season_stats_config,
-    "SEASON_TEAM_STATS" = get_season_team_stats_config
+    "SEASON_TEAM_STATS" = get_season_team_stats_config,
+    "TEAM" = get_team_node_config
   )
   
   if (!page_type %in% names(config_functions)) {
@@ -46,5 +47,13 @@ get_season_team_stats_config <- function() {
     "SEASON", "TEAM", "https://www.basketball-reference.com/leagues/{node}.html", "table#totals-team", "tr td[data-stat='team'] a", "",  "mp", "pts", "", FALSE, FALSE, c("id", "team"), ".*/teams/([^/]+)/.*",
     "SEASON", "TEAM", "https://www.basketball-reference.com/leagues/{node}.html", "table#advanced-team", "tr td[data-stat='team'] a", "",  "age", "pts", "", TRUE, TRUE, c("id", "team"), ".*/teams/([^/]+)/.*"
   )
+  data
+}
+
+get_team_node_config <- function() {
+  data <- tribble(
+    ~type, ~url, ~table_identifier, ~key_data_identifier, ~suffix,  ~start, ~end, ~rename_start, ~multi_row_header, ~dummy_header, ~id_extract_names, ~id_extract_regex,
+    "TEAM", "https://www.basketball-reference.com/teams/", "table#teams_active", "tr th[data-stat$='name'] a", "",  "", "", "", FALSE, FALSE, c("id", "team"), ".*/([^/]+)/$"
+  ) 
   data
 }
