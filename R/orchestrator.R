@@ -16,19 +16,23 @@ source("R/data_prep/relationship/relationships.R")
 
 source("R/Page.R")
 source("R/SeasonsPage.R")
+source("R/TeamsPage.R")
 source("R/Config.R")
 source("R/utils.R")
 
 
 seasons_page <- SeasonsPage(get_page_config("SEASON"))
-seasons_nodes_new <- get_page_node(seasons_page)
+seasons_nodes <- get_page_node(seasons_page)
 
 seasons_stats_page <- SeasonsPage(get_page_config("SEASON_STATS"))
-seasons_stats_new <- get_page_node_stats(seasons_stats_page)
+seasons_stats <- get_page_node_stats(seasons_stats_page)
 
 seasons_teams_stats_page <- SeasonsPage(get_page_config("SEASON_TEAM_STATS"))
-seasons_teams_stats_new <- get_page_multi_node_stats(seasons_teams_stats_page, seasons_nodes_new)
+seasons_teams_stats <- get_page_multi_node_stats(seasons_teams_stats_page, seasons_nodes)
 
+
+teams_page <- TeamsPage(get_page_config("TEAM"))
+teams_nodes_new <- get_page_node(teams_page)
 
 teams_nodes <- m_get_team_df()
 teams_stats <- m_get_team_top_stats()
