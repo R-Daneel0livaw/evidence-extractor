@@ -140,14 +140,26 @@ get_cleaned_view <- function(clean_fn, view, config) {
 
 apply_column_selection <- function(data, select_cols) {
   if (!is.null(select_cols)) {
-    if (all(grepl("^-", select_cols))) {
-      exclude_cols <- gsub("^-", "", select_cols)
+    expanded_cols <- unlist(lapply(select_cols, function(col) {
+      if (grepl(":", col)) {
+        col <- gsub("^-", "", col) 
+        col_range <- strsplit(col, ":")[[1]]
+        return(vars_select(names(data), all_of(col_range[1]):all_of(col_range[2])))
+      }
+      return(col)
+    }))
+    
+    exclude_cols <- expanded_cols[grepl("^-", select_cols)] %>% gsub("^-", "", .)
+    include_cols <- expanded_cols[!grepl("^-", select_cols)]
+    
+    if (length(exclude_cols) > 0) {
       return(data %>% select(-any_of(exclude_cols)))
-    } else {
-      return(data %>% select(any_of(select_cols)))
+    } else if (length(include_cols) > 0) {
+      return(data %>% select(any_of(include_cols)))
     }
   }
-  data
+  
+  data  
 }
 
 base_get_config_rows <- function(
