@@ -23,6 +23,25 @@ get_page_node.TeamsPage <- function(page) {
   )
 }
 
+get_page_node_stats.TeamsPage <- function(page) {
+  base_get_page_node(
+    page = page,
+    # clean_fn = get_clean_seasons_stats_table, 
+    # join_fn = function(view, identifier) {
+    #   join_identifier(view, identifier, season)
+    # },
+    # mutate_fn = function(data) {
+    #   data %>%
+    #     mutate(type = page$config$type) %>%
+    #     relocate(type, id)
+    # },
+    # select_cols = c("-season"),
+    stats_fn = function(data, config) {
+        convert_to_stats(data, config$start) 
+    }
+  )
+}
+
 get_clean_teams_table <- function(view) {
   seasons_initial_table <-
     view %>% 

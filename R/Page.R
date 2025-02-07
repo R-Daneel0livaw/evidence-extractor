@@ -148,7 +148,6 @@ apply_column_selection <- function(data, select_cols) {
         col_names <- names(data)
         col_indices <- tidyselect::eval_select(expr(c(all_of(col_range[1]):all_of(col_range[2]))), data)
         return(col_names[col_indices])
-        # return(vars_select(names(data), all_of(col_range[1]):all_of(col_range[2])))
       }
       return(col)
     }))
