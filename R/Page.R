@@ -76,8 +76,9 @@ enforce_rate_limit <- function() {
 
 base_get_page_node <- function(page,
                                config = NULL,
-                               clean_fn,
-                               join_fn,
+                               orig_data = NULL,
+                               clean_fn = NULL,
+                               join_fn = NULL,
                                mutate_fn,
                                filter_fn = NULL,
                                select_cols = NULL,
@@ -99,9 +100,13 @@ base_get_page_node <- function(page,
     identifier <- filter_fn(identifier)
   }
   
-  result <- join_fn(get_cleaned_view(clean_fn, view, config), identifier) %>%
-    mutate_fn() %>%
-    apply_column_selection(select_cols)
+  result <- orig_data %||% get_cleaned_view(clean_fn, view, config)
+  
+  if (!is.null(join_fn)) {
+    result <- join_fn(result, identifier) %>%
+      mutate_fn() %>%
+      apply_column_selection(select_cols)
+  }
   
   if (!is.null(rename_fn)) {
     result <- rename_fn(result, config$suffix, config$rename_start, config$end)

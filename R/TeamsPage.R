@@ -26,6 +26,7 @@ get_page_node.TeamsPage <- function(page) {
 get_page_node_stats.TeamsPage <- function(page) {
   base_get_page_node(
     page = page,
+    orig_data = NULL,
     # clean_fn = get_clean_seasons_stats_table, 
     # join_fn = function(view, identifier) {
     #   join_identifier(view, identifier, season)
