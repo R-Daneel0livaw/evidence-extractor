@@ -4,23 +4,23 @@ TeamsPage <- function(config) {
 }
 
 get_page_node.TeamsPage <- function(page) {
-  # base_get_page_node(
-  #   page = page,
-  #   clean_fn = get_clean_teams_table,
-  #   join_fn = function(view, identifier) {
-  #     join_teams_identifier(view, identifier)
-  #   },
-  #   mutate_fn = function(data) {
-  #     data %>%
-  #       join_teams_alternative_names(get_teams_alternative_names(data)) %>% 
-  #       mutate(type = page$config$type) %>%
-  #       relocate(type, id, team, alternative_names) 
-  #   },
-  #   filter_fn = function(data) {
-  #     data %>% mutate(current = TRUE)
-  #   },
-  #   select_cols =  c("-current:level", "-lg")
-  # )
+  base_get_page_node(
+    page = page,
+    clean_fn = get_clean_teams_table,
+    join_fn = function(view, identifier) {
+      join_teams_identifier(view, identifier)
+    },
+    mutate_fn = function(data) {
+      data %>%
+        join_teams_alternative_names(get_teams_alternative_names(data)) %>%
+        mutate(type = page$config$type) %>%
+        relocate(type, id, team, alternative_names)
+    },
+    filter_fn = function(data) {
+      data %>% mutate(current = TRUE)
+    },
+    select_cols =  c("-current:level", "-lg")
+  )
 }
 
 get_clean_teams_table <- function(view) {
@@ -34,7 +34,7 @@ get_clean_teams_table <- function(view) {
 
 join_teams_identifier <- function(view, identifier) {
   joined_table <-
-    join_identifier(initial_table, identifier, team) %>%
+    join_identifier(view, identifier, team) %>%
     fill(id) %>%
     replace_na(list(current = FALSE)) %>%
     mutate(level = ifelse(!duplicated(team) &
