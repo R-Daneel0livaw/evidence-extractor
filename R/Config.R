@@ -4,7 +4,7 @@ get_page_config <- function(page_type, secondary_type = NULL) {
     "SEASON_STATS" = get_season_stats_config,
     "SEASON_TEAM_STATS" = get_season_team_stats_config,
     "TEAM" = get_team_node_config,
-    "TEAMS_STATS" = get_team_stats_config
+    "TEAM_STATS" = get_team_stats_config
   )
   
   if (!page_type %in% names(config_functions)) {
@@ -61,8 +61,8 @@ get_team_node_config <- function() {
 
 get_team_stats_config <- function() {
   data <- tribble(
-    ~start,
-    "g"
+    ~type, ~url, ~table_identifier, ~start,
+    "TEAM", "https://www.basketball-reference.com/teams/", "table#teams_active", "g" 
   ) 
   data
 }
