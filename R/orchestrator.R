@@ -32,13 +32,11 @@ seasons_teams_stats <- get_page_multi_node_stats(seasons_teams_stats_page, seaso
 
 
 teams_page <- TeamsPage(get_page_config("TEAM"))
-teams_nodes_new <- get_page_node(teams_page)
+teams_nodes <- get_page_node(teams_page)
 
 teams_stats_page <- TeamsPage(get_page_config("TEAM_STATS"))
-teams_stats_new <- get_page_node_stats(teams_stats_page, teams_nodes_new)
+teams_stats <- get_page_node_stats(teams_stats_page, teams_nodes)
 
-teams_nodes <- m_get_team_df()
-teams_stats <- m_get_team_top_stats()
 
 players_nodes <- m_get_player_df()
 players_stats <- m_get_player_top_stats()

@@ -61,8 +61,8 @@ get_team_node_config <- function() {
 
 get_team_stats_config <- function() {
   data <- tribble(
-    ~type, ~url, ~table_identifier, ~start,
-    "TEAM", "https://www.basketball-reference.com/teams/", "table#teams_active", "g" 
+    ~start,
+    "g" 
   ) 
   data
 }
