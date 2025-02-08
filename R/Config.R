@@ -3,7 +3,8 @@ get_page_config <- function(page_type, secondary_type = NULL) {
     "SEASON" = get_season_node_config,
     "SEASON_STATS" = get_season_stats_config,
     "SEASON_TEAM_STATS" = get_season_team_stats_config,
-    "TEAM" = get_team_node_config
+    "TEAM" = get_team_node_config,
+    "TEAMS_STATS" = get_team_stats_config
   )
   
   if (!page_type %in% names(config_functions)) {
@@ -54,6 +55,14 @@ get_team_node_config <- function() {
   data <- tribble(
     ~type, ~url, ~table_identifier, ~key_data_identifier, ~suffix,  ~start, ~end, ~rename_start, ~multi_row_header, ~dummy_header, ~id_extract_names, ~id_extract_regex,
     "TEAM", "https://www.basketball-reference.com/teams/", "table#teams_active", "tr th[data-stat$='name'] a", "",  "", "", "", FALSE, FALSE, c("id", "team"), ".*/([^/]+)/$"
+  ) 
+  data
+}
+
+get_team_stats_config <- function() {
+  data <- tribble(
+    ~start,
+    "g"
   ) 
   data
 }
