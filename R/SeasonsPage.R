@@ -25,7 +25,7 @@ get_page_node.SeasonsPage <- function(page) {
   )
 }
 
-get_page_node_stats.SeasonsPage <- function(page) {
+get_page_node_stats.SeasonsPage <- function(page, base_nodes = NULL) {
   base_get_page_node(
     page = page,
     clean_fn = get_clean_seasons_stats_table, 

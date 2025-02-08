@@ -45,7 +45,7 @@ get_page_node <- function(page) {
   UseMethod("get_page_node")
 }
 
-get_page_node_stats <- function(page) {
+get_page_node_stats <- function(page, base_nodes = NULL) {
   UseMethod("get_page_node_stats")
 }
 
