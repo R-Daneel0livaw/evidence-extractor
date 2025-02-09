@@ -125,52 +125,6 @@ base_get_page_node <- function(page = NULL,
   return(result)
 }
 
-
-# base_get_page_node <- function(page,
-#                                config = NULL,
-#                                orig_data = NULL,
-#                                clean_fn = NULL,
-#                                join_fn = NULL,
-#                                mutate_fn,
-#                                filter_fn = NULL,
-#                                select_cols = NULL,
-#                                rename_fn = NULL,
-#                                stats_fn = NULL) {
-#   
-#   config <- config %||% page$config 
-#   
-#   view <- do.call(page$fetch_table, build_fetch_args(config))
-#   
-#   identifier <- extract_identifier(
-#     view = view,
-#     identifier = config$key_data_identifier,
-#     names = unlist(config$id_extract_names), 
-#     id = str_extract(id, config$id_extract_regex, 1)
-#   )
-#   
-#   if (!is.null(filter_fn)) {
-#     identifier <- filter_fn(identifier)
-#   }
-#   
-#   result <- orig_data %||% get_cleaned_view(clean_fn, view, config)
-#   
-#   if (!is.null(join_fn)) {
-#     result <- join_fn(result, identifier) %>%
-#       mutate_fn() %>%
-#       apply_column_selection(select_cols)
-#   }
-#   
-#   if (!is.null(rename_fn)) {
-#     result <- rename_fn(result, config$suffix, config$rename_start, config$end)
-#   }
-#   
-#   if (!is.null(stats_fn)) {
-#     result <- stats_fn(result, config)
-#   }
-#   
-#   return(result)
-# }
-
 build_fetch_args <- function(config) {
   fetch_args <- list(identifier = config$table_identifier)
   
