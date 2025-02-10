@@ -16,6 +16,7 @@ source("R/data_prep/relationship/relationships.R")
 source("R/Page.R")
 source("R/SeasonsPage.R")
 source("R/TeamsPage.R")
+source("R/PlayersPage.R")
 source("R/Config.R")
 source("R/utils.R")
 
@@ -35,6 +36,10 @@ teams_nodes <- get_page_node(teams_page)
 
 teams_stats_page <- TeamsPage(get_page_config("TEAM_STATS"))
 teams_stats <- get_page_node_stats(teams_stats_page, teams_nodes)
+
+
+players_page <- PlayersPage(get_page_config("PLAYER"))
+players_nodes <- get_page_node(players_page)
 
 
 players_nodes <- m_get_player_df()

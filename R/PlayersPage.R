@@ -4,43 +4,28 @@ PlayersPage <- function(config) {
 }
 
 get_page_node.PlayersPage <- function(page) {
-  players <- map_dfr(letters[1:3], function(letter) {
-    base_get_page_node(
-      page = page,
-      clean_fn = get_clean_players_table,
-      join_fn = function(view, identifier) {
-        join_players_identifier(view, identifier)
-      },
-      mutate_fn = function(data) {
-        data %>%
-          join_players_active(get_players_active(players_view)) %>%
-          join_players_college(get_players_college(players_view)) %>% 
-          mutate(type = page$config$type) %>%
-          relocate(type, id, active)
-      },
-      filter_fn = function(data) {
-        data %>% mutate(row_number = row_number())
-      }
-    )
+  params_grid <- expand_grid(page$config, stat = letters[1:3]) %>% transpose()
+  params_grid %>% 
+    map_dfr(function(config_row) {
+    # base_get_page_node(
+    #   page = page,
+    #   config = config_row,
+    #   clean_fn = get_clean_players_table,
+    #   join_fn = function(view, identifier) {
+    #     join_players_identifier(view, identifier)
+    #   },
+    #   mutate_fn = function(data) {
+    #     data %>%
+    #       join_players_active(get_players_active(players_view)) %>%
+    #       join_players_college(get_players_college(players_view)) %>%
+    #       mutate(type = page$config$type) %>%
+    #       relocate(type, id, active)
+    #   },
+    #   filter_fn = function(data) {
+    #     data %>% mutate(row_number = row_number())
+    #   }
+    # )
   })
-  
-  # base_get_page_node(
-  #   page = page,
-  #   clean_fn = get_clean_players_table,
-  #   join_fn = function(view, identifier) {
-  #     join_players_identifier(view, identifier)
-  #   },
-  #   mutate_fn = function(data) {
-  #     data %>%
-  #       join_players_active(get_players_active(players_view)) %>%
-  #       join_players_college(get_players_college(players_view)) %>% 
-  #       mutate(type = page$config$type) %>%
-  #       relocate(type, id, active)
-  #   },
-  #   filter_fn = function(data) {
-  #     data %>% mutate(row_number = row_number())
-  #   }
-  # )
 }
 
 get_clean_players_table <- function(view) {
