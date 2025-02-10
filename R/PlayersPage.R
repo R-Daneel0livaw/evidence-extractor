@@ -6,7 +6,7 @@ PlayersPage <- function(config) {
 get_page_node.PlayersPage <- function(page) {
   params_grid <- expand_grid(page$config, stat = letters[1:3]) %>% transpose()
   params_grid %>% 
-    map_dfr(function(config_row) {
+    map_dfr(\(config_row) {
     # base_get_page_node(
     #   page = page,
     #   config = config_row,
