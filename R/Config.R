@@ -55,7 +55,7 @@ get_season_team_stats_config <- function() {
 get_team_node_config <- function() {
   data <- tribble(
     ~type, ~url, ~table_identifier, ~key_data_identifier, ~suffix,  ~start, ~end, ~rename_start, ~multi_row_header, ~dummy_header, ~id_extract_names, ~id_extract_regex,
-    "TEAM", "https://www.basketball-reference.com/teams/{node}/", "table#teams_active", "tr th[data-stat$='name'] a", "",  "", "", "", FALSE, FALSE, c("id", "team"), ".*/([^/]+)/$"
+    "TEAM", "https://www.basketball-reference.com/teams/", "table#teams_active", "tr th[data-stat$='name'] a", "",  "", "", "", FALSE, FALSE, c("id", "team"), ".*/([^/]+)/$"
   ) 
   data
 }
@@ -71,7 +71,7 @@ get_team_stats_config <- function() {
 get_player_node_config <- function() {
   data <- tribble(
     ~type, ~url, ~table_identifier, ~key_data_identifier, ~suffix,  ~start, ~end, ~rename_start, ~multi_row_header, ~dummy_header, ~id_extract_names, ~id_extract_regex,
-    "PLAYER", "https://www.basketball-reference.com/players/", "table#players", "tr th[data-stat='player'] a", "",  "", "", "", FALSE, FALSE, c("id", "player"), "[^/]+(?=\\.html$)"
+    "PLAYER", "https://www.basketball-reference.com/players/{node}/", "table#players", "tr th[data-stat='player'] a", "",  "", "", "", FALSE, FALSE, c("id", "player"), "[^/]+(?=\\.html$)"
   ) 
   data
 }
