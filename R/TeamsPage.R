@@ -10,7 +10,7 @@ get_page_node.TeamsPage <- function(page) {
     join_fn = function(view, identifier) {
       join_teams_identifier(view, identifier)
     },
-    mutate_fn = function(data) {
+    mutate_fn = function(data, view) {
       data %>%
         join_teams_alternative_names(get_teams_alternative_names(data)) %>%
         mutate(type = page$config$type) %>%
