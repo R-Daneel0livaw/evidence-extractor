@@ -14,10 +14,10 @@ get_page_node.PlayersPage <- function(page) {
         join_fn = function(view, identifier) {
           join_players_identifier(view, identifier)
         },
-        mutate_fn = function(data) {
+        mutate_fn = function(data, view) {
           data %>%
-            join_players_active(get_players_active(players_view)) %>%
-            join_players_college(get_players_college(players_view)) %>%
+            join_players_active(get_players_active(view)) %>%
+            join_players_college(get_players_college(view)) %>%
             mutate(type = page$config$type) %>%
             relocate(type, id, active)
         },
