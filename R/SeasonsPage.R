@@ -10,7 +10,7 @@ get_page_node.SeasonsPage <- function(page) {
     join_fn = function(view, identifier) {
       join_identifier(view, identifier, season)
     },
-    mutate_fn = function(data) {
+    mutate_fn = function(data, view) {
       data %>%
         mutate(
           start = as.numeric(str_replace(season, "-.*", "")),
@@ -32,7 +32,7 @@ get_page_node_stats.SeasonsPage <- function(page) {
     join_fn = function(view, identifier) {
       join_identifier(view, identifier, season)
     },
-    mutate_fn = function(data) {
+    mutate_fn = function(data, view) {
       data %>%
         mutate(type = page$config$type) %>%
         relocate(type, id)
@@ -78,7 +78,7 @@ get_seasons_teams_stats <- function(config_row, page) {
       join_identifier(view, identifier, team) %>%
         filter(!is.na(id))
     },
-    mutate_fn = function(data) {
+    mutate_fn = function(data, view) {
       data %>% mutate(type = config_row$secondary_type) %>% 
         relocate(type, id)
     },

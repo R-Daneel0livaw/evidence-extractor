@@ -111,7 +111,7 @@ base_get_page_node <- function(page = NULL,
   }
   
   if (!is.null(mutate_fn)) {
-    result <- mutate_fn(result) %>% apply_column_selection(select_cols)
+    result <- mutate_fn(result, view) %>% apply_column_selection(select_cols)
   }
   
   if (!is.null(rename_fn)) {
