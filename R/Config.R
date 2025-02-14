@@ -80,7 +80,7 @@ get_player_node_config <- function() {
 get_player_stats_config <- function() {
   data <- tribble(
     ~type, ~url, ~table_identifier, ~key_data_identifier, ~suffix,  ~start, ~end, ~rename_start, ~multi_row_header, ~dummy_header, ~id_extract_names, ~id_extract_regex,
-    "PLAYER", "https://www.basketball-reference.com/leagues/NBA_stats_per_game.html", "table#stats-Regular-Season", "tr td[data-stat='season'] a", "",  "age", "", "", FALSE, FALSE, c("id", "season"), ".*/([A-Z]+_\\d+).html"
+    "PLAYER", "https://www.basketball-reference.com/players/{node1}/{node2}.html", "table#per_game_stats", "tfoot tr[id] > *", "", "games",  "pts_per_g", "", FALSE, FALSE, c("data_stat", "text"), ""
   )
   data
 }
