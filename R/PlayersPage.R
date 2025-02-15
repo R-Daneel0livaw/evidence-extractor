@@ -28,6 +28,41 @@ get_page_node.PlayersPage <- function(page) {
   })
 }
 
+get_page_node_stats.PlayersPage <- function(page, base_nodes = NULL) {
+  params_grid <- expand_grid(page$config, stat = base_nodes[120]) %>% transpose()
+  # params_grid %>% 
+  #   map_dfr(\(config_row) {
+  #     base_get_page_node(
+  #       page = page,
+  #       config = config_row,
+  #       clean_fn = get_clean_players_table,
+  #       join_fn = function(view, identifier) {
+  #         join_players_identifier(view, identifier)
+  #       },
+  #       mutate_fn = function(data, view) {
+  #         data %>%
+  #           join_players_active(get_players_active(view)) %>%
+  #           join_players_college(get_players_college(view)) %>%
+  #           mutate(type = page$config$type) %>%
+  #           relocate(type, id, active)
+  #       },
+  #       filter_fn = function(data) {
+  #         data %>% mutate(row_number = row_number())
+  #       }
+  #     )
+  #   }) %>% 
+  #   distinct(name, connector_id, .keep_all = TRUE)
+  
+  players_stats_table <-
+    join_config_stat(page$config, base_nodes$id[120]) %>%
+    mutate(stat_sort = stat) %>%
+    arrange(stat_sort, desc(stat_sort)) %>%
+    select(-stat_sort) %>%
+    transpose() %>% 
+    map_dfr(\(config_row) get_players_stats_group(config_row)) %>%
+    distinct(name, connector_id, .keep_all = TRUE)
+}
+
 get_clean_players_table <- function(view) {
   players_initial_table <-
     view %>%
