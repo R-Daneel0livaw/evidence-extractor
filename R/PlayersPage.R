@@ -29,7 +29,11 @@ get_page_node.PlayersPage <- function(page) {
 }
 
 get_page_node_stats.PlayersPage <- function(page, base_nodes = NULL) {
-  params_grid <- expand_grid(page$config, stat = base_nodes[120]) %>% transpose()
+  params_grid <- expand_grid(page$config, stat = base_nodes[120]) %>%
+    mutate(stat_sort = stat) %>%
+    arrange(stat_sort, desc(stat_sort)) %>%
+    select(-stat_sort) %>%
+    transpose()
   # params_grid %>% 
   #   map_dfr(\(config_row) {
   #     base_get_page_node(
