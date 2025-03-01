@@ -1,6 +1,7 @@
 library(tidyverse)
 library(rvest)
 library(jsonlite)
+library(lubridate)
 library(janitor)
 library(polite)
 library(memoise)
@@ -42,7 +43,7 @@ players_page <- PlayersPage(get_page_config("PLAYER"))
 players_nodes_new <- get_page_node(players_page)
 
 players_stats_page <- PlayersPage(get_page_config("PLAYER_STATS"))
-players_stats_new <- get_page_node_stats(players_stats_page)
+players_stats_new <- get_page_node_stats(players_stats_page, players_nodes_new)
 
 
 
