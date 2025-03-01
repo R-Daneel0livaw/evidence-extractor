@@ -40,32 +40,22 @@ get_page_node_stats.PlayersPage <- function(page, base_nodes = NULL) {
       # base_get_page_node(
       #   page = page,
       #   config = config_row,
-      #   clean_fn = get_clean_players_table,
-      #   join_fn = function(view, identifier) {
-      #     join_players_identifier(view, identifier)
-      #   },
       #   mutate_fn = function(data, view) {
       #     data %>%
-      #       join_players_active(get_players_active(view)) %>%
-      #       join_players_college(get_players_college(view)) %>%
-      #       mutate(type = page$config$type) %>%
-      #       relocate(type, id, active)
+      #       pivot_wider(names_from = data_stat, values_from = text) %>%
+      #       mutate(type = "PLAYER") %>%
+      #       relocate(type, id)
       #   },
       #   filter_fn = function(data) {
-      #     data %>% mutate(row_number = row_number())
+      #     data %>% filter(data_stat != "DUMMY")
+      #   },
+      #   select_cols =  c("-current:level", "-lg", type, id, all_of(config_row$start):all_of(config_row$end)),
+      #   stats_fn = function(data, config) {
+      #     convert_to_stats(data, config$start) 
       #   }
       # )
     }) 
   # %>%
-  #   distinct(name, connector_id, .keep_all = TRUE)
-  
-  # players_stats_table <-
-  #   join_config_stat(page$config, base_nodes$id[120]) %>%
-  #   mutate(stat_sort = stat) %>%
-  #   arrange(stat_sort, desc(stat_sort)) %>%
-  #   select(-stat_sort) %>%
-  #   transpose() %>% 
-  #   map_dfr(\(config_row) get_players_stats_group(config_row)) %>%
   #   distinct(name, connector_id, .keep_all = TRUE)
 }
 
