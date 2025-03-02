@@ -149,33 +149,6 @@ get_cleaned_view <- function(clean_fn, view, config) {
   }
 }
 
-# apply_column_selection <- function(data, select_cols) {
-#   if (!is.null(select_cols)) {
-#     expanded_cols <- unlist(lapply(select_cols, function(col) {
-#       if (grepl(":", col)) {
-#         col <- gsub("^-", "", col) 
-#         col_range <- strsplit(col, ":")[[1]]
-#         
-#         col_names <- names(data)
-#         col_indices <- tidyselect::eval_select(expr(c(all_of(col_range[1]):all_of(col_range[2]))), data)
-#         return(col_names[col_indices])
-#       }
-#       return(col)
-#     }))
-#     
-#     exclude_cols <- expanded_cols[grepl("^-", select_cols)] %>% gsub("^-", "", .)
-#     include_cols <- expanded_cols[!grepl("^-", select_cols)]
-#     
-#     if (length(exclude_cols) > 0) {
-#       return(data %>% select(-any_of(exclude_cols)))
-#     } else if (length(include_cols) > 0) {
-#       return(data %>% select(any_of(include_cols)))
-#     }
-#   }
-#   
-#   data  
-# }
-
 apply_column_selection <- function(data, select_cols, config = NULL) {
   if (!is.null(config)) {
     if (!is.null(config$start) && nzchar(config$start)) {
