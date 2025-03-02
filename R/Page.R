@@ -104,7 +104,7 @@ base_get_page_node <- function(page = NULL,
     identifier <- filter_fn(identifier)
   }
   
-  result <- get_cleaned_view(clean_fn, view, config)
+  result <- if (is.null(clean_fn)) identifier else get_cleaned_view(clean_fn, view, config)
   
   if (!is.null(join_fn)) {
     result <- join_fn(result, identifier)
