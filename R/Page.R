@@ -138,6 +138,24 @@ build_fetch_args <- function(config) {
   fetch_args
 }
 
+# build_fetch_args <- function(config) {
+#   fetch_args <- list(identifier = config$table_identifier)
+#   
+#   # Extract all column names that start with "node"
+#   dynamic_columns <- grep("^node", names(config), value = TRUE)
+#   
+#   if (length(dynamic_columns) > 0) {
+#     fetch_args$dynamic_values <- as.list(config[dynamic_columns])
+#   }
+#   
+#   if (!is.null(config[["index"]])) {
+#     fetch_args$index <- config[["index"]]
+#   }
+#   
+#   fetch_args
+# }
+
+
 get_cleaned_view <- function(clean_fn, view, config) {
   extra_params <- config[c("multi_row_header", "dummy_header")]
   extra_params <- extra_params[extra_params == TRUE]
