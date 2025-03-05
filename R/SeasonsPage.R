@@ -51,7 +51,7 @@ get_page_multi_node_stats.SeasonsPage <- function(page, base_nodes) {
   
   mutate_fn <- function(stats_table) {
     stats_table %>%
-      mutate(stat_sort = as.numeric(str_extract(stat, ".+_(\\d+)", 1))) %>%
+      mutate(stat_sort = as.numeric(str_extract(.data[[names(.)[str_detect(names(.), "^stat\\d+$")][1]]], ".+_(\\d+)", 1))) %>%
       arrange(stat_sort, desc(stat_sort)) %>%
       select(-stat_sort)
   }

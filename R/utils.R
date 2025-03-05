@@ -88,10 +88,24 @@ join_identifier <- function(initial_table, identifier, ...) {
   joined_table
 }
 
-join_config_stat <- function(config, stat) {
-  joined_table <- expand_grid(config, stat = stat)
-  
-  joined_table
+# join_config_stat <- function(config, stat) {
+#   joined_table <- expand_grid(config, stat = stat)
+#   
+#   joined_table
+# }
+
+join_config_stat <- function(config, ...) {
+  stat_list <- list(...)
+  stat_names <- paste0("stat", seq_along(stat_list))  # Generate stat1, stat2, etc.
+
+  # Convert to a data frame with dynamic column names
+  stat_df <- as.data.frame(stat_list)
+  names(stat_df) <- stat_names
+
+  # Expand the grid
+  expanded_table <- expand_grid(config, stat_df)
+
+  expanded_table
 }
 
 duplicate_stats <-

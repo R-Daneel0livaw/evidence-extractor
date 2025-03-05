@@ -125,29 +125,12 @@ base_get_page_node <- function(page = NULL,
   return(result)
 }
 
-build_fetch_args <- function(config) {
-  fetch_args <- list(identifier = config$table_identifier)
-  
-  if (!is.null(config[["stat"]])) {
-    fetch_args$dynamic_values <- list(node = config[["stat"]])
-  }
-  if (!is.null(config[["index"]])) {
-    fetch_args$index <- config[["index"]]
-  }
-  
-  fetch_args
-}
-
 # build_fetch_args <- function(config) {
 #   fetch_args <- list(identifier = config$table_identifier)
 #   
-#   # Extract all column names that start with "node"
-#   dynamic_columns <- grep("^node", names(config), value = TRUE)
-#   
-#   if (length(dynamic_columns) > 0) {
-#     fetch_args$dynamic_values <- as.list(config[dynamic_columns])
+#   if (!is.null(config[["stat"]])) {
+#     fetch_args$dynamic_values <- list(node = config[["stat"]])
 #   }
-#   
 #   if (!is.null(config[["index"]])) {
 #     fetch_args$index <- config[["index"]]
 #   }
@@ -155,6 +138,28 @@ build_fetch_args <- function(config) {
 #   fetch_args
 # }
 
+build_fetch_args <- function(config, index = 1) {
+  fetch_args <- list(identifier = config$table_identifier[index])
+
+  stat_cols <- grep("^stat[0-9]+$", names(config), value = TRUE)
+  print(stat_cols)
+
+  if (length(stat_cols) > 0) {
+    dynamic_values <- lapply(stat_cols, function(col) {
+      config[[col]][index]
+    })
+    
+    names(dynamic_values) <- sub("^stat", "node", stat_cols)
+    
+    fetch_args$dynamic_values <- dynamic_values
+  }
+  
+  if (!is.null(config[["index"]])) {
+    fetch_args$index <- config[["index"]]
+  }
+
+  fetch_args
+}
 
 get_cleaned_view <- function(clean_fn, view, config) {
   extra_params <- config[c("multi_row_header", "dummy_header")]
