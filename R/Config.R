@@ -72,7 +72,7 @@ get_team_stats_config <- function() {
 get_player_node_config <- function() {
   data <- tribble(
     ~type, ~url, ~table_identifier, ~key_data_identifier, ~suffix,  ~start, ~end, ~rename_start, ~multi_row_header, ~dummy_header, ~id_extract_names, ~id_extract_regex,
-    "PLAYER", "https://www.basketball-reference.com/players/{node}/", "table#players", "tr th[data-stat='player'] a", "",  "", "", "", FALSE, FALSE, c("id", "player"), "([^/]+)(?=\\.html$)"
+    "PLAYER", "https://www.basketball-reference.com/players/{node1}/", "table#players", "tr th[data-stat='player'] a", "",  "", "", "", FALSE, FALSE, c("id", "player"), "([^/]+)(?=\\.html$)"
   ) 
   data
 }
