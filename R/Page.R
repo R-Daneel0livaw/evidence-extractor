@@ -142,7 +142,6 @@ build_fetch_args <- function(config, index = 1) {
   fetch_args <- list(identifier = config$table_identifier[index])
 
   stat_cols <- grep("^stat[0-9]+$", names(config), value = TRUE)
-  print(stat_cols)
 
   if (length(stat_cols) > 0) {
     dynamic_values <- lapply(stat_cols, function(col) {
