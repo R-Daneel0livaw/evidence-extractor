@@ -4,7 +4,7 @@ PlayersPage <- function(config) {
 }
 
 get_page_node.PlayersPage <- function(page) {
-  params_grid <- expand_grid(page$config, stat = letters[1:3]) %>% transpose()
+  params_grid <- join_config_stat(page$config, letters[1:3]) %>% transpose()
   params_grid %>% 
     map_dfr(\(config_row) {
       base_get_page_node(
@@ -29,7 +29,7 @@ get_page_node.PlayersPage <- function(page) {
 }
 
 get_page_node_stats.PlayersPage <- function(page, base_nodes = NULL) {
-  params_grid <- expand_grid(page$config, stat = base_nodes$id[120]) %>%
+  params_grid <- join_config_stat(page$config, base_nodes$id[120]) %>%
     mutate(stat_sort = stat) %>%
     arrange(stat_sort, desc(stat_sort)) %>%
     select(-stat_sort) %>%

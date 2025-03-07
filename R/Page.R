@@ -125,24 +125,11 @@ base_get_page_node <- function(page = NULL,
   return(result)
 }
 
-# build_fetch_args <- function(config) {
-#   fetch_args <- list(identifier = config$table_identifier)
-#   
-#   if (!is.null(config[["stat"]])) {
-#     fetch_args$dynamic_values <- list(node = config[["stat"]])
-#   }
-#   if (!is.null(config[["index"]])) {
-#     fetch_args$index <- config[["index"]]
-#   }
-#   
-#   fetch_args
-# }
-
 build_fetch_args <- function(config, index = 1) {
   fetch_args <- list(identifier = config$table_identifier[index])
 
   stat_cols <- grep("^stat[0-9]+$", names(config), value = TRUE)
-
+  
   if (length(stat_cols) > 0) {
     dynamic_values <- lapply(stat_cols, function(col) {
       config[[col]][index]
