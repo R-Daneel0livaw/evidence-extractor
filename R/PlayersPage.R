@@ -36,27 +36,25 @@ get_page_node_stats.PlayersPage <- function(page, base_nodes = NULL) {
     transpose()
   params_grid %>%
     map_dfr(\(config_row) {
-      print(config_row)
-      # base_get_page_node(
-      #   page = page,
-      #   config = config_row,
-      #   mutate_fn = function(data, view) {
-      #     data %>%
-      #       pivot_wider(names_from = data_stat, values_from = text) %>%
-      #       mutate(type = "PLAYER") %>%
-      #       relocate(type, id)
-      #   },
-      #   filter_fn = function(data) {
-      #     data %>% filter(data_stat != "DUMMY")
-      #   },
-      #   select_cols =  c("type", "id", "start:end"),
-      #   stats_fn = function(data, config) {
-      #     convert_to_stats(data, config$start) 
-      #   }
-      # )
-    }) 
-  # %>%
-  #   distinct(name, connector_id, .keep_all = TRUE)
+      base_get_page_node(
+        page = page,
+        config = config_row,
+        mutate_fn = function(data, view) {
+          data %>%
+            pivot_wider(names_from = data_stat, values_from = text) %>%
+            mutate(type = "PLAYER") %>%
+            relocate(type, id)
+        },
+        filter_fn = function(data) {
+          data %>% filter(data_stat != "DUMMY")
+        },
+        select_cols =  c("type", "id", "start:end"),
+        stats_fn = function(data, config) {
+          convert_to_stats(data, config$start)
+        }
+      )
+    }) %>%
+    distinct(name, connector_id, .keep_all = TRUE)
 }
 
 get_clean_players_table <- function(view) {
