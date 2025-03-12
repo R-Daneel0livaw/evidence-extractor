@@ -29,8 +29,8 @@ get_page_node.PlayersPage <- function(page) {
 }
 
 get_page_node_stats.PlayersPage <- function(page, base_nodes = NULL) {
-  params_grid <- join_config_stat(page$config, base_nodes$id[120]) %>%
-    mutate(stat_sort = stat) %>%
+  params_grid <- join_config_stat(page$config, str_sub(base_nodes$id[120], 1, 1), base_nodes$id[120]) %>%
+    mutate(stat_sort = as.numeric(str_extract(.data[[names(.)[str_detect(names(.), "^stat\\d+$")][2]]], ".+_(\\d+)", 1))) %>%
     arrange(stat_sort, desc(stat_sort)) %>%
     select(-stat_sort) %>%
     transpose()
@@ -48,13 +48,14 @@ get_page_node_stats.PlayersPage <- function(page, base_nodes = NULL) {
         filter_fn = function(data) {
           data %>% filter(data_stat != "DUMMY")
         },
-        select_cols =  c("type", "id", "start:end"),
-        stats_fn = function(data, config) {
-          convert_to_stats(data, config$start)
-        }
+        # select_cols =  c("type", "id", "start:end"),
+        # stats_fn = function(data, config) {
+        #   convert_to_stats(data, config$start)
+        # }
       )
-    }) %>%
-    distinct(name, connector_id, .keep_all = TRUE)
+    })
+  # %>%
+  #   distinct(name, connector_id, .keep_all = TRUE)
 }
 
 get_clean_players_table <- function(view) {
