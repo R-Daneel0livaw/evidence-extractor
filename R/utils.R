@@ -70,6 +70,9 @@ extract_value <- function(view, identifier, name, ...) {
 
 extract_identifier <- function(view, identifier, names, 
                                attrs = NULL, add_text = TRUE, ...) {
+  print(identifier)
+  print(names)
+  print(attrs)
   extracted_identifier <-
     view %>%
     html_elements(identifier) %>%
@@ -98,6 +101,12 @@ join_config_stat <- function(config, ...) {
   expanded_table <- expand_grid(config, stat_df)
 
   expanded_table
+}
+
+join_config_stat_old <- function(config, stat) {
+  joined_table <- expand_grid(config, stat = stat)
+  
+  joined_table
 }
 
 duplicate_stats <-

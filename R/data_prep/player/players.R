@@ -10,7 +10,7 @@ m_get_player_df <- memoise(get_player_df)
 
 get_player_top_stats <- function() {
   players_stats_table <-
-    join_config_stat(get_player_top_stats_config(), m_get_player_df()$id[120]) %>%
+    join_config_stat_old(get_player_top_stats_config(), m_get_player_df()$id[120]) %>%
     mutate(stat_sort = stat) %>%
     arrange(stat_sort, desc(stat_sort)) %>%
     select(-stat_sort) %>%
@@ -174,8 +174,8 @@ get_player_top_stats_config <- function() {
   data <- tribble(
     ~view, ~stat_suffix,  ~stats_start, ~stats_end, ~rename_start, ~multi_row_header, ~dummy_header, ~identifier,
     "table#per_game_stats", "",  "games", "pts_per_g", "", FALSE, FALSE, "tfoot tr[id] > *",
-    "table#totals_stats", "",  "fg", "tpl_dbl", "", FALSE, TRUE, "tfoot tr:nth-child(1) > *",
-    "table#advanced", "",  "games", "vorp", "", FALSE, FALSE, "tfoot tr[id] > *"
+    # "table#totals_stats", "",  "fg", "tpl_dbl", "", FALSE, TRUE, "tfoot tr:nth-child(1) > *",
+    # "table#advanced", "",  "games", "vorp", "", FALSE, FALSE, "tfoot tr[id] > *"
   )
   
   data

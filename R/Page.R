@@ -92,7 +92,7 @@ base_get_page_node <- function(page = NULL,
   }
   
   view <- do.call(page$fetch_table, build_fetch_args(config))
-
+  
   identifier <- extract_identifier(
     view = view,
     identifier = config$key_data_identifier,
