@@ -96,7 +96,7 @@ base_get_page_node <- function(page = NULL,
   # identifier <- extract_identifier(
   #   view = view,
   #   identifier = config$key_data_identifier,
-  #   names = unlist(config$id_extract_names), 
+  #   names = unlist(config$id_extract_names),
   #   id = if (nzchar(config$id_extract_regex)) {
   #     str_extract(id, config$id_extract_regex, 1)
   #   } else {
@@ -104,25 +104,21 @@ base_get_page_node <- function(page = NULL,
   #   }
   # )
   
-  
-  args_list <- list(
+  identifier <- extract_identifier(
     view = view,
     identifier = config$key_data_identifier,
     names = unlist(config$id_extract_names),
+    attrs = if (!is.null(config$id_extract_attrs) && length(config$id_extract_attrs) > 0) {
+      config$id_extract_attrs
+    } else {
+      NULL
+    },
     id = if (nzchar(config$id_extract_regex)) {
       str_extract(id, config$id_extract_regex, 1)
     } else {
       config$stat
     }
   )
-
-  if (!is.null(config$id_extract_attrs) && length(config$id_extract_attrs) > 0) {
-    args_list$attrs <- config$id_extract_attrs
-  }
-
-  identifier <- do.call(extract_identifier, args_list)
-  
-  
   
   
   if (!is.null(filter_fn)) {
