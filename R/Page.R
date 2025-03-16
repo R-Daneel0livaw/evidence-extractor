@@ -108,8 +108,6 @@ base_get_page_node <- function(page = NULL,
       config$stat2
     }
   )
-  print(identifier)
-  
   
   if (!is.null(filter_fn)) {
     identifier <- filter_fn(identifier)

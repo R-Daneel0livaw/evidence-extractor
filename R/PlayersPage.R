@@ -48,14 +48,13 @@ get_page_node_stats.PlayersPage <- function(page, base_nodes = NULL) {
         filter_fn = function(data) {
           data %>% filter(data_stat != "DUMMY")
         },
-        # select_cols =  c("type", "id", "start:end"),
-        # stats_fn = function(data, config) {
-        #   convert_to_stats(data, config$start)
-        # }
+        select_cols =  c("type", "id", "start:end"),
+        stats_fn = function(data, config) {
+          convert_to_stats(data, config$start)
+        }
       )
-    })
-  # %>%
-  #   distinct(name, connector_id, .keep_all = TRUE)
+    }) %>%
+    distinct(name, connector_id, .keep_all = TRUE)
 }
 
 get_clean_players_table <- function(view) {
