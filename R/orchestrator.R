@@ -40,15 +40,17 @@ teams_stats <- get_page_node_stats(teams_stats_page, teams_nodes)
 
 
 players_page <- PlayersPage(get_page_config("PLAYER"))
-players_nodes_new <- get_page_node(players_page)
+players_nodes <- get_page_node(players_page)
 
 players_stats_page <- PlayersPage(get_page_config("PLAYER_STATS"))
-players_stats_new <- get_page_node_stats(players_stats_page, players_nodes_new)
+players_stats <- get_page_node_stats(players_stats_page, players_nodes)
 
 
 
-players_nodes <- m_get_player_df()
-players_stats <- m_get_player_top_stats()
+
+
+
+
 player_team_group <- m_get_player_team()
 player_team_relationships <- generate_simple_relationships(
   player_team_group %>%
