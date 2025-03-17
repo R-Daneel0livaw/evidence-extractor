@@ -6,7 +6,8 @@ get_page_config <- function(page_type, secondary_type = NULL) {
     "TEAM" = get_team_node_config,
     "TEAM_STATS" = get_team_stats_config,
     "PLAYER" = get_player_node_config,
-    "PLAYER_STATS" = get_player_stats_config
+    "PLAYER_STATS" = get_player_stats_config,
+    "GAME" = get_game_node_config
   )
   
   if (!page_type %in% names(config_functions)) {
@@ -84,5 +85,13 @@ get_player_stats_config <- function() {
     "PLAYER", "https://www.basketball-reference.com/players/{node1}/{node2}.html", "table#totals_stats", "tfoot tr:nth-child(1) > *", "", "fg",  "tpl_dbl", "", FALSE, TRUE, c("data_stat", "text"), "data-stat", "",
     "PLAYER", "https://www.basketball-reference.com/players/{node1}/{node2}.html", "table#advanced", "tfoot tr[id] > *", "", "games",  "vorp", "", FALSE, FALSE, c("data_stat", "text"), "data-stat", ""
   )
+  data
+}
+
+get_game_node_config <- function() {
+  data <- tribble(
+    ~type, ~url, ~table_identifier, ~key_data_identifier, ~suffix,  ~start, ~end, ~rename_start, ~multi_row_header, ~dummy_header, ~id_extract_names, ~id_extract_regex,
+    "GAME", "https://www.basketball-reference.com/leagues/{node1}/_games-{node2}.html", "table#schedule", "tr td[data-stat='box_score_text'] a", "",  "", "", "", FALSE, FALSE, c("id"), ".*/([^.]+)\\.html$"
+  ) 
   data
 }
