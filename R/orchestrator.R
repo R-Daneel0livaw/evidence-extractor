@@ -46,6 +46,8 @@ players_stats_page <- PlayersPage(get_page_config("PLAYER_STATS"))
 players_stats <- get_page_node_stats(players_stats_page, players_nodes)
 
 
+games_page <- GamesPage(get_page_config("GAME"))
+games_nodes_new <- get_page_node(games_page)
 
 
 
