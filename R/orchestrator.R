@@ -18,6 +18,7 @@ source("R/Page.R")
 source("R/SeasonsPage.R")
 source("R/TeamsPage.R")
 source("R/PlayersPage.R")
+source("R/GamesPage.R")
 source("R/Config.R")
 source("R/utils.R")
 
