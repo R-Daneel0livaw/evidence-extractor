@@ -7,7 +7,6 @@ library(polite)
 library(memoise)
 library(uuid)
 
-source("R/data_prep/player/players.R")
 source("R/data_prep/game/games.R")
 source("R/data_prep/award/awards.R")
 source("R/data_prep/relationship/relationships.R")
