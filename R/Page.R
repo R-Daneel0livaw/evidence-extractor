@@ -203,7 +203,6 @@ apply_column_selection <- function(data, select_cols, config = NULL) {
   data
 }
 
-
 base_get_config_rows <- function(
     page, 
     base_nodes, 
