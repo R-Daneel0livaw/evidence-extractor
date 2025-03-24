@@ -41,7 +41,7 @@ Page <- function(config) {
   structure(page, class = "Page")
 }
 
-get_page_node <- function(page) {
+get_page_node <- function(page, dependent_nodes = NULL) {
   UseMethod("get_page_node")
 }
 
