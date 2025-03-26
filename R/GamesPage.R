@@ -4,16 +4,17 @@ GamesPage <- function(config) {
 }
 
 get_page_node.GamesPage <- function(page, dependent_nodes) {
-  params_grid <- join_config_stat(page$config, month.name[10:12]) %>% transpose()
-  params_grid %>% 
+  print(dependent_nodes)
+  params_grid <- join_config_stat(page$config, dependent_nodes$id[2], str_to_lower(month.name[10:12])) %>% transpose()
+  params_grid %>%
     map_dfr(\(config_row) {
       base_get_page_node(
         page = page,
         config = config_row,
         clean_fn = get_clean_games_table,
         join_fn = function(view, identifier) {
-          join_games_identifier(view, identifier) %>% 
-          join_games_identifier(get_visitor(games_view)) %>% 
+          join_games_identifier(view, identifier) %>%
+          join_games_identifier(get_visitor(games_view)) %>%
           join_games_identifier(get_home(games_view))
         },
         mutate_fn = function(data, view) {
