@@ -73,7 +73,11 @@ extract_identifier <- function(view, identifier, names,
   extracted_identifier <-
     view %>%
     html_elements(identifier) %>%
-    html_attrs_dfr(attrs = attrs, add_text = add_text) %>%
+    html_attrs_dfr(attrs = attrs, add_text = add_text)
+  
+  print(extracted_identifier)
+  
+  extracted_identifier <- extracted_identifier %>% 
     rename_all(~ names) %>%
     mutate(...)
   
