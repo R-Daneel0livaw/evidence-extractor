@@ -93,6 +93,22 @@ base_get_page_node <- function(page = NULL,
   
   view <- do.call(page$fetch_table, build_fetch_args(config))
   
+  # identifier <- extract_identifier(
+  #   view = view,
+  #   identifier = config$key_data_identifier,
+  #   names = unlist(config$id_extract_names),
+  #   attrs = if (!is.null(config$id_extract_attrs) && length(config$id_extract_attrs) > 0) {
+  #     config$id_extract_attrs
+  #   } else {
+  #     NULL
+  #   },
+  #   id = if (nzchar(config$id_extract_regex)) {
+  #     str_extract(id, config$id_extract_regex, 1)
+  #   } else {
+  #     config$stat2
+  #   }
+  # )
+  
   identifier <- extract_identifier(
     view = view,
     identifier = config$key_data_identifier,
@@ -106,8 +122,14 @@ base_get_page_node <- function(page = NULL,
       str_extract(id, config$id_extract_regex, 1)
     } else {
       config$stat2
+    },
+    add_text = if (!is.null(config$add_text) && nzchar(config$add_text)) {
+      config$add_text
+    } else {
+      TRUE
     }
   )
+  
   
   if (!is.null(filter_fn)) {
     identifier <- filter_fn(identifier)
