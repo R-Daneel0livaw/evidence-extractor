@@ -52,11 +52,8 @@ get_clean_games_table <- function(view) {
 }
 
 join_games_identifier <- function(initial_table, identifier) {
-  print("join_games_identifier")
-  print(initial_table)
   joined_table <-
     join_identifier(initial_table = initial_table, identifier = identifier, row_number)
-  print("returning")
   
   joined_table
 }
