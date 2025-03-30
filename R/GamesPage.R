@@ -12,12 +12,12 @@ get_page_node.GamesPage <- function(page, dependent_nodes) {
         config = config_row,
         clean_fn = get_clean_games_table,
         join_fn = function(view, identifier) {
-          join_games_identifier(view, identifier) %>%
-          join_games_identifier(get_visitor(games_view)) %>%
-          join_games_identifier(get_home(games_view))
+          join_games_identifier(view, identifier) 
         },
         mutate_fn = function(data, view) {
           data %>%
+            join_games_identifier(get_visitor(view)) %>%
+            join_games_identifier(get_home(view)) %>% 
             mutate(type = page$config$type,
                    season = season) %>%
             relocate(type, id, date, start_et, ot, arena, attend)
@@ -52,8 +52,11 @@ get_clean_games_table <- function(view) {
 }
 
 join_games_identifier <- function(initial_table, identifier) {
+  print("join_games_identifier")
+  print(initial_table)
   joined_table <-
     join_identifier(initial_table = initial_table, identifier = identifier, row_number)
+  print("returning")
   
   joined_table
 }

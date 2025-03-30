@@ -70,6 +70,7 @@ extract_value <- function(view, identifier, name, ...) {
 
 extract_identifier <- function(view, identifier, names, 
                                attrs = NULL, add_text = TRUE, ...) {
+  
   extracted_identifier <-
     view %>%
     html_elements(identifier) %>%
