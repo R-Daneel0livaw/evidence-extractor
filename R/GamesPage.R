@@ -7,7 +7,6 @@ get_page_node.GamesPage <- function(page, dependent_nodes) {
   params_grid <- join_config_stat(page$config, dependent_nodes$id[2], str_to_lower(month.name[10:12])) %>% transpose()
   params_grid %>%
     map_dfr(\(config_row) {
-      print(config_row)
       base_get_page_node(
         page = page,
         config = config_row,
