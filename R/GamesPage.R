@@ -7,6 +7,7 @@ get_page_node.GamesPage <- function(page, dependent_nodes) {
   params_grid <- join_config_stat(page$config, dependent_nodes$id[2], str_to_lower(month.name[10:12])) %>% transpose()
   params_grid %>%
     map_dfr(\(config_row) {
+      print(config_row)
       base_get_page_node(
         page = page,
         config = config_row,
@@ -19,7 +20,7 @@ get_page_node.GamesPage <- function(page, dependent_nodes) {
             join_games_identifier(get_visitor(view)) %>%
             join_games_identifier(get_home(view)) %>% 
             mutate(type = page$config$type,
-                   season = season) %>%
+                   season = config_row$stat1) %>%
             relocate(type, id, date, start_et, ot, arena, attend)
         },
         filter_fn = function(data) {
