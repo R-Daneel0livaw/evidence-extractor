@@ -7,7 +7,8 @@ get_page_config <- function(page_type, secondary_type = NULL) {
     "TEAM_STATS" = get_team_stats_config,
     "PLAYER" = get_player_node_config,
     "PLAYER_STATS" = get_player_stats_config,
-    "GAME" = get_game_node_config
+    "GAME" = get_game_node_config,
+    "GAME_STATS" = get_game_stats_config
   )
   
   if (!page_type %in% names(config_functions)) {
@@ -92,6 +93,14 @@ get_game_node_config <- function() {
   data <- tribble(
     ~type, ~url, ~table_identifier, ~key_data_identifier, ~suffix,  ~start, ~end, ~rename_start, ~multi_row_header, ~dummy_header, ~add_text, ~id_extract_names, ~id_extract_regex,
     "GAME", "https://www.basketball-reference.com/leagues/{node1}_games-{node2}.html", "table#schedule", "tr td[data-stat='box_score_text'] a", "",  "", "", "", FALSE, FALSE, FALSE, c("id"), ".*/([^.]+)\\.html$"
+  ) 
+  data
+}
+
+get_game_stats_config <- function() {
+  data <- tribble(
+    ~start,
+    "visitor_pts" 
   ) 
   data
 }
