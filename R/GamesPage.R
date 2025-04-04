@@ -30,6 +30,17 @@ get_page_node.GamesPage <- function(page, dependent_nodes) {
   })
 }
 
+get_page_node_stats.GamesPage <- function(page, base_nodes = NULL) {
+  base_get_page_node(
+    orig_data = base_nodes,
+    config = page$config,
+    stats_fn = function(data, config) {
+        convert_to_stats(data, config$start) %>% 
+        filter(name %in% c("visitor_pts", "home_pts"))
+    }
+  )
+}
+
 get_clean_games_table <- function(view) {
   games_initial_table <-
     view %>%
