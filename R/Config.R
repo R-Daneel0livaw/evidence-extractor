@@ -109,9 +109,10 @@ get_game_stats_config <- function() {
 get_game_player_stats_config <- function() {
   data <- tribble(
     ~type, ~secondary_type, ~url, ~table_identifier, ~key_data_identifier, ~suffix,  ~start, ~end, ~rename_start, ~multi_row_header, ~dummy_header, ~id_extract_names, ~id_extract_regex,
-    # "GAME", "PLAYER", "https://www.basketball-reference.com/leagues/{node1}.html", "table#per_game-team", "tr td[data-stat='team'] a", "per_g",  "g", "pts", "mp", FALSE, FALSE, c("id", "team"), ".*/teams/([^/]+)/.*",
-    # "GAME", "PLAYER", "https://www.basketball-reference.com/leagues/{node1}.html", "table#totals-team", "tr td[data-stat='team'] a", "",  "mp", "pts", "", FALSE, FALSE, c("id", "team"), ".*/teams/([^/]+)/.*",
-    # "GAME", "PLAYER", "https://www.basketball-reference.com/leagues/{node1}.html", "table#advanced-team", "tr td[data-stat='team'] a", "",  "age", "pts", "", TRUE, TRUE, c("id", "team"), ".*/teams/([^/]+)/.*"
+    # "GAME", "PLAYER", "https://www.basketball-reference.com/boxscores/{node1}.html", "table#box-{{DYNAMIC}}-game-basic", "tr th[data-stat='player'] a", "",  "mp", "plus_minus", "", TRUE, FALSE, c("id", "player"), "(?<=/players/[a-z]/)[a-z0-9]+",
+    # "GAME", "PLAYER", "https://www.basketball-reference.com/boxscores/{node1}.html", "table#box-{{DYNAMIC}}-game-advanced", "tr th[data-stat='player'] a", "",  "ts_pct", "bpm", "", TRUE, FALSE, c("id", "player"), "(?<=/players/[a-z]/)[a-z0-9]+",
+    # "GAME", "PLAYER", "https://www.basketball-reference.com/boxscores/{node1}.html", "table#box-{{DYNAMIC}}-game-basic", "tr th[data-stat='player'] a", "",  "mp", "plus_minus", "", TRUE, FALSE, c("id", "player"), "(?<=/players/[a-z]/)[a-z0-9]+"
+    # "GAME", "PLAYER", "https://www.basketball-reference.com/boxscores/{node1}.html", "table#box-{{DYNAMIC}}-game-advanced", "tr th[data-stat='player'] a", "",  "ts_pct", "bpm", "", TRUE, FALSE, c("id", "player"), "(?<=/players/[a-z]/)[a-z0-9]+"
   )
   data
 }
