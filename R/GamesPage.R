@@ -66,6 +66,31 @@ get_page_multi_node_stats.GamesPage <- function(page, base_nodes) {
   # )
 }
 
+get_games_players_stats <- function(config_row, page) {
+  # base_get_page_node(
+  #   page = page,
+  #   config = config_row,
+  #   clean_fn = get_clean_seasons_teams_stats_table,
+  #   join_fn = function(view, identifier) {
+  #     join_identifier(view, identifier, team) %>%
+  #       filter(!is.na(id))
+  #   },
+  #   mutate_fn = function(data, view) {
+  #     data %>% mutate(type = config_row$secondary_type) %>% 
+  #       relocate(type, id)
+  #   },
+  #   select_cols = c("-team", "-ranker"),
+  #   rename_fn = rename_stats,
+  #   stats_fn = function(data, config) {
+  #     data %>%
+  #       convert_to_stats(config$start) %>%
+  #       mutate(id = get_uuid(nrow(.))) %>%
+  #       relocate(type, id) %>%
+  #       duplicate_stats(config$type, config$stat)
+  #   }
+  # )
+}
+
 get_clean_games_table <- function(view) {
   games_initial_table <-
     view %>%
