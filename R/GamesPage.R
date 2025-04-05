@@ -41,6 +41,31 @@ get_page_node_stats.GamesPage <- function(page, base_nodes = NULL) {
   )
 }
 
+get_page_multi_node_stats.GamesPage <- function(page, base_nodes) {
+  # join_fn <- function(page, base_nodes) {
+  #   join_config_stat(add_index_column(page$config), base_nodes$id[2:3])
+  # }
+  # 
+  # mutate_fn <- function(stats_table) {
+  #   stats_table %>%
+  #     mutate(stat_sort = as.numeric(str_extract(.data[[names(.)[str_detect(names(.), "^stat\\d+$")][1]]], ".+_(\\d+)", 1))) %>%
+  #     arrange(stat_sort, desc(stat_sort)) %>%
+  #     select(-stat_sort)
+  # }
+  # 
+  # map_fn <- function(page, config_row) {
+  #   get_seasons_teams_stats(config_row, page)
+  # }
+  # 
+  # base_get_config_rows(
+  #   page = page, 
+  #   base_nodes = base_nodes, 
+  #   join_fn = join_fn, 
+  #   mutate_fn = mutate_fn, 
+  #   map_fn = map_fn
+  # )
+}
+
 get_clean_games_table <- function(view) {
   games_initial_table <-
     view %>%

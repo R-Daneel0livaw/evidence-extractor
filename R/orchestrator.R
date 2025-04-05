@@ -47,11 +47,13 @@ players_stats <- get_page_node_stats(players_stats_page, players_nodes)
 
 
 games_page <- GamesPage(get_page_config("GAME"))
-games_nodes_new <- get_page_node(games_page, seasons_nodes)
+games_nodes <- get_page_node(games_page, seasons_nodes)
 
 games_stats_page <- GamesPage(get_page_config("GAME_STATS"))
-games_stats_new <- get_page_node_stats(games_stats_page, games_nodes_new)
+games_stats <- get_page_node_stats(games_stats_page, games_nodes)
 
+games_players_stats_page <- GamesPage(get_page_config("GAME_PLAYER_STATS"))
+games_players_stats <- get_page_multi_node_stats(games_stats_page, games_nodes)
 
 
 
@@ -62,9 +64,6 @@ player_team_relationships <- generate_simple_relationships(
     rename(a = player, b = team), 
   "PLAYED_FOR"
 )
-
-games_nodes <- m_get_game_df()
-games_stats <- m_get_games_top_stats()
 
 games_players_stats <- m_get_game_player_stats()
 game_player_relationships <- generate_relationships(games_players_stats, "PARTICIPATED_IN")

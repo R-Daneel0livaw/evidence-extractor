@@ -8,7 +8,8 @@ get_page_config <- function(page_type, secondary_type = NULL) {
     "PLAYER" = get_player_node_config,
     "PLAYER_STATS" = get_player_stats_config,
     "GAME" = get_game_node_config,
-    "GAME_STATS" = get_game_stats_config
+    "GAME_STATS" = get_game_stats_config,
+    "GAME_PLAYER_STATS" = get_game_player_stats_config
   )
   
   if (!page_type %in% names(config_functions)) {
@@ -102,5 +103,15 @@ get_game_stats_config <- function() {
     ~start,
     "visitor_pts" 
   ) 
+  data
+}
+
+get_game_player_stats_config <- function() {
+  data <- tribble(
+    ~type, ~secondary_type, ~url, ~table_identifier, ~key_data_identifier, ~suffix,  ~start, ~end, ~rename_start, ~multi_row_header, ~dummy_header, ~id_extract_names, ~id_extract_regex,
+    # "GAME", "PLAYER", "https://www.basketball-reference.com/leagues/{node1}.html", "table#per_game-team", "tr td[data-stat='team'] a", "per_g",  "g", "pts", "mp", FALSE, FALSE, c("id", "team"), ".*/teams/([^/]+)/.*",
+    # "GAME", "PLAYER", "https://www.basketball-reference.com/leagues/{node1}.html", "table#totals-team", "tr td[data-stat='team'] a", "",  "mp", "pts", "", FALSE, FALSE, c("id", "team"), ".*/teams/([^/]+)/.*",
+    # "GAME", "PLAYER", "https://www.basketball-reference.com/leagues/{node1}.html", "table#advanced-team", "tr td[data-stat='team'] a", "",  "age", "pts", "", TRUE, TRUE, c("id", "team"), ".*/teams/([^/]+)/.*"
+  )
   data
 }
