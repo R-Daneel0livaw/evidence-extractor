@@ -44,7 +44,7 @@ get_page_node_stats.GamesPage <- function(page, base_nodes = NULL) {
 get_page_multi_node_stats.GamesPage <- function(page, base_nodes) {
   join_fn <- function(page, base_nodes) {
     join_config_stat(add_index_column(page$config), base_nodes$id[1]) %>%
-      left_join(get_game_df(), by = c("stat" = "id"))
+      left_join(base_nodes, by = c("stat" = "id"))
   }
   # 
   # mutate_fn <- function(stats_table) {
