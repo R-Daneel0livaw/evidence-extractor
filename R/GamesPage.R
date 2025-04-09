@@ -44,16 +44,15 @@ get_page_node_stats.GamesPage <- function(page, base_nodes = NULL) {
 get_page_multi_node_stats.GamesPage <- function(page, base_nodes) {
   join_fn <- function(page, base_nodes) {
     join_config_stat(add_index_column(page$config), base_nodes$id[1]) %>%
-      left_join(base_nodes, by = c("stat" = "id")) %>% 
-      rowwise()
+      left_join(base_nodes, by = c("stat" = "id")) 
   }
-  # 
-  # mutate_fn <- function(stats_table) {
-  #   stats_table %>%
-  #     mutate(stat_sort = as.numeric(str_extract(.data[[names(.)[str_detect(names(.), "^stat\\d+$")][1]]], ".+_(\\d+)", 1))) %>%
-  #     arrange(stat_sort, desc(stat_sort)) %>%
-  #     select(-stat_sort)
-  # }
+
+  mutate_fn <- function(stats_table) {
+    stats_table %>%
+      rowwise() %>% 
+      mutate(view = str_replace(view, "\\{\\{DYNAMIC\\}\\}", get(dynamic_field))) %>%
+      ungroup()
+  }
   # 
   # map_fn <- function(page, config_row) {
   #   get_seasons_teams_stats(config_row, page)
